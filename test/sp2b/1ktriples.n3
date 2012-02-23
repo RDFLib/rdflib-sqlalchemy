@@ -1,0 +1,1294 @@
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix swrc: <http://swrc.ontoware.org/ontology#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix bench: <http://localhost/vocabulary/bench/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix person: <http://localhost/persons/> .
+bench:Journal rdfs:subClassOf foaf:Document.
+bench:Proceedings rdfs:subClassOf foaf:Document.
+bench:Inproceedings rdfs:subClassOf foaf:Document.
+bench:Article rdfs:subClassOf foaf:Document.
+bench:Www rdfs:subClassOf foaf:Document.
+bench:MastersThesis rdfs:subClassOf foaf:Document.
+bench:PhDThesis rdfs:subClassOf foaf:Document.
+bench:Incollection rdfs:subClassOf foaf:Document.
+bench:Book rdfs:subClassOf foaf:Document.
+<http://localhost/persons/Paul_Erdoes> rdf:type foaf:Person.
+<http://localhost/persons/Paul_Erdoes> foaf:name "Paul Erdoes"^^xsd:string.
+<http://localhost/misc/UnknownDocument> rdf:type foaf:Document.
+<http://localhost/publications/journals/Journal1/1940> rdf:type bench:Journal.
+<http://localhost/publications/journals/Journal1/1940> swrc:number "1"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1940> dc:title "Journal 1 (1940)"^^xsd:string.
+<http://localhost/publications/journals/Journal1/1940> swrc:volume "1"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1940> dcterms:issued "1940"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article1> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article1> bench:abstract "unmuzzling measles decentralizing hogfishes gantleted richer succories dwelling scrapped prat islanded burlily thanklessly swiveled polers oinked apnea maxillary dumpers bering evasiveness toto teashop reaccepts gunneries exorcises pirog desexes summable heliocentricity excretions recelebrating dually plateauing reoccupations embossers cerebrum gloves mohairs admiralties bewigged playgoers cheques batting waspishly stilbestrol villainousness miscalling firefanged skeins equalled sandwiching bewitchment cheaters riffled kerneling napoleons rifer splinting surmisers satisfying undamped sharpers forbearer anesthetization undermentioned outflanking funnyman commuted lachrymation floweret arcadian acridities unrealistic substituting surges preheats loggias reconciliating photocatalyst lenity tautological jambing sodality outcrop slipcases phenylketonuria grunts venturers valiantly unremorsefully extradites stollens ponderers conditione loathly cancels debiting parrots paraguayans resonates"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article1> bench:cdrom "http://www.hogfishes.tld/richer/succories.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article1> rdfs:seeAlso "http://www.gantleted.tld/succories/dwelling.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article1> swrc:month "4"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article1> swrc:note "overbites terminals giros podgy vagus kinkiest xix recollected"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article1> swrc:pages "110"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article1> dc:title "richer dwelling scrapped"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article1> foaf:homepage "http://www.succories.tld/scrapped/prat.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article1> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Adamanta_Schlitt rdf:type foaf:Person.
+_:Adamanta_Schlitt foaf:name "Adamanta Schlitt"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article1> dc:creator _:Adamanta_Schlitt.
+<http://localhost/publications/articles/Journal1/1940/Article1> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article1> dcterms:references _:references1.
+_:references1 rdf:type rdf:Bag.
+_:references1 rdf:_1 <http://localhost/misc/UnknownDocument>.
+_:references1 rdf:_2 <http://localhost/misc/UnknownDocument>.
+_:references1 rdf:_3 <http://localhost/misc/UnknownDocument>.
+_:references1 rdf:_4 <http://localhost/misc/UnknownDocument>.
+<http://localhost/publications/articles/Journal1/1940/Article2> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article2> bench:abstract "householder overeducated objurgate treaties preprocessor despising loftily yabber reprovingly blungers dwarflike effulgences coreless tuberculoses environs hulled preexamination oralogy tibetans slavishly hipless prs bluejays cuppier nonsurgical skimpiest outpoured dissociated heartier petitionee brill neologic intermuscular fobbed transcribed swifters redigesting ostinato recalculation safest signiory latchets inflecting trephines hops exec junketeers isolators reducing nethermost nonfiction retrogressions eliminates unknowns mongoloids danker raunchiness perspicuously disjoined nigglings midmonths labium peeped daydreams permuting immediately canzona interrelated cooked reformers goodwife technicolor plenishes nippy bounden occulters blubberer amenities desecrated tetrachlorides loutish polygony malines cliffhanger entailments reindexed bedstraws thoughtless elation swampland earings circumscribed paralyzingly pouchy surrejoinders chestiest measurage tonsils pasturage thurifer teazle"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article2> bench:cdrom "http://www.dwelling.tld/prat/islanded.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article2> rdfs:seeAlso "http://www.scrapped.tld/islanded/burlily.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article2> swrc:month "8"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article2> swrc:note "fringier rhythmical wastebaskets powderer immigrates inserter plights corollaries"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article2> swrc:pages "114"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article2> dc:title "prat burlily thanklessly"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article2> foaf:homepage "http://www.islanded.tld/thanklessly/swiveled.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article2> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Cecil_Kochler rdf:type foaf:Person.
+_:Cecil_Kochler foaf:name "Cecil Kochler"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article2> dc:creator _:Cecil_Kochler.
+<http://localhost/publications/articles/Journal1/1940/Article2> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article3> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article3> bench:abstract "gaudiness irades inadvisability disciplinarians majors manifestly decaffeinates scalepan folklorists attractive yeller cognizably reminds teratoid coadjutors thuggeries nondestructive maladjustments subpartnership cordilleras recirculations alkalin succulently marquise underlaid neurosurgeon innervated hunts barrens emanative blowpipe varies thickest machinability orbiters tormentor owner zanier corkscrewed promiscuousness clewed reassemble hesitation fainting croupy bacchanalia regainers teardown margarins inconvenience triunities dipped votarists kilogram timbrel presell woodcraft reupholstered xerosis steamers neurological warranter flashings oops detonations chippering photospherically pouchiest canvasses pyorrheas cartons acquirable refocus vividness administrated remedying prophetically allayed zinged fridge stained unintentional antiquarians dilutes quantitatively shovels vitric mendelism kookiest leavening embrocation casteless uroliths sashes marrieds fungic gasogenes obnoxiously dismounting endorser libations"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article3> bench:cdrom "http://www.burlily.tld/swiveled/polers.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article3> rdfs:seeAlso "http://www.thanklessly.tld/polers/oinked.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article3> swrc:note "harrower claymores shiftlessly feedstuffs lyricizing hierarchs composedly taunting"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article3> swrc:pages "117"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article3> dc:title "swiveled oinked apnea"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article3> foaf:homepage "http://www.polers.tld/apnea/maxillary.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article3> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Amalia_Krajcik rdf:type foaf:Person.
+_:Amalia_Krajcik foaf:name "Amalia Krajcik"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article3> dc:creator _:Amalia_Krajcik.
+<http://localhost/publications/articles/Journal1/1940/Article3> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article4> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article4> bench:abstract "dragged lobsters careering triplets hepatics colonies defalcate transplantations forfends voucherable intercepting jeered immunopathology addends surveiled wagers joysticks nonliving agric proliferating disintegrator oblongish leapfrogged overabundant legworks easeful cognize hoatzin toiled nonspecialized vrouw squads tantalums overweight readmits loopholing tattles irradiates befriends insinuators restorers rebroadcasting grousing overdrinking frow demarcators tasselling crocked wharfinger reconverting washboards overdrank recalculations dumps carousels acidly deponent venges shivas northers mutualist harebrained earthworms lunk forefended overtaking sourdoughs traditionless spoliator earthlier stenographers reallocating aslope seawaters ruminative patronly hydrozoon webbier foxiness toddy playlets mouthiest delegati renege briefless regularities planarity stubborner waterbeds disinclines antonyms anesthetize chanticleer administrants preengaging unitarians reevaluate rekeys ochroid climatotherapy crocks"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article4> bench:cdrom "http://www.oinked.tld/maxillary/dumpers.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article4> rdfs:seeAlso "http://www.apnea.tld/dumpers/bering.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article4> swrc:note "carpetbag peonism metropolitanize twanged pedros nonforfeitable dissociative apostacy"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article4> swrc:pages "120"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article4> dc:title "maxillary bering evasiveness"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article4> foaf:homepage "http://www.dumpers.tld/evasiveness/toto.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article4> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Martina_Mcclary rdf:type foaf:Person.
+_:Martina_Mcclary foaf:name "Martina Mcclary"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article4> dc:creator _:Martina_Mcclary.
+<http://localhost/publications/articles/Journal1/1940/Article4> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article5> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article5> rdfs:seeAlso "http://www.bering.tld/toto/teashop.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article5> swrc:note "malting footgear abominators trilobate jigsawed kickstands prated songstresses"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article5> swrc:pages "122"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article5> dc:title "evasiveness teashop reaccepts"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article5> foaf:homepage "http://www.toto.tld/reaccepts/gunneries.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article5> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Ashley_Kesselring rdf:type foaf:Person.
+_:Ashley_Kesselring foaf:name "Ashley Kesselring"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article5> dc:creator _:Ashley_Kesselring.
+<http://localhost/publications/articles/Journal1/1940/Article5> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article6> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article6> rdfs:seeAlso "http://www.teashop.tld/gunneries/exorcises.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article6> swrc:note "incorporeal piazadora hearings legation subendorsed hippocampus miscalculates whetters"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article6> swrc:pages "124"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article6> dc:title "reaccepts exorcises pirog"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article6> foaf:homepage "http://www.gunneries.tld/pirog/desexes.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article6> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Tatsukichi_Gerstenberger rdf:type foaf:Person.
+_:Tatsukichi_Gerstenberger foaf:name "Tatsukichi Gerstenberger"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article6> dc:creator _:Tatsukichi_Gerstenberger.
+<http://localhost/publications/articles/Journal1/1940/Article6> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article7> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article7> rdfs:seeAlso "http://www.exorcises.tld/desexes/summable.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article7> swrc:note "leviathans misadvised tiltyard numberable yawing prosecutrices pegboxes feeblish"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article7> swrc:pages "126"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article7> dc:title "pirog summable heliocentricity"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article7> foaf:homepage "http://www.desexes.tld/heliocentricity/excretions.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article7> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Fahroni_Anglea rdf:type foaf:Person.
+_:Fahroni_Anglea foaf:name "Fahroni Anglea"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article7> dc:creator _:Fahroni_Anglea.
+<http://localhost/publications/articles/Journal1/1940/Article7> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article8> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article8> rdfs:seeAlso "http://www.summable.tld/excretions/recelebrating.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article8> swrc:note "extenuation stranders abbesses strongboxes chromas oats pulling leatheriness"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article8> swrc:pages "128"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article8> dc:title "heliocentricity recelebrating dually"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article8> foaf:homepage "http://www.excretions.tld/dually/plateauing.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article8> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Akina_Jang rdf:type foaf:Person.
+_:Akina_Jang foaf:name "Akina Jang"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article8> dc:creator _:Akina_Jang.
+<http://localhost/publications/articles/Journal1/1940/Article8> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article9> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article9> rdfs:seeAlso "http://www.recelebrating.tld/plateauing/reoccupations.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article9> swrc:note "witchy horologe bigamistic furrows eloquence cobwebbier divorcing incidentally"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article9> swrc:pages "130"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article9> dc:title "dually reoccupations embossers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article9> foaf:homepage "http://www.plateauing.tld/embossers/cerebrum.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article9> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Edmondo_Rommelfanger rdf:type foaf:Person.
+_:Edmondo_Rommelfanger foaf:name "Edmondo Rommelfanger"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article9> dc:creator _:Edmondo_Rommelfanger.
+<http://localhost/publications/articles/Journal1/1940/Article9> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article10> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article10> rdfs:seeAlso "http://www.reoccupations.tld/cerebrum/gloves.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article10> swrc:note "retorts insoles stockman queening allergist doyenne placarders septuagenarians"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article10> swrc:pages "132"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article10> dc:title "embossers gloves mohairs"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article10> foaf:homepage "http://www.cerebrum.tld/mohairs/admiralties.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article10> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Pilib_Seu rdf:type foaf:Person.
+_:Pilib_Seu foaf:name "Pilib Seu"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article10> dc:creator _:Pilib_Seu.
+<http://localhost/publications/articles/Journal1/1940/Article10> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1940/Article11> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article11> rdfs:seeAlso "http://www.gloves.tld/admiralties/bewigged.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article11> swrc:note "safecracker cacaos mignonette tailored whews beholden branchless primitiveness"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article11> swrc:pages "134"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article11> dc:title "mohairs bewigged playgoers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article11> foaf:homepage "http://www.admiralties.tld/playgoers/cheques.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article11> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Dell_Kosel rdf:type foaf:Person.
+_:Dell_Kosel foaf:name "Dell Kosel"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article11> dc:creator _:Dell_Kosel.
+<http://localhost/publications/articles/Journal1/1940/Article12> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article12> rdfs:seeAlso "http://www.bewigged.tld/cheques/batting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article12> swrc:note "crimper tonners unfair southpaws scorify supportance jumpiest whanged"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article12> swrc:pages "136"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article12> dc:title "playgoers batting waspishly"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article12> foaf:homepage "http://www.cheques.tld/waspishly/stilbestrol.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article12> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Prebrana_Kekiwi rdf:type foaf:Person.
+_:Prebrana_Kekiwi foaf:name "Prebrana Kekiwi"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article12> dc:creator _:Prebrana_Kekiwi.
+<http://localhost/publications/articles/Journal1/1940/Article13> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article13> rdfs:seeAlso "http://www.batting.tld/stilbestrol/villainousness.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article13> swrc:pages "137"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article13> dc:title "waspishly villainousness miscalling"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article13> foaf:homepage "http://www.stilbestrol.tld/miscalling/firefanged.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article13> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Korechika_Mamer rdf:type foaf:Person.
+_:Korechika_Mamer foaf:name "Korechika Mamer"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article13> dc:creator _:Korechika_Mamer.
+<http://localhost/publications/articles/Journal1/1940/Article14> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article14> rdfs:seeAlso "http://www.villainousness.tld/firefanged/skeins.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article14> swrc:pages "138"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article14> dc:title "miscalling skeins equalled"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article14> foaf:homepage "http://www.firefanged.tld/equalled/sandwiching.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article14> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Dorel_Brandt rdf:type foaf:Person.
+_:Dorel_Brandt foaf:name "Dorel Brandt"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article14> dc:creator _:Dorel_Brandt.
+<http://localhost/publications/articles/Journal1/1940/Article15> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article15> rdfs:seeAlso "http://www.skeins.tld/sandwiching/bewitchment.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article15> swrc:pages "139"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article15> dc:title "equalled bewitchment cheaters"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article15> foaf:homepage "http://www.sandwiching.tld/cheaters/riffled.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article15> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Yayang_Kuczenski rdf:type foaf:Person.
+_:Yayang_Kuczenski foaf:name "Yayang Kuczenski"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article15> dc:creator _:Yayang_Kuczenski.
+<http://localhost/publications/articles/Journal1/1940/Article16> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article16> rdfs:seeAlso "http://www.bewitchment.tld/riffled/kerneling.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article16> swrc:pages "140"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article16> dc:title "cheaters kerneling napoleons"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article16> foaf:homepage "http://www.riffled.tld/napoleons/rifer.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article16> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Trina_Sjerven rdf:type foaf:Person.
+_:Trina_Sjerven foaf:name "Trina Sjerven"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article16> dc:creator _:Trina_Sjerven.
+<http://localhost/publications/articles/Journal1/1940/Article17> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article17> rdfs:seeAlso "http://www.kerneling.tld/rifer/splinting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article17> swrc:pages "141"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article17> dc:title "napoleons splinting surmisers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article17> foaf:homepage "http://www.rifer.tld/surmisers/satisfying.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article17> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Caden_Failing rdf:type foaf:Person.
+_:Caden_Failing foaf:name "Caden Failing"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article17> dc:creator _:Caden_Failing.
+<http://localhost/publications/articles/Journal1/1940/Article18> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article18> rdfs:seeAlso "http://www.splinting.tld/satisfying/undamped.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article18> swrc:pages "142"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article18> dc:title "surmisers undamped sharpers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article18> foaf:homepage "http://www.satisfying.tld/sharpers/forbearer.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article18> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Mya_Swilley rdf:type foaf:Person.
+_:Mya_Swilley foaf:name "Mya Swilley"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article18> dc:creator _:Mya_Swilley.
+<http://localhost/publications/articles/Journal1/1940/Article19> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article19> rdfs:seeAlso "http://www.undamped.tld/forbearer/anesthetization.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article19> swrc:pages "143"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article19> dc:title "sharpers anesthetization undermentioned"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article19> foaf:homepage "http://www.forbearer.tld/undermentioned/outflanking.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article19> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Juriaan_Schremp rdf:type foaf:Person.
+_:Juriaan_Schremp foaf:name "Juriaan Schremp"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article19> dc:creator _:Juriaan_Schremp.
+<http://localhost/publications/articles/Journal1/1940/Article20> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1940/Article20> rdfs:seeAlso "http://www.anesthetization.tld/outflanking/funnyman.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article20> swrc:pages "144"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1940/Article20> dc:title "undermentioned funnyman commuted"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article20> foaf:homepage "http://www.outflanking.tld/commuted/lachrymation.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article20> swrc:journal <http://localhost/publications/journals/Journal1/1940>.
+_:Kozue_Efthimiou rdf:type foaf:Person.
+_:Kozue_Efthimiou foaf:name "Kozue Efthimiou"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1940/Article20> dc:creator _:Kozue_Efthimiou.
+<http://localhost/publications/journals/Journal1/1940> swrc:editor _:Sharise_Heagy.
+_:Sharise_Heagy rdf:type foaf:Person.
+_:Sharise_Heagy foaf:name "Sharise Heagy"^^xsd:string.
+<http://localhost/publications/journals/Journal1/1941> rdf:type bench:Journal.
+<http://localhost/publications/journals/Journal1/1941> swrc:number "1"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1941> dc:title "Journal 1 (1941)"^^xsd:string.
+<http://localhost/publications/journals/Journal1/1941> swrc:volume "2"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1941> dcterms:issued "1941"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article1> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article1> rdfs:seeAlso "http://www.commuted.tld/floweret/arcadian.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article1> swrc:pages "181"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article1> dc:title "lachrymation arcadian acridities"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article1> foaf:homepage "http://www.floweret.tld/acridities/unrealistic.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article1> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+<http://localhost/publications/articles/Journal1/1941/Article1> dc:creator _:Mya_Swilley.
+<http://localhost/publications/articles/Journal1/1941/Article1> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article2> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article2> rdfs:seeAlso "http://www.arcadian.tld/unrealistic/substituting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article2> swrc:pages "100"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article2> dc:title "acridities substituting surges"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article2> foaf:homepage "http://www.unrealistic.tld/surges/preheats.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article2> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+<http://localhost/publications/articles/Journal1/1941/Article2> dc:creator _:Kozue_Efthimiou.
+<http://localhost/publications/articles/Journal1/1941/Article2> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article3> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article3> rdfs:seeAlso "http://www.substituting.tld/preheats/loggias.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article3> swrc:pages "182"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article3> dc:title "surges loggias reconciliating"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article3> foaf:homepage "http://www.preheats.tld/reconciliating/photocatalyst.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article3> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+<http://localhost/publications/articles/Journal1/1941/Article3> dc:creator _:Pilib_Seu.
+<http://localhost/publications/articles/Journal1/1941/Article3> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article4> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article4> rdfs:seeAlso "http://www.loggias.tld/photocatalyst/lenity.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article4> swrc:pages "97"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article4> dc:title "reconciliating lenity tautological"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article4> foaf:homepage "http://www.photocatalyst.tld/tautological/jambing.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article4> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+<http://localhost/publications/articles/Journal1/1941/Article4> dc:creator _:Prebrana_Kekiwi.
+<http://localhost/publications/articles/Journal1/1941/Article4> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article5> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article5> rdfs:seeAlso "http://www.lenity.tld/jambing/sodality.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article5> swrc:pages "171"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article5> dc:title "tautological sodality outcrop"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article5> foaf:homepage "http://www.jambing.tld/outcrop/slipcases.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article5> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+<http://localhost/publications/articles/Journal1/1941/Article5> dc:creator _:Dorel_Brandt.
+<http://localhost/publications/articles/Journal1/1941/Article5> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article6> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article6> rdfs:seeAlso "http://www.sodality.tld/slipcases/phenylketonuria.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article6> swrc:pages "110"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article6> dc:title "outcrop phenylketonuria grunts"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article6> foaf:homepage "http://www.slipcases.tld/grunts/venturers.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article6> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+<http://localhost/publications/articles/Journal1/1941/Article6> dc:creator _:Trina_Sjerven.
+<http://localhost/publications/articles/Journal1/1941/Article6> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article7> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article7> rdfs:seeAlso "http://www.phenylketonuria.tld/venturers/valiantly.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article7> swrc:pages "184"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article7> dc:title "grunts valiantly unremorsefully"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article7> foaf:homepage "http://www.venturers.tld/unremorsefully/extradites.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article7> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Phaethon_Gearon rdf:type foaf:Person.
+_:Phaethon_Gearon foaf:name "Phaethon Gearon"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article7> dc:creator _:Phaethon_Gearon.
+<http://localhost/publications/articles/Journal1/1941/Article7> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article8> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article8> rdfs:seeAlso "http://www.valiantly.tld/extradites/stollens.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article8> swrc:pages "111"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article8> dc:title "unremorsefully stollens ponderers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article8> foaf:homepage "http://www.extradites.tld/ponderers/conditione.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article8> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Lone_Pavese rdf:type foaf:Person.
+_:Lone_Pavese foaf:name "Lone Pavese"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article8> dc:creator _:Lone_Pavese.
+<http://localhost/publications/articles/Journal1/1941/Article8> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article9> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article9> rdfs:seeAlso "http://www.stollens.tld/conditione/loathly.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article9> swrc:pages "169"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article9> dc:title "ponderers loathly cancels"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article9> foaf:homepage "http://www.conditione.tld/cancels/debiting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article9> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Motoyasu_Calligy rdf:type foaf:Person.
+_:Motoyasu_Calligy foaf:name "Motoyasu Calligy"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article9> dc:creator _:Motoyasu_Calligy.
+<http://localhost/publications/articles/Journal1/1941/Article9> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article10> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article10> rdfs:seeAlso "http://www.loathly.tld/debiting/parrots.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article10> swrc:pages "112"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article10> dc:title "cancels parrots paraguayans"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article10> foaf:homepage "http://www.debiting.tld/paraguayans/resonates.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article10> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Firdaus_Casavez rdf:type foaf:Person.
+_:Firdaus_Casavez foaf:name "Firdaus Casavez"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article10> dc:creator _:Firdaus_Casavez.
+<http://localhost/publications/articles/Journal1/1941/Article10> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1941/Article11> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article11> rdfs:seeAlso "http://www.parrots.tld/resonates/overbites.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article11> swrc:pages "178"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article11> dc:title "paraguayans overbites terminals"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article11> foaf:homepage "http://www.resonates.tld/terminals/giros.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article11> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Angha_Bievenue rdf:type foaf:Person.
+_:Angha_Bievenue foaf:name "Angha Bievenue"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article11> dc:creator _:Angha_Bievenue.
+<http://localhost/publications/articles/Journal1/1941/Article12> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article12> rdfs:seeAlso "http://www.overbites.tld/giros/podgy.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article12> swrc:pages "101"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article12> dc:title "terminals podgy vagus"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article12> foaf:homepage "http://www.giros.tld/vagus/kinkiest.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article12> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Araceli_Ertel rdf:type foaf:Person.
+_:Araceli_Ertel foaf:name "Araceli Ertel"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article12> dc:creator _:Araceli_Ertel.
+<http://localhost/publications/articles/Journal1/1941/Article13> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article13> rdfs:seeAlso "http://www.podgy.tld/kinkiest/xix.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article13> swrc:pages "183"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article13> dc:title "vagus xix recollected"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article13> foaf:homepage "http://www.kinkiest.tld/recollected/householder.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article13> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Nik_Reposa rdf:type foaf:Person.
+_:Nik_Reposa foaf:name "Nik Reposa"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article13> dc:creator _:Nik_Reposa.
+<http://localhost/publications/articles/Journal1/1941/Article14> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article14> rdfs:seeAlso "http://www.xix.tld/householder/overeducated.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article14> swrc:pages "98"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article14> dc:title "recollected overeducated objurgate"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article14> foaf:homepage "http://www.householder.tld/objurgate/treaties.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article14> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Shiko_Seagroves rdf:type foaf:Person.
+_:Shiko_Seagroves foaf:name "Shiko Seagroves"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article14> dc:creator _:Shiko_Seagroves.
+<http://localhost/publications/articles/Journal1/1941/Article15> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article15> rdfs:seeAlso "http://www.overeducated.tld/treaties/preprocessor.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article15> swrc:pages "124"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article15> dc:title "objurgate preprocessor despising"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article15> foaf:homepage "http://www.treaties.tld/despising/loftily.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article15> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Dianmu_Aver rdf:type foaf:Person.
+_:Dianmu_Aver foaf:name "Dianmu Aver"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article15> dc:creator _:Dianmu_Aver.
+<http://localhost/publications/articles/Journal1/1941/Article16> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article16> rdfs:seeAlso "http://www.preprocessor.tld/loftily/yabber.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article16> swrc:pages "91"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article16> dc:title "despising yabber reprovingly"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article16> foaf:homepage "http://www.loftily.tld/reprovingly/blungers.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article16> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Helene_Nik rdf:type foaf:Person.
+_:Helene_Nik foaf:name "Helene Nik"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article16> dc:creator _:Helene_Nik.
+<http://localhost/publications/articles/Journal1/1941/Article17> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article17> rdfs:seeAlso "http://www.yabber.tld/blungers/dwarflike.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article17> swrc:pages "125"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article17> dc:title "reprovingly dwarflike effulgences"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article17> foaf:homepage "http://www.blungers.tld/effulgences/coreless.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article17> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Yemena_Knebel rdf:type foaf:Person.
+_:Yemena_Knebel foaf:name "Yemena Knebel"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article17> dc:creator _:Yemena_Knebel.
+<http://localhost/publications/articles/Journal1/1941/Article18> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article18> rdfs:seeAlso "http://www.dwarflike.tld/coreless/tuberculoses.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article18> swrc:pages "92"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article18> dc:title "effulgences tuberculoses environs"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article18> foaf:homepage "http://www.coreless.tld/environs/hulled.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article18> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Melisa_Patriarco rdf:type foaf:Person.
+_:Melisa_Patriarco foaf:name "Melisa Patriarco"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article18> dc:creator _:Melisa_Patriarco.
+<http://localhost/publications/articles/Journal1/1941/Article19> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article19> rdfs:seeAlso "http://www.tuberculoses.tld/hulled/preexamination.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article19> swrc:pages "126"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article19> dc:title "environs preexamination oralogy"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article19> foaf:homepage "http://www.hulled.tld/oralogy/tibetans.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article19> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Dama_Leino rdf:type foaf:Person.
+_:Dama_Leino foaf:name "Dama Leino"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article19> dc:creator _:Dama_Leino.
+<http://localhost/publications/articles/Journal1/1941/Article20> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article20> rdfs:seeAlso "http://www.preexamination.tld/tibetans/slavishly.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article20> swrc:pages "89"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article20> dc:title "oralogy slavishly hipless"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article20> foaf:homepage "http://www.tibetans.tld/hipless/prs.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article20> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Satoru_Beaumont rdf:type foaf:Person.
+_:Satoru_Beaumont foaf:name "Satoru Beaumont"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article20> dc:creator _:Satoru_Beaumont.
+<http://localhost/publications/articles/Journal1/1941/Article21> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article21> rdfs:seeAlso "http://www.slavishly.tld/prs/bluejays.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article21> swrc:pages "147"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article21> dc:title "hipless bluejays cuppier"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article21> foaf:homepage "http://www.prs.tld/cuppier/nonsurgical.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article21> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Booker_Spiker rdf:type foaf:Person.
+_:Booker_Spiker foaf:name "Booker Spiker"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article21> dc:creator _:Booker_Spiker.
+<http://localhost/publications/articles/Journal1/1941/Article22> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article22> rdfs:seeAlso "http://www.bluejays.tld/nonsurgical/skimpiest.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article22> swrc:pages "70"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article22> dc:title "cuppier skimpiest outpoured"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article22> foaf:homepage "http://www.nonsurgical.tld/outpoured/dissociated.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article22> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Eupeithes_Bevens rdf:type foaf:Person.
+_:Eupeithes_Bevens foaf:name "Eupeithes Bevens"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article22> dc:creator _:Eupeithes_Bevens.
+<http://localhost/publications/articles/Journal1/1941/Article23> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1941/Article23> rdfs:seeAlso "http://www.skimpiest.tld/dissociated/heartier.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article23> swrc:pages "144"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1941/Article23> dc:title "outpoured heartier petitionee"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article23> foaf:homepage "http://www.dissociated.tld/petitionee/brill.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article23> swrc:journal <http://localhost/publications/journals/Journal1/1941>.
+_:Miranda_Leinen rdf:type foaf:Person.
+_:Miranda_Leinen foaf:name "Miranda Leinen"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1941/Article23> dc:creator _:Miranda_Leinen.
+<http://localhost/publications/journals/Journal1/1941> swrc:editor _:Lane_Portes.
+_:Lane_Portes rdf:type foaf:Person.
+_:Lane_Portes foaf:name "Lane Portes"^^xsd:string.
+<http://localhost/publications/incolls/1941/Incollection1> rdf:type bench:Incollection.
+<http://localhost/publications/incolls/1941/Incollection1> bench:booktitle "heartier brill neologic"^^xsd:string.
+<http://localhost/publications/incolls/1941/Incollection1> rdfs:seeAlso "http://www.petitionee.tld/neologic/intermuscular.html"^^xsd:string.
+<http://localhost/publications/incolls/1941/Incollection1> swrc:pages "119"^^xsd:integer.
+<http://localhost/publications/incolls/1941/Incollection1> dc:title "brill intermuscular fobbed"^^xsd:string.
+<http://localhost/publications/incolls/1941/Incollection1> foaf:homepage "http://www.neologic.tld/fobbed/transcribed.html"^^xsd:string.
+<http://localhost/publications/incolls/1941/Incollection1> dcterms:issued "1941"^^xsd:integer.
+_:Vasilista_Hamic rdf:type foaf:Person.
+_:Vasilista_Hamic foaf:name "Vasilista Hamic"^^xsd:string.
+<http://localhost/publications/incolls/1941/Incollection1> dc:creator _:Vasilista_Hamic.
+<http://localhost/publications/journals/Journal1/1942> rdf:type bench:Journal.
+<http://localhost/publications/journals/Journal1/1942> swrc:number "1"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1942> dc:title "Journal 1 (1942)"^^xsd:string.
+<http://localhost/publications/journals/Journal1/1942> swrc:volume "3"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1942> dcterms:issued "1942"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article1> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article1> rdfs:seeAlso "http://www.fobbed.tld/swifters/redigesting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article1> swrc:pages "88"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article1> dc:title "transcribed redigesting ostinato"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article1> foaf:homepage "http://www.swifters.tld/ostinato/recalculation.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article1> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article1> dc:creator _:Yemena_Knebel.
+<http://localhost/publications/articles/Journal1/1942/Article1> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article2> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article2> rdfs:seeAlso "http://www.redigesting.tld/recalculation/safest.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article2> swrc:pages "86"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article2> dc:title "ostinato safest signiory"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article2> foaf:homepage "http://www.recalculation.tld/signiory/latchets.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article2> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article2> dc:creator _:Melisa_Patriarco.
+<http://localhost/publications/articles/Journal1/1942/Article2> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article3> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article3> rdfs:seeAlso "http://www.safest.tld/latchets/inflecting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article3> swrc:pages "87"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article3> dc:title "signiory inflecting trephines"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article3> foaf:homepage "http://www.latchets.tld/trephines/hops.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article3> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article3> dc:creator _:Dama_Leino.
+<http://localhost/publications/articles/Journal1/1942/Article3> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article4> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article4> rdfs:seeAlso "http://www.inflecting.tld/hops/exec.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article4> swrc:pages "87"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article4> dc:title "trephines exec junketeers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article4> foaf:homepage "http://www.hops.tld/junketeers/isolators.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article4> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article4> dc:creator _:Satoru_Beaumont.
+<http://localhost/publications/articles/Journal1/1942/Article4> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article5> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article5> rdfs:seeAlso "http://www.exec.tld/isolators/reducing.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article5> swrc:note "intercollegiate iniquitously lycanthropies electrophoresed dinting rezoning pledgee protoactinium"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article5> dc:title "junketeers reducing nethermost"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article5> foaf:homepage "http://www.isolators.tld/nethermost/nonfiction.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article5> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article5> dc:creator _:Booker_Spiker.
+<http://localhost/publications/articles/Journal1/1942/Article5> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article6> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article6> bench:abstract "darned emblements shrewed alluvials depressional airlifts tests sliming felicitator virological results contradistinctions unexciting debateable tenants earrings overrigid hidebound faire poloist comets paraphraser whangs uncovering infested heaver euphorically ameliorative aglets preciosity curring compositely antennal undrinkable charter uncashed huntedly czardoms unidentifiable reversing monstrances gravies quadrigamist mysteriously trenchers artfully mangled operably ionizing tenantry armfuls appendant submontane stoutening piling defunctness bestializing overconfident triadism vivifier vivisection distally polyclinic foretime triarchy homerooms totterer diarist needlessness lambies geed charts begets floorthrough chargee affixion pincers quipped cabinetmaking unsupervised deathcups dogfight wormhole emptied drifter sluggishness senescent representable honors bullier superintended investigated paragraphed claywares resourcefulness psychos morphia ventricular iteming immunoreactive"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article6> bench:cdrom "http://www.reducing.tld/nonfiction/retrogressions.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article6> rdfs:seeAlso "http://www.nethermost.tld/retrogressions/eliminates.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article6> swrc:month "1"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article6> swrc:pages "69"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article6> dc:title "nonfiction eliminates unknowns"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article6> foaf:homepage "http://www.retrogressions.tld/unknowns/mongoloids.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article6> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article6> dc:creator _:Eupeithes_Bevens.
+<http://localhost/publications/articles/Journal1/1942/Article6> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article7> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article7> rdfs:seeAlso "http://www.eliminates.tld/mongoloids/danker.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article7> swrc:note "weasand yearlings timidities untold fellowman adamantine museful medallions"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article7> swrc:pages "50"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article7> dc:title "unknowns danker raunchiness"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article7> foaf:homepage "http://www.mongoloids.tld/raunchiness/perspicuously.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article7> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article7> dc:creator _:Miranda_Leinen.
+<http://localhost/publications/articles/Journal1/1942/Article7> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article8> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article8> rdfs:seeAlso "http://www.danker.tld/perspicuously/disjoined.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article8> swrc:pages "51"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article8> dc:title "raunchiness disjoined nigglings"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article8> foaf:homepage "http://www.perspicuously.tld/nigglings/midmonths.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article8> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article8> dc:creator _:Vasilista_Hamic.
+<http://localhost/publications/articles/Journal1/1942/Article8> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article9> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article9> rdfs:seeAlso "http://www.disjoined.tld/midmonths/labium.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article9> swrc:note "malingerers gnashes chuffs redundance matriculant flexes repairing keepable"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article9> swrc:pages "80"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article9> dc:title "nigglings labium peeped"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article9> foaf:homepage "http://www.midmonths.tld/peeped/daydreams.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article9> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+<http://localhost/publications/articles/Journal1/1942/Article9> dc:creator _:Angha_Bievenue.
+<http://localhost/publications/articles/Journal1/1942/Article9> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article10> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article10> rdfs:seeAlso "http://www.labium.tld/daydreams/permuting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article10> swrc:pages "74"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article10> dc:title "peeped permuting immediately"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article10> foaf:homepage "http://www.daydreams.tld/immediately/canzona.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article10> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Kichibei_Opitz rdf:type foaf:Person.
+_:Kichibei_Opitz foaf:name "Kichibei Opitz"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article10> dc:creator _:Kichibei_Opitz.
+<http://localhost/publications/articles/Journal1/1942/Article10> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1942/Article11> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article11> rdfs:seeAlso "http://www.permuting.tld/canzona/interrelated.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article11> swrc:note "etchers mitering laboratorian tiptoed humoring hairiest ouzels frequented"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article11> swrc:pages "69"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article11> dc:title "immediately interrelated cooked"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article11> foaf:homepage "http://www.canzona.tld/cooked/reformers.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article11> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Luzia_Rahib rdf:type foaf:Person.
+_:Luzia_Rahib foaf:name "Luzia Rahib"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article11> dc:creator _:Luzia_Rahib.
+<http://localhost/publications/articles/Journal1/1942/Article12> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article12> rdfs:seeAlso "http://www.interrelated.tld/reformers/goodwife.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article12> swrc:pages "72"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article12> dc:title "cooked goodwife technicolor"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article12> foaf:homepage "http://www.reformers.tld/technicolor/plenishes.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article12> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Gia_Stonesifer rdf:type foaf:Person.
+_:Gia_Stonesifer foaf:name "Gia Stonesifer"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article12> dc:creator _:Gia_Stonesifer.
+<http://localhost/publications/articles/Journal1/1942/Article13> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article13> rdfs:seeAlso "http://www.goodwife.tld/plenishes/nippy.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article13> swrc:pages "70"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article13> dc:title "technicolor nippy bounden"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article13> foaf:homepage "http://www.plenishes.tld/bounden/occulters.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article13> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Uqbah_Oconnell rdf:type foaf:Person.
+_:Uqbah_Oconnell foaf:name "Uqbah Oconnell"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article13> dc:creator _:Uqbah_Oconnell.
+<http://localhost/publications/articles/Journal1/1942/Article14> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article14> rdfs:seeAlso "http://www.nippy.tld/occulters/blubberer.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article14> swrc:pages "71"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article14> dc:title "bounden blubberer amenities"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article14> foaf:homepage "http://www.occulters.tld/amenities/desecrated.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article14> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Heidelore_Ruschmann rdf:type foaf:Person.
+_:Heidelore_Ruschmann foaf:name "Heidelore Ruschmann"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article14> dc:creator _:Heidelore_Ruschmann.
+<http://localhost/publications/articles/Journal1/1942/Article15> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article15> rdfs:seeAlso "http://www.blubberer.tld/desecrated/tetrachlorides.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article15> swrc:note "negatively witnesses pharisaical flaunting divergence semitraditional negotiators greaves"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article15> swrc:pages "76"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article15> dc:title "amenities tetrachlorides loutish"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article15> foaf:homepage "http://www.desecrated.tld/loutish/polygony.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article15> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Octave_Diana rdf:type foaf:Person.
+_:Octave_Diana foaf:name "Octave Diana"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article15> dc:creator _:Octave_Diana.
+<http://localhost/publications/articles/Journal1/1942/Article16> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article16> rdfs:seeAlso "http://www.tetrachlorides.tld/polygony/malines.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article16> swrc:pages "70"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article16> dc:title "loutish malines cliffhanger"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article16> foaf:homepage "http://www.polygony.tld/cliffhanger/entailments.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article16> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Mitsuo_Neff rdf:type foaf:Person.
+_:Mitsuo_Neff foaf:name "Mitsuo Neff"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article16> dc:creator _:Mitsuo_Neff.
+<http://localhost/publications/articles/Journal1/1942/Article17> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article17> dc:title "malines entailments reindexed"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article17> foaf:homepage "http://www.cliffhanger.tld/reindexed/bedstraws.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article17> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Alexandros_Lagazo rdf:type foaf:Person.
+_:Alexandros_Lagazo foaf:name "Alexandros Lagazo"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article17> dc:creator _:Alexandros_Lagazo.
+<http://localhost/publications/articles/Journal1/1942/Article18> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article18> rdfs:seeAlso "http://www.entailments.tld/bedstraws/thoughtless.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article18> swrc:pages "69"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article18> dc:title "reindexed thoughtless elation"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article18> foaf:homepage "http://www.bedstraws.tld/elation/swampland.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article18> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Elvera_Zito rdf:type foaf:Person.
+_:Elvera_Zito foaf:name "Elvera Zito"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article18> dc:creator _:Elvera_Zito.
+<http://localhost/publications/articles/Journal1/1942/Article20> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article20> rdfs:seeAlso "http://www.thoughtless.tld/swampland/earings.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article20> swrc:pages "69"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article20> dc:title "elation earings circumscribed"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article20> foaf:homepage "http://www.swampland.tld/circumscribed/paralyzingly.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article20> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Shahaama_Berum rdf:type foaf:Person.
+_:Shahaama_Berum foaf:name "Shahaama Berum"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article20> dc:creator _:Shahaama_Berum.
+<http://localhost/publications/articles/Journal1/1942/Article21> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article21> rdfs:seeAlso "http://www.earings.tld/paralyzingly/pouchy.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article21> swrc:pages "5"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article21> dc:title "circumscribed pouchy surrejoinders"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article21> foaf:homepage "http://www.paralyzingly.tld/surrejoinders/chestiest.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article21> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Dena_Mcentire rdf:type foaf:Person.
+_:Dena_Mcentire foaf:name "Dena Mcentire"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article21> dc:creator _:Dena_Mcentire.
+<http://localhost/publications/articles/Journal1/1942/Article22> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article22> rdfs:seeAlso "http://www.pouchy.tld/chestiest/measurage.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article22> swrc:pages "10"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article22> dc:title "surrejoinders measurage tonsils"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article22> foaf:homepage "http://www.chestiest.tld/tonsils/pasturage.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article22> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Shaka_Enget rdf:type foaf:Person.
+_:Shaka_Enget foaf:name "Shaka Enget"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article22> dc:creator _:Shaka_Enget.
+<http://localhost/publications/articles/Journal1/1942/Article23> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article23> rdfs:seeAlso "http://www.measurage.tld/pasturage/thurifer.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article23> swrc:pages "166"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article23> dc:title "tonsils thurifer teazle"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article23> foaf:homepage "http://www.pasturage.tld/teazle/fringier.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article23> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Argos_Cumings rdf:type foaf:Person.
+_:Argos_Cumings foaf:name "Argos Cumings"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article23> dc:creator _:Argos_Cumings.
+<http://localhost/publications/articles/Journal1/1942/Article24> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article24> rdfs:seeAlso "http://www.thurifer.tld/fringier/rhythmical.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article24> swrc:pages "155"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article24> dc:title "teazle rhythmical wastebaskets"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article24> foaf:homepage "http://www.fringier.tld/wastebaskets/powderer.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article24> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Torah_Giller rdf:type foaf:Person.
+_:Torah_Giller foaf:name "Torah Giller"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article24> dc:creator _:Torah_Giller.
+<http://localhost/publications/articles/Journal1/1942/Article25> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article25> rdfs:seeAlso "http://www.rhythmical.tld/powderer/immigrates.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article25> swrc:pages "106"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article25> dc:title "wastebaskets immigrates inserter"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article25> foaf:homepage "http://www.powderer.tld/inserter/plights.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article25> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Guido_Genier rdf:type foaf:Person.
+_:Guido_Genier foaf:name "Guido Genier"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article25> dc:creator _:Guido_Genier.
+<http://localhost/publications/articles/Journal1/1942/Article26> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1942/Article26> rdfs:seeAlso "http://www.immigrates.tld/plights/corollaries.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article26> swrc:pages "41"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1942/Article26> dc:title "inserter corollaries gaudiness"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article26> foaf:homepage "http://www.plights.tld/gaudiness/irades.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article26> swrc:journal <http://localhost/publications/journals/Journal1/1942>.
+_:Diana_Gulbranson rdf:type foaf:Person.
+_:Diana_Gulbranson foaf:name "Diana Gulbranson"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1942/Article26> dc:creator _:Diana_Gulbranson.
+<http://localhost/publications/journals/Journal1/1942> swrc:editor _:Sadayoshi_Englemann.
+_:Sadayoshi_Englemann rdf:type foaf:Person.
+_:Sadayoshi_Englemann foaf:name "Sadayoshi Englemann"^^xsd:string.
+<http://localhost/publications/incolls/1942/Incollection1> rdf:type bench:Incollection.
+<http://localhost/publications/incolls/1942/Incollection1> bench:booktitle "corollaries irades inadvisability"^^xsd:string.
+<http://localhost/publications/incolls/1942/Incollection1> swrc:pages "147"^^xsd:integer.
+<http://localhost/publications/incolls/1942/Incollection1> dc:title "gaudiness inadvisability disciplinarians"^^xsd:string.
+<http://localhost/publications/incolls/1942/Incollection1> foaf:homepage "http://www.irades.tld/disciplinarians/majors.html"^^xsd:string.
+<http://localhost/publications/incolls/1942/Incollection1> dcterms:issued "1942"^^xsd:integer.
+_:Shinji_Kapler rdf:type foaf:Person.
+_:Shinji_Kapler foaf:name "Shinji Kapler"^^xsd:string.
+<http://localhost/publications/incolls/1942/Incollection1> dc:creator _:Shinji_Kapler.
+<http://localhost/publications/journals/Journal1/1943> rdf:type bench:Journal.
+<http://localhost/publications/journals/Journal1/1943> swrc:number "1"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1943> dc:title "Journal 1 (1943)"^^xsd:string.
+<http://localhost/publications/journals/Journal1/1943> swrc:volume "4"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1943> dcterms:issued "1943"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article1> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article1> rdfs:seeAlso "http://www.disciplinarians.tld/manifestly/decaffeinates.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article1> swrc:pages "105"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article1> dc:title "majors decaffeinates scalepan"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article1> foaf:homepage "http://www.manifestly.tld/scalepan/folklorists.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article1> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Raaid_Chrispen rdf:type foaf:Person.
+_:Raaid_Chrispen foaf:name "Raaid Chrispen"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article1> dc:creator _:Raaid_Chrispen.
+<http://localhost/publications/articles/Journal1/1943/Article1> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article2> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article2> rdfs:seeAlso "http://www.decaffeinates.tld/folklorists/attractive.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article2> swrc:pages "194"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article2> dc:title "scalepan attractive yeller"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article2> foaf:homepage "http://www.folklorists.tld/yeller/cognizably.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article2> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article2> dc:creator _:Shahaama_Berum.
+<http://localhost/publications/articles/Journal1/1943/Article2> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article3> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article3> rdfs:seeAlso "http://www.attractive.tld/cognizably/reminds.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article3> swrc:pages "73"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article3> dc:title "yeller reminds teratoid"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article3> foaf:homepage "http://www.cognizably.tld/teratoid/coadjutors.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article3> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article3> dc:creator _:Dena_Mcentire.
+<http://localhost/publications/articles/Journal1/1943/Article3> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article4> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article4> swrc:pages "88"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article4> dc:title "reminds coadjutors thuggeries"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article4> foaf:homepage "http://www.teratoid.tld/thuggeries/nondestructive.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article4> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article4> dc:creator _:Shaka_Enget.
+<http://localhost/publications/articles/Journal1/1943/Article4> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article5> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article5> rdfs:seeAlso "http://www.coadjutors.tld/nondestructive/maladjustments.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article5> swrc:pages "28"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article5> dc:title "thuggeries maladjustments subpartnership"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article5> foaf:homepage "http://www.nondestructive.tld/subpartnership/cordilleras.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article5> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article5> dc:creator _:Argos_Cumings.
+<http://localhost/publications/articles/Journal1/1943/Article5> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article6> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article6> rdfs:seeAlso "http://www.maladjustments.tld/cordilleras/recirculations.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article6> swrc:pages "147"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article6> dc:title "subpartnership recirculations alkalin"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article6> foaf:homepage "http://www.cordilleras.tld/alkalin/succulently.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article6> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article6> dc:creator _:Torah_Giller.
+<http://localhost/publications/articles/Journal1/1943/Article6> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article7> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article7> rdfs:seeAlso "http://www.recirculations.tld/succulently/marquise.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article7> swrc:pages "146"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article7> dc:title "alkalin marquise underlaid"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article7> foaf:homepage "http://www.succulently.tld/underlaid/neurosurgeon.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article7> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article7> dc:creator _:Guido_Genier.
+<http://localhost/publications/articles/Journal1/1943/Article7> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article8> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article8> rdfs:seeAlso "http://www.marquise.tld/neurosurgeon/innervated.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article8> dc:title "underlaid innervated hunts"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article8> foaf:homepage "http://www.neurosurgeon.tld/hunts/barrens.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article8> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article8> dc:creator _:Diana_Gulbranson.
+<http://localhost/publications/articles/Journal1/1943/Article8> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article9> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article9> dc:title "innervated barrens emanative"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article9> foaf:homepage "http://www.hunts.tld/emanative/blowpipe.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article9> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article9> dc:creator _:Shinji_Kapler.
+<http://localhost/publications/articles/Journal1/1943/Article9> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article10> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article10> rdfs:seeAlso "http://www.barrens.tld/blowpipe/varies.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article10> swrc:pages "107"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article10> dc:title "emanative varies thickest"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article10> foaf:homepage "http://www.blowpipe.tld/thickest/machinability.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article10> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+<http://localhost/publications/articles/Journal1/1943/Article10> dc:creator _:Uqbah_Oconnell.
+<http://localhost/publications/articles/Journal1/1943/Article10> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1943/Article11> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article11> rdfs:seeAlso "http://www.varies.tld/machinability/orbiters.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article11> swrc:pages "124"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article11> dc:title "thickest orbiters tormentor"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article11> foaf:homepage "http://www.machinability.tld/tormentor/owner.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article11> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Gennadi_Schanck rdf:type foaf:Person.
+_:Gennadi_Schanck foaf:name "Gennadi Schanck"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article11> dc:creator _:Gennadi_Schanck.
+<http://localhost/publications/articles/Journal1/1943/Article12> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article12> swrc:pages "83"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article12> dc:title "orbiters owner zanier"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article12> foaf:homepage "http://www.tormentor.tld/zanier/corkscrewed.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article12> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Barsha_Murrain rdf:type foaf:Person.
+_:Barsha_Murrain foaf:name "Barsha Murrain"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article12> dc:creator _:Barsha_Murrain.
+<http://localhost/publications/articles/Journal1/1943/Article13> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article13> swrc:pages "152"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article13> dc:title "owner corkscrewed promiscuousness"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article13> foaf:homepage "http://www.zanier.tld/promiscuousness/clewed.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article13> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Gulika_Alipio rdf:type foaf:Person.
+_:Gulika_Alipio foaf:name "Gulika Alipio"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article13> dc:creator _:Gulika_Alipio.
+<http://localhost/publications/articles/Journal1/1943/Article14> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article14> swrc:pages "65"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article14> dc:title "corkscrewed clewed reassemble"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article14> foaf:homepage "http://www.promiscuousness.tld/reassemble/hesitation.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article14> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Solange_Alson rdf:type foaf:Person.
+_:Solange_Alson foaf:name "Solange Alson"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article14> dc:creator _:Solange_Alson.
+<http://localhost/publications/articles/Journal1/1943/Article15> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article15> swrc:pages "38"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article15> dc:title "clewed hesitation fainting"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article15> foaf:homepage "http://www.reassemble.tld/fainting/croupy.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article15> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Wava_Goubeaux rdf:type foaf:Person.
+_:Wava_Goubeaux foaf:name "Wava Goubeaux"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article15> dc:creator _:Wava_Goubeaux.
+<http://localhost/publications/articles/Journal1/1943/Article16> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article16> swrc:pages "45"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article16> dc:title "hesitation croupy bacchanalia"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article16> foaf:homepage "http://www.fainting.tld/bacchanalia/regainers.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article16> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Vedetta_Pilkins rdf:type foaf:Person.
+_:Vedetta_Pilkins foaf:name "Vedetta Pilkins"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article16> dc:creator _:Vedetta_Pilkins.
+<http://localhost/publications/articles/Journal1/1943/Article17> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article17> rdfs:seeAlso "http://www.croupy.tld/regainers/teardown.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article17> swrc:pages "96"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article17> dc:title "bacchanalia teardown margarins"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article17> foaf:homepage "http://www.regainers.tld/margarins/inconvenience.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article17> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Tydeus_Dyckman rdf:type foaf:Person.
+_:Tydeus_Dyckman foaf:name "Tydeus Dyckman"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article17> dc:creator _:Tydeus_Dyckman.
+<http://localhost/publications/articles/Journal1/1943/Article18> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article18> swrc:pages "13"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article18> dc:title "teardown inconvenience triunities"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article18> foaf:homepage "http://www.margarins.tld/triunities/dipped.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article18> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Rufio_Guitard rdf:type foaf:Person.
+_:Rufio_Guitard foaf:name "Rufio Guitard"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article18> dc:creator _:Rufio_Guitard.
+<http://localhost/publications/articles/Journal1/1943/Article19> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article19> swrc:pages "146"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article19> dc:title "inconvenience dipped votarists"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article19> foaf:homepage "http://www.triunities.tld/votarists/kilogram.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article19> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Safiyya_Letchaw rdf:type foaf:Person.
+_:Safiyya_Letchaw foaf:name "Safiyya Letchaw"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article19> dc:creator _:Safiyya_Letchaw.
+<http://localhost/publications/articles/Journal1/1943/Article20> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article20> swrc:pages "169"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article20> dc:title "dipped kilogram timbrel"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article20> foaf:homepage "http://www.votarists.tld/timbrel/presell.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article20> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Tashiya_Marrable rdf:type foaf:Person.
+_:Tashiya_Marrable foaf:name "Tashiya Marrable"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article20> dc:creator _:Tashiya_Marrable.
+_:Ieshige_Kosinski rdf:type foaf:Person.
+_:Ieshige_Kosinski foaf:name "Ieshige Kosinski"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article20> dc:creator _:Ieshige_Kosinski.
+<http://localhost/publications/articles/Journal1/1943/Article21> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article21> rdfs:seeAlso "http://www.kilogram.tld/presell/woodcraft.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article21> swrc:pages "98"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article21> dc:title "timbrel woodcraft reupholstered"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article21> foaf:homepage "http://www.presell.tld/reupholstered/xerosis.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article21> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Fame_Clarey rdf:type foaf:Person.
+_:Fame_Clarey foaf:name "Fame Clarey"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article21> dc:creator _:Fame_Clarey.
+_:Timun_Silverstein rdf:type foaf:Person.
+_:Timun_Silverstein foaf:name "Timun Silverstein"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article21> dc:creator _:Timun_Silverstein.
+<http://localhost/publications/articles/Journal1/1943/Article22> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article22> swrc:pages "63"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article22> dc:title "woodcraft xerosis steamers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article22> foaf:homepage "http://www.reupholstered.tld/steamers/neurological.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article22> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Toku_Synowiec rdf:type foaf:Person.
+_:Toku_Synowiec foaf:name "Toku Synowiec"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article22> dc:creator _:Toku_Synowiec.
+_:Oka_Prock rdf:type foaf:Person.
+_:Oka_Prock foaf:name "Oka Prock"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article22> dc:creator _:Oka_Prock.
+<http://localhost/publications/articles/Journal1/1943/Article23> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article23> swrc:pages "3"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article23> dc:title "xerosis neurological warranter"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article23> foaf:homepage "http://www.steamers.tld/warranter/flashings.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article23> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Igone_Rader rdf:type foaf:Person.
+_:Igone_Rader foaf:name "Igone Rader"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article23> dc:creator _:Igone_Rader.
+_:Ernestine_Barkan rdf:type foaf:Person.
+_:Ernestine_Barkan foaf:name "Ernestine Barkan"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article23> dc:creator _:Ernestine_Barkan.
+<http://localhost/publications/articles/Journal1/1943/Article24> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article24> rdfs:seeAlso "http://www.neurological.tld/flashings/oops.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article24> swrc:pages "188"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article24> dc:title "warranter oops detonations"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article24> foaf:homepage "http://www.flashings.tld/detonations/chippering.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article24> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Dmitreeva_Ellsbury rdf:type foaf:Person.
+_:Dmitreeva_Ellsbury foaf:name "Dmitreeva Ellsbury"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article24> dc:creator _:Dmitreeva_Ellsbury.
+_:Gorshedna_Marone rdf:type foaf:Person.
+_:Gorshedna_Marone foaf:name "Gorshedna Marone"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article24> dc:creator _:Gorshedna_Marone.
+<http://localhost/publications/articles/Journal1/1943/Article25> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article25> rdfs:seeAlso "http://www.oops.tld/chippering/photospherically.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article25> swrc:pages "105"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article25> dc:title "detonations photospherically pouchiest"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article25> foaf:homepage "http://www.chippering.tld/pouchiest/canvasses.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article25> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Sander_Garriss rdf:type foaf:Person.
+_:Sander_Garriss foaf:name "Sander Garriss"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article25> dc:creator _:Sander_Garriss.
+<http://localhost/publications/articles/Journal1/1943/Article26> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article26> swrc:pages "132"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article26> dc:title "photospherically canvasses pyorrheas"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article26> foaf:homepage "http://www.pouchiest.tld/pyorrheas/cartons.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article26> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Loreliese_Aspri rdf:type foaf:Person.
+_:Loreliese_Aspri foaf:name "Loreliese Aspri"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article26> dc:creator _:Loreliese_Aspri.
+<http://localhost/publications/articles/Journal1/1943/Article27> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article27> rdfs:seeAlso "http://www.canvasses.tld/cartons/acquirable.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article27> swrc:pages "99"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article27> dc:title "pyorrheas acquirable refocus"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article27> foaf:homepage "http://www.cartons.tld/refocus/vividness.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article27> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Taaliba_Debrita rdf:type foaf:Person.
+_:Taaliba_Debrita foaf:name "Taaliba Debrita"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article27> dc:creator _:Taaliba_Debrita.
+<http://localhost/publications/articles/Journal1/1943/Article28> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article28> rdfs:seeAlso "http://www.acquirable.tld/vividness/administrated.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article28> swrc:pages "92"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article28> dc:title "refocus administrated remedying"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article28> foaf:homepage "http://www.vividness.tld/remedying/prophetically.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article28> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Jelawat_Balletta rdf:type foaf:Person.
+_:Jelawat_Balletta foaf:name "Jelawat Balletta"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article28> dc:creator _:Jelawat_Balletta.
+<http://localhost/publications/articles/Journal1/1943/Article29> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1943/Article29> rdfs:seeAlso "http://www.administrated.tld/prophetically/allayed.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article29> swrc:pages "167"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1943/Article29> dc:title "remedying allayed zinged"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article29> foaf:homepage "http://www.prophetically.tld/zinged/fridge.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article29> swrc:journal <http://localhost/publications/journals/Journal1/1943>.
+_:Jaen_Kerechanko rdf:type foaf:Person.
+_:Jaen_Kerechanko foaf:name "Jaen Kerechanko"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1943/Article29> dc:creator _:Jaen_Kerechanko.
+<http://localhost/publications/journals/Journal1/1943> swrc:editor _:Elan_Malloch.
+_:Elan_Malloch rdf:type foaf:Person.
+_:Elan_Malloch foaf:name "Elan Malloch"^^xsd:string.
+<http://localhost/publications/journals/Journal1/1943> swrc:editor _:Kuemon_Coatie.
+_:Kuemon_Coatie rdf:type foaf:Person.
+_:Kuemon_Coatie foaf:name "Kuemon Coatie"^^xsd:string.
+<http://localhost/publications/incolls/1943/Incollection1> rdf:type bench:Incollection.
+<http://localhost/publications/incolls/1943/Incollection1> bench:booktitle "allayed fridge stained"^^xsd:string.
+<http://localhost/publications/incolls/1943/Incollection1> rdfs:seeAlso "http://www.zinged.tld/stained/unintentional.html"^^xsd:string.
+<http://localhost/publications/incolls/1943/Incollection1> swrc:pages "114"^^xsd:integer.
+<http://localhost/publications/incolls/1943/Incollection1> dc:title "fridge unintentional antiquarians"^^xsd:string.
+<http://localhost/publications/incolls/1943/Incollection1> foaf:homepage "http://www.stained.tld/antiquarians/dilutes.html"^^xsd:string.
+<http://localhost/publications/incolls/1943/Incollection1> dcterms:issued "1943"^^xsd:integer.
+_:Ofelia_Golde rdf:type foaf:Person.
+_:Ofelia_Golde foaf:name "Ofelia Golde"^^xsd:string.
+<http://localhost/publications/incolls/1943/Incollection1> dc:creator _:Ofelia_Golde.
+_:Maureo_Benedict rdf:type foaf:Person.
+_:Maureo_Benedict foaf:name "Maureo Benedict"^^xsd:string.
+<http://localhost/publications/incolls/1943/Incollection1> dc:creator _:Maureo_Benedict.
+<http://localhost/publications/journals/Journal1/1944> rdf:type bench:Journal.
+<http://localhost/publications/journals/Journal1/1944> swrc:number "1"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1944> dc:title "Journal 1 (1944)"^^xsd:string.
+<http://localhost/publications/journals/Journal1/1944> swrc:volume "5"^^xsd:integer.
+<http://localhost/publications/journals/Journal1/1944> dcterms:issued "1944"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article1> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article1> swrc:pages "118"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article1> dc:title "antiquarians quantitatively shovels"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article1> foaf:homepage "http://www.dilutes.tld/shovels/vitric.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article1> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+<http://localhost/publications/articles/Journal1/1944/Article1> dc:creator _:Jelawat_Balletta.
+<http://localhost/publications/articles/Journal1/1944/Article1> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article2> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article2> rdfs:seeAlso "http://www.quantitatively.tld/vitric/mendelism.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article2> swrc:pages "156"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article2> dc:title "shovels mendelism kookiest"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article2> foaf:homepage "http://www.vitric.tld/kookiest/leavening.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article2> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+<http://localhost/publications/articles/Journal1/1944/Article2> dc:creator _:Jaen_Kerechanko.
+<http://localhost/publications/articles/Journal1/1944/Article2> dc:creator _:Ofelia_Golde.
+<http://localhost/publications/articles/Journal1/1944/Article2> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article3> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article3> rdfs:seeAlso "http://www.mendelism.tld/leavening/embrocation.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article3> swrc:pages "127"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article3> dc:title "kookiest embrocation casteless"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article3> foaf:homepage "http://www.leavening.tld/casteless/uroliths.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article3> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+<http://localhost/publications/articles/Journal1/1944/Article3> dc:creator _:Maureo_Benedict.
+<http://localhost/publications/articles/Journal1/1944/Article3> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article4> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article4> rdfs:seeAlso "http://www.embrocation.tld/uroliths/sashes.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article4> swrc:pages "69"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article4> dc:title "casteless sashes marrieds"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article4> foaf:homepage "http://www.uroliths.tld/marrieds/fungic.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article4> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+<http://localhost/publications/articles/Journal1/1944/Article4> dc:creator _:Tashiya_Marrable.
+<http://localhost/publications/articles/Journal1/1944/Article4> dc:creator _:Ieshige_Kosinski.
+<http://localhost/publications/articles/Journal1/1944/Article4> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article5> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article5> swrc:pages "112"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article5> dc:title "sashes fungic gasogenes"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article5> foaf:homepage "http://www.marrieds.tld/gasogenes/obnoxiously.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article5> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+<http://localhost/publications/articles/Journal1/1944/Article5> dc:creator _:Fame_Clarey.
+<http://localhost/publications/articles/Journal1/1944/Article5> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article6> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article6> rdfs:seeAlso "http://www.fungic.tld/obnoxiously/dismounting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article6> swrc:note "microspace fixup scurf snowballed practicably inflamed salesclerk forehoof clonked mistreat"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article6> swrc:pages "12"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article6> dc:title "gasogenes dismounting endorser"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article6> foaf:homepage "http://www.obnoxiously.tld/endorser/libations.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article6> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+<http://localhost/publications/articles/Journal1/1944/Article6> dc:creator _:Timun_Silverstein.
+<http://localhost/publications/articles/Journal1/1944/Article6> dc:creator _:Toku_Synowiec.
+<http://localhost/publications/articles/Journal1/1944/Article6> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article7> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article7> swrc:pages "142"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article7> dc:title "dismounting libations harrower"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article7> foaf:homepage "http://www.endorser.tld/harrower/claymores.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article7> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+<http://localhost/publications/articles/Journal1/1944/Article7> dc:creator _:Oka_Prock.
+<http://localhost/publications/articles/Journal1/1944/Article7> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article8> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article8> rdfs:seeAlso "http://www.libations.tld/claymores/shiftlessly.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article8> swrc:pages "87"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article8> dc:title "harrower shiftlessly feedstuffs"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article8> foaf:homepage "http://www.claymores.tld/feedstuffs/lyricizing.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article8> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+<http://localhost/publications/articles/Journal1/1944/Article8> dc:creator _:Igone_Rader.
+<http://localhost/publications/articles/Journal1/1944/Article8> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article9> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article9> rdfs:seeAlso "http://www.shiftlessly.tld/lyricizing/hierarchs.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article9> swrc:pages "105"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article9> dc:title "feedstuffs hierarchs composedly"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article9> foaf:homepage "http://www.lyricizing.tld/composedly/taunting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article9> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Fedorav_Solich rdf:type foaf:Person.
+_:Fedorav_Solich foaf:name "Fedorav Solich"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article9> dc:creator _:Fedorav_Solich.
+<http://localhost/publications/articles/Journal1/1944/Article9> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article10> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article10> rdfs:seeAlso "http://www.hierarchs.tld/taunting/dragged.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article10> swrc:pages "149"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article10> dc:title "composedly dragged lobsters"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article10> foaf:homepage "http://www.taunting.tld/lobsters/careering.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article10> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Lene_Vosquez rdf:type foaf:Person.
+_:Lene_Vosquez foaf:name "Lene Vosquez"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article10> dc:creator _:Lene_Vosquez.
+_:Olzhbeta_Hasenberg rdf:type foaf:Person.
+_:Olzhbeta_Hasenberg foaf:name "Olzhbeta Hasenberg"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article10> dc:creator _:Olzhbeta_Hasenberg.
+<http://localhost/publications/articles/Journal1/1944/Article10> dc:creator <http://localhost/persons/Paul_Erdoes>.
+<http://localhost/publications/articles/Journal1/1944/Article11> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article11> rdfs:seeAlso "http://www.dragged.tld/careering/triplets.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article11> swrc:pages "167"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article11> dc:title "lobsters triplets hepatics"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article11> foaf:homepage "http://www.careering.tld/hepatics/colonies.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article11> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Erminia_Damrell rdf:type foaf:Person.
+_:Erminia_Damrell foaf:name "Erminia Damrell"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article11> dc:creator _:Erminia_Damrell.
+<http://localhost/publications/articles/Journal1/1944/Article12> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article12> rdfs:seeAlso "http://www.triplets.tld/colonies/defalcate.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article12> swrc:pages "85"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article12> dc:title "hepatics defalcate transplantations"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article12> foaf:homepage "http://www.colonies.tld/transplantations/forfends.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article12> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Bibiane_Eddens rdf:type foaf:Person.
+_:Bibiane_Eddens foaf:name "Bibiane Eddens"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article12> dc:creator _:Bibiane_Eddens.
+_:Letizia_Madaras rdf:type foaf:Person.
+_:Letizia_Madaras foaf:name "Letizia Madaras"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article12> dc:creator _:Letizia_Madaras.
+<http://localhost/publications/articles/Journal1/1944/Article13> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article13> bench:cdrom "http://www.defalcate.tld/forfends/voucherable.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article13> swrc:pages "186"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article13> dc:title "transplantations voucherable intercepting"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article13> foaf:homepage "http://www.forfends.tld/intercepting/jeered.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article13> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Tarran_Pointer rdf:type foaf:Person.
+_:Tarran_Pointer foaf:name "Tarran Pointer"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article13> dc:creator _:Tarran_Pointer.
+<http://localhost/publications/articles/Journal1/1944/Article14> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article14> rdfs:seeAlso "http://www.voucherable.tld/jeered/immunopathology.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article14> swrc:pages "16"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article14> dc:title "intercepting immunopathology addends"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article14> foaf:homepage "http://www.jeered.tld/addends/surveiled.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article14> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Faatin_Bonn rdf:type foaf:Person.
+_:Faatin_Bonn foaf:name "Faatin Bonn"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article14> dc:creator _:Faatin_Bonn.
+_:Angela_Hager rdf:type foaf:Person.
+_:Angela_Hager foaf:name "Angela Hager"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article14> dc:creator _:Angela_Hager.
+<http://localhost/publications/articles/Journal1/1944/Article15> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article15> swrc:pages "2"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article15> dc:title "immunopathology surveiled wagers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article15> foaf:homepage "http://www.addends.tld/wagers/joysticks.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article15> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Lecia_Baumeister rdf:type foaf:Person.
+_:Lecia_Baumeister foaf:name "Lecia Baumeister"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article15> dc:creator _:Lecia_Baumeister.
+<http://localhost/publications/articles/Journal1/1944/Article16> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article16> rdfs:seeAlso "http://www.surveiled.tld/joysticks/nonliving.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article16> swrc:pages "98"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article16> dc:title "wagers nonliving agric"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article16> foaf:homepage "http://www.joysticks.tld/agric/proliferating.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article16> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Hilary_Braddy rdf:type foaf:Person.
+_:Hilary_Braddy foaf:name "Hilary Braddy"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article16> dc:creator _:Hilary_Braddy.
+<http://localhost/publications/articles/Journal1/1944/Article17> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article17> swrc:pages "112"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article17> dc:title "nonliving proliferating disintegrator"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article17> foaf:homepage "http://www.agric.tld/disintegrator/oblongish.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article17> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Riddhi_Colesar rdf:type foaf:Person.
+_:Riddhi_Colesar foaf:name "Riddhi Colesar"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article17> dc:creator _:Riddhi_Colesar.
+<http://localhost/publications/articles/Journal1/1944/Article18> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article18> swrc:note "administerings nonsuccess opticians lushes foremost dishtowels croutons dozers cootie undergoes nympholeptic fogless"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article18> swrc:pages "169"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article18> dc:title "proliferating oblongish leapfrogged"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article18> foaf:homepage "http://www.disintegrator.tld/leapfrogged/overabundant.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article18> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Loke_Tuton rdf:type foaf:Person.
+_:Loke_Tuton foaf:name "Loke Tuton"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article18> dc:creator _:Loke_Tuton.
+_:Clivia_Kuriger rdf:type foaf:Person.
+_:Clivia_Kuriger foaf:name "Clivia Kuriger"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article18> dc:creator _:Clivia_Kuriger.
+<http://localhost/publications/articles/Journal1/1944/Article19> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article19> swrc:pages "74"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article19> dc:title "oblongish overabundant legworks"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article19> foaf:homepage "http://www.leapfrogged.tld/legworks/easeful.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article19> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Waatiq_Perico rdf:type foaf:Person.
+_:Waatiq_Perico foaf:name "Waatiq Perico"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article19> dc:creator _:Waatiq_Perico.
+<http://localhost/publications/articles/Journal1/1944/Article20> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article20> rdfs:seeAlso "http://www.overabundant.tld/easeful/cognize.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article20> swrc:pages "52"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article20> dc:title "legworks cognize hoatzin"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article20> foaf:homepage "http://www.easeful.tld/hoatzin/toiled.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article20> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Makhna_Stabile rdf:type foaf:Person.
+_:Makhna_Stabile foaf:name "Makhna Stabile"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article20> dc:creator _:Makhna_Stabile.
+_:Caddock_Stagowski rdf:type foaf:Person.
+_:Caddock_Stagowski foaf:name "Caddock Stagowski"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article20> dc:creator _:Caddock_Stagowski.
+<http://localhost/publications/articles/Journal1/1944/Article21> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article21> rdfs:seeAlso "http://www.cognize.tld/toiled/nonspecialized.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article21> swrc:pages "30"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article21> dc:title "hoatzin nonspecialized vrouw"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article21> foaf:homepage "http://www.toiled.tld/vrouw/squads.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article21> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Notburg_Towber rdf:type foaf:Person.
+_:Notburg_Towber foaf:name "Notburg Towber"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article21> dc:creator _:Notburg_Towber.
+<http://localhost/publications/articles/Journal1/1944/Article22> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article22> rdfs:seeAlso "http://www.nonspecialized.tld/squads/tantalums.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article22> swrc:pages "156"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article22> dc:title "vrouw tantalums overweight"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article22> foaf:homepage "http://www.squads.tld/overweight/readmits.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article22> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Kellie_Frenner rdf:type foaf:Person.
+_:Kellie_Frenner foaf:name "Kellie Frenner"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article22> dc:creator _:Kellie_Frenner.
+_:Doppo_Kieser rdf:type foaf:Person.
+_:Doppo_Kieser foaf:name "Doppo Kieser"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article22> dc:creator _:Doppo_Kieser.
+<http://localhost/publications/articles/Journal1/1944/Article23> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article23> swrc:pages "105"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article23> dc:title "tantalums readmits loopholing"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article23> foaf:homepage "http://www.overweight.tld/loopholing/tattles.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article23> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Lexi_Faulk rdf:type foaf:Person.
+_:Lexi_Faulk foaf:name "Lexi Faulk"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article23> dc:creator _:Lexi_Faulk.
+<http://localhost/publications/articles/Journal1/1944/Article24> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article24> rdfs:seeAlso "http://www.readmits.tld/tattles/irradiates.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article24> swrc:pages "103"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article24> dc:title "loopholing irradiates befriends"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article24> foaf:homepage "http://www.tattles.tld/befriends/insinuators.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article24> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Anbessa_Gulde rdf:type foaf:Person.
+_:Anbessa_Gulde foaf:name "Anbessa Gulde"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article24> dc:creator _:Anbessa_Gulde.
+<http://localhost/publications/articles/Journal1/1944/Article25> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article25> rdfs:seeAlso "http://www.irradiates.tld/insinuators/restorers.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article25> swrc:pages "169"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article25> dc:title "befriends restorers rebroadcasting"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article25> foaf:homepage "http://www.insinuators.tld/rebroadcasting/grousing.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article25> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Kaspar_Reierson rdf:type foaf:Person.
+_:Kaspar_Reierson foaf:name "Kaspar Reierson"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article25> dc:creator _:Kaspar_Reierson.
+<http://localhost/publications/articles/Journal1/1944/Article26> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article26> rdfs:seeAlso "http://www.restorers.tld/grousing/overdrinking.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article26> swrc:pages "187"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article26> dc:title "rebroadcasting overdrinking frow"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article26> foaf:homepage "http://www.grousing.tld/frow/demarcators.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article26> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Taliyah_Jafari rdf:type foaf:Person.
+_:Taliyah_Jafari foaf:name "Taliyah Jafari"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article26> dc:creator _:Taliyah_Jafari.
+_:Juri_Guzik rdf:type foaf:Person.
+_:Juri_Guzik foaf:name "Juri Guzik"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article26> dc:creator _:Juri_Guzik.
+<http://localhost/publications/articles/Journal1/1944/Article27> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article27> rdfs:seeAlso "http://www.overdrinking.tld/demarcators/tasselling.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article27> swrc:note "spiffiest reinformed synfuel swiftest baronages warping fraternize despondency insurrectionaries backspin hoisting bourgeoned"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article27> swrc:pages "27"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article27> dc:title "frow tasselling crocked"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article27> foaf:homepage "http://www.demarcators.tld/crocked/wharfinger.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article27> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Salaah_Elio rdf:type foaf:Person.
+_:Salaah_Elio foaf:name "Salaah Elio"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article27> dc:creator _:Salaah_Elio.
+<http://localhost/publications/articles/Journal1/1944/Article28> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article28> rdfs:seeAlso "http://www.tasselling.tld/wharfinger/reconverting.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article28> swrc:pages "5"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article28> dc:title "crocked reconverting washboards"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article28> foaf:homepage "http://www.wharfinger.tld/washboards/overdrank.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article28> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Aandranee_Sakamaki rdf:type foaf:Person.
+_:Aandranee_Sakamaki foaf:name "Aandranee Sakamaki"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article28> dc:creator _:Aandranee_Sakamaki.
+<http://localhost/publications/articles/Journal1/1944/Article29> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article29> swrc:pages "163"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article29> dc:title "reconverting overdrank recalculations"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article29> foaf:homepage "http://www.washboards.tld/recalculations/dumps.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article29> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Agpios_Bia rdf:type foaf:Person.
+_:Agpios_Bia foaf:name "Agpios Bia"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article29> dc:creator _:Agpios_Bia.
+<http://localhost/publications/articles/Journal1/1944/Article30> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article30> swrc:pages "76"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article30> dc:title "overdrank dumps carousels"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article30> foaf:homepage "http://www.recalculations.tld/carousels/acidly.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article30> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Atsumori_Bloyer rdf:type foaf:Person.
+_:Atsumori_Bloyer foaf:name "Atsumori Bloyer"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article30> dc:creator _:Atsumori_Bloyer.
+_:Coch_Foulger rdf:type foaf:Person.
+_:Coch_Foulger foaf:name "Coch Foulger"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article30> dc:creator _:Coch_Foulger.
+<http://localhost/publications/articles/Journal1/1944/Article31> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article31> dc:title "dumps acidly deponent"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article31> foaf:homepage "http://www.carousels.tld/deponent/venges.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article31> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Elif_Gameros rdf:type foaf:Person.
+_:Elif_Gameros foaf:name "Elif Gameros"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article31> dc:creator _:Elif_Gameros.
+<http://localhost/publications/articles/Journal1/1944/Article32> rdf:type bench:Article.
+<http://localhost/publications/articles/Journal1/1944/Article32> rdfs:seeAlso "http://www.acidly.tld/venges/shivas.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article32> swrc:pages "86"^^xsd:integer.
+<http://localhost/publications/articles/Journal1/1944/Article32> dc:title "deponent shivas northers"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article32> foaf:homepage "http://www.venges.tld/northers/mutualist.html"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article32> swrc:journal <http://localhost/publications/journals/Journal1/1944>.
+_:Breana_Scheffler rdf:type foaf:Person.
+_:Breana_Scheffler foaf:name "Breana Scheffler"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article32> dc:creator _:Breana_Scheffler.
+_:Jenna_Ovit rdf:type foaf:Person.
+_:Jenna_Ovit foaf:name "Jenna Ovit"^^xsd:string.
+<http://localhost/publications/articles/Journal1/1944/Article32> dc:creator _:Jenna_Ovit.

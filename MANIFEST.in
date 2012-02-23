@@ -1,0 +1,4 @@
+include *.md
+recursive-include rdflib_sqlalchemy *.py
+include setup.*
+graft test
