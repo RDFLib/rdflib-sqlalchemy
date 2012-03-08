@@ -3,6 +3,8 @@ from rdflib import BNode
 from rdflib import ConjunctiveGraph
 from rdflib import Graph
 from rdflib import URIRef
+from rdflib.store import Store
+from rdflib import plugin
 
 # logging.getLogger('sqlalchemy.engine').setLevel(logging.WARN)
 
@@ -21,10 +23,10 @@ class ContextTestCase(unittest.TestCase):
     c2 = URIRef(u'context-2')
 
     def setUp(self, uri='sqlite://', storename=None):
-        self.graph = ConjunctiveGraph(storename, identifier=self.identifier)
-        self.graph.destroy(self.uri)
+        store = plugin.get(storename, Store)(identifier=self.identifier)
+        self.graph = ConjunctiveGraph(store, identifier=self.identifier)
         self.graph.open(uri, create=True)
-    
+
     def tearDown(self, uri='sqlite://'):
         self.graph.destroy(uri)
         try:
@@ -124,14 +126,21 @@ class ContextTestCase(unittest.TestCase):
 
     def testLenInMultipleContexts(self):
         oldLen = len(self.graph.store)
+        print("Original", oldLen, self.graph.store)
         self.addStuffInMultipleContexts()
-
+        newLen = len(self.graph.store)
+        print("MultipleContexts", newLen, self.graph.store)
         # addStuffInMultipleContexts is adding the same triple to
         # three different contexts. So it's only + 1
-        self.assertEquals(len(self.graph.store), oldLen + 1) 
+        print("No context", len(list(self.graph.triples((None, None, None)))))
+        print("Context context-1", len(list(self.graph.triples((None, None, None), context=self.c1))))
+        print("Context context-2", len(list(self.graph.triples((None, None, None), context=self.c2))))
+        self.assertEquals(len(self.graph.store), oldLen + 1,
+            [self.graph.store, oldLen+1])
 
         graph = Graph(self.graph.store, self.c1)
-        self.assertEquals(len(graph.store), oldLen + 1)
+        self.assertEquals(len(graph.store), oldLen + 1,
+            [graph.store, oldLen+1])
 
     def testRemoveInMultipleContexts(self):
         c1 = self.c1

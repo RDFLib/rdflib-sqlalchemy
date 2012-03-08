@@ -20,7 +20,6 @@ class SQLAlchemyMySQLGraphTestCase(graph_case.GraphTestCase):
         graph_case.GraphTestCase.setUp(self, uri=self.uri, storename=self.storename)
 
     def tearDown(self):
-        self.create = False
         graph_case.GraphTestCase.tearDown(self, uri=self.uri)
 
     def testStatementNode(self):
@@ -34,14 +33,7 @@ class SQLAlchemyMySQLContextTestCase(context_case.ContextTestCase):
         context_case.ContextTestCase.setUp(self, uri=self.uri, storename=self.storename)
 
     def tearDown(self):
-        self.create = False
         context_case.ContextTestCase.tearDown(self, uri=self.uri)
-
-    def testConjunction(self):
-        raise SkipTest("Known issue.")
-
-    def testContexts(self):
-        raise SkipTest("Known issue.")
 
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")

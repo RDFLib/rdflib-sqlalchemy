@@ -101,7 +101,7 @@ def _parse_rfc1738_args(name):
 
 def queryAnalysis(query, store, cursor):
     """
-    Helper function for executing EXPLAIN on all dispatched SQL statements - 
+    Helper function for executing EXPLAIN on all dispatched SQL statements -
     for the pupose of analyzing index usage
     """
     cursor.execute(store._normalizeSQLCmd('explain ' + query))
@@ -113,7 +113,7 @@ def queryAnalysis(query, store, cursor):
             store.queryOptMarks = {}
         hits = store.queryOptMarks.get(('FULL SCAN', table), 0)
         store.queryOptMarks[('FULL SCAN', table)] = hits + 1
-    
+
     if not hasattr(store, 'queryOptMarks'):
         store.queryOptMarks = {}
     hits = store.queryOptMarks.get((_key,table), 0)
@@ -150,11 +150,11 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
             selectString =\
             """select *,NULL as objLanguage, NULL as objDatatype"""
             tableSource = " from %s as %s "%(tableName, tableAlias)
-        
+
 
         #selects.append('('+selectString + tableSource + whereClause+')')
         selects.append(selectString + tableSource + whereClause)
-    
+
     orderStmt = ''
     if selectType == TRIPLE_SELECT:
         orderStmt = ' order by subject,predicate,object'
@@ -179,7 +179,7 @@ def extractTriple(tupleRt, store, hardCodedContext=None):
     s = createTerm(subject, subjTerm, store)
     p = createTerm(predicate, predTerm, store)
     o = createTerm(obj, objTerm, store, objLanguage, objDatatype)
-    
+
     graphKlass, idKlass = constructGraph(ctxTerm)
     return s, p, o, (graphKlass, idKlass, context)
 
@@ -257,22 +257,31 @@ def createTerm(termString, termType, store, objLanguage=None, objDatatype=None):
 class SQLGenerator(object):
     def executeSQL(self, cursor, qStr, params=None, paramList=False):
         """
-        This takes the query string and parameters and (depending on the 
-        SQL implementation) either fill in the parameter in-place or pass 
-        it on to the Python DB impl (if it supports this). The default 
-        (here) is to fill the parameters in-place surrounding each param 
+        This takes the query string and parameters and (depending on the
+        SQL implementation) either fill in the parameter in-place or pass
+        it on to the Python DB impl (if it supports this). The default
+        (here) is to fill the parameters in-place surrounding each param
         with quote characters
         """
         # print("SQLGenerator", qStr,params)
         if not params:
-            cursor.execute(unicode(qStr))
+            querystr = qStr.replace('"',"'")
+            try:
+                cursor.execute(unicode(querystr))
+            except Exception, msg:
+                print("Execution error for %s, %s" % (unicode(querystr), msg))
+                raise Exception(msg)
         elif paramList:
             raise Exception("Not supported!")
         else:
-            params = tuple([not isinstance(item,int) and u"'%s'" % item or item 
+            params = tuple([not isinstance(item,int) and u"'%s'" % item or item
                                 for item in params])
             querystr = qStr.replace('"',"'")
-            cursor.execute(querystr%params)
+            try:
+                cursor.execute(querystr%params)
+            except Exception, msg:
+                print(querystr, params)
+                raise Exception(msg)
 
     # FIXME:  This *may* prove to be a performance bottleneck and should
     # perhaps be implemented in C (as it was in 4Suite RDF)
@@ -284,12 +293,17 @@ class SQLGenerator(object):
         Ported from Ft.Lib.DbUtil
         """
         if qstr is None:
-            return ''
-        try:
-            tmp = qstr.replace("\\","\\\\")
-            tmp = tmp.replace("'", "\\'")
-        except:
-            tmp = qstr
+            tmp = ''
+        elif self.configuration.startswith('postgres') \
+              or self.configuration.startswith('sqlite') \
+              or self.configuration.startswith('firebird'):
+            tmp = qstr.replace("'", "''")
+        else:
+            try:
+                tmp = qstr.replace("\\","\\\\")
+                tmp = tmp.replace("'", "\\'")
+            except:
+                tmp = qstr
         return tmp
 
     # Normalize a SQL command before executing it.  Commence unicode black magic
@@ -328,10 +342,10 @@ class SQLGenerator(object):
             self.normalizeTerm(klass),
             self.normalizeTerm(context.identifier),
             int(type2TermCombination(member, klass, context))]
-    
+
     def buildLiteralTripleSQLCommand(self, subject, predicate, obj, context, storeId):
         """
-        Builds an insert command for literal triples (statements where the 
+        Builds an insert command for literal triples (statements where the
         object is a Literal)
         """
         triplePattern = int(statement2TermCombination(subject, predicate, obj, context))
@@ -345,7 +359,7 @@ class SQLGenerator(object):
             triplePattern,
             isinstance(obj, Literal) and obj.language or 'NULL',
             isinstance(obj, Literal) and obj.datatype or 'NULL']
-    
+
     def buildTripleSQLCommand(self, subject, predicate, obj, context, storeId, quoted):
         """
         Builds an insert command for regular triple table
@@ -380,72 +394,72 @@ class SQLGenerator(object):
         if typeTable:
             rdf_type_memberClause = rdf_type_contextClause = rdf_type_contextClause = None
 
-            
+
             clauseParts = self.buildTypeMemberClause(self.normalizeTerm(subject), tableName)
             if clauseParts is not None:
                 rdf_type_memberClause = clauseParts[0]
                 parameters.extend([param for param in clauseParts[-1] if param])
 
-            
+
             clauseParts = self.buildTypeClassClause(self.normalizeTerm(obj), tableName)
             if clauseParts is not None:
                 rdf_type_klassClause = clauseParts[0]
                 parameters.extend(clauseParts[-1])
 
-            
+
             clauseParts = self.buildContextClause(context, tableName)
             if clauseParts is not None:
                 rdf_type_contextClause = clauseParts[0]
                 parameters.extend([param for param in clauseParts[-1] if param])
 
-            
+
             typeClauses = [rdf_type_memberClause, rdf_type_klassClause, rdf_type_contextClause]
             clauseString = ' and '.join([clause for clause in typeClauses if clause])
             clauseString = clauseString and 'where ' + clauseString or ''
         else:
             subjClause = predClause = objClause = contextClause = litDTypeClause = litLanguageClause = None
 
-            
+
             clauseParts = self.buildSubjClause(self.normalizeTerm(subject), tableName)
             if clauseParts is not None:
                 subjClause = clauseParts[0]
                 parameters.extend([param for param in clauseParts[-1] if param])
 
-            
+
             clauseParts = self.buildPredClause(self.normalizeTerm(predicate), tableName)
             if clauseParts is not None:
                 predClause = clauseParts[0]
                 parameters.extend([param for param in clauseParts[-1] if param])
 
-            
+
             clauseParts = self.buildObjClause(self.normalizeTerm(obj), tableName)
             if clauseParts is not None:
                 objClause = clauseParts[0]
                 parameters.extend([param for param in clauseParts[-1] if param])
 
-            
+
             clauseParts = self.buildContextClause(context, tableName)
             if clauseParts is not None:
                 contextClause = clauseParts[0]
                 parameters.extend([param for param in clauseParts[-1] if param])
 
-            
+
             clauseParts = self.buildLitDTypeClause(obj, tableName)
             if clauseParts is not None:
                 litDTypeClause = clauseParts[0]
                 parameters.extend([param for param in clauseParts[-1] if param])
 
-            
+
             clauseParts = self.buildLitLanguageClause(obj, tableName)
             if clauseParts is not None:
                 litLanguageClause = clauseParts[0]
                 parameters.extend([param for param in clauseParts[-1] if param])
 
-            
+
             clauses=[subjClause, predClause, objClause, contextClause, litDTypeClause, litLanguageClause]
             clauseString = ' and '.join([clause for clause in clauses if clause])
             clauseString = clauseString and 'where ' + clauseString or ''
-        
+
 
         return clauseString, [p for p in parameters if p]
 
@@ -468,7 +482,7 @@ class SQLGenerator(object):
     # Where Clause  utility Functions
     # The predicate and object clause builders are modified in order
     # to optimize subjects and objects utility functions which can
-    # take lists as their last argument (object, predicate - 
+    # take lists as their last argument (object, predicate -
     # respectively)
     def buildSubjClause(self,subject,tableName):
         if isinstance(subject,REGEXTerm):
@@ -502,7 +516,7 @@ class SQLGenerator(object):
                 tableName and '%s.subject' % tableName or 'subject') + \
                 "%s", [subject] or None
 
-    # Capable of taking a list of predicates as well (in which case 
+    # Capable of taking a list of predicates as well (in which case
     # subclauses are joined with 'OR')
     def buildPredClause(self, predicate, tableName):
         if isinstance(predicate, REGEXTerm):
@@ -569,7 +583,7 @@ class SQLGenerator(object):
             return context is not None and "%s=" % (
                 tableName and '%s.context' % tableName or 'context') + \
                     "%s", [context] or None
-    
+
     def buildTypeMemberClause(self, subject, tableName):
         if isinstance(subject,REGEXTerm):
             return " REGEXP (%s," + " %s)" % (
@@ -613,11 +627,11 @@ class SQLAlchemy(Store, SQLGenerator):
     - Asserted non rdf:type statements
     - Asserted literal statements
     - Asserted rdf:type statements (in a table which models Class membership)
-        The motivation for this partition is primarily query speed and 
-        scalability as most graphs will always have more rdf:type statements 
+        The motivation for this partition is primarily query speed and
+        scalability as most graphs will always have more rdf:type statements
         than others
     - All Quoted statements
-    
+
     In addition it persists namespace mappings in a separate table
     """
     context_aware = True
@@ -625,6 +639,7 @@ class SQLAlchemy(Store, SQLGenerator):
     transaction_aware = True
     regex_matching = PYTHON_REGEX
     autocommit_default = False
+    configuration = Literal("sqlite://")
 
     def __init__(self, identifier=None, configuration=None):
         """
@@ -637,17 +652,15 @@ class SQLAlchemy(Store, SQLGenerator):
         self._internedId = INTERNED_PREFIX + \
                                 hashlib.sha1(
                                     self.identifier.encode('utf8')).hexdigest()[:10]
-        
-        # super(SQLAlchemy, self).__init__(identifier=self.identifier, configuration=None)
 
         # This parameter controls how exlusively the literal table is searched
-        # If true, the Literal partition is searched *exclusively* if the 
-        # object term in a triple pattern is a Literal or a REGEXTerm.  Note, 
+        # If true, the Literal partition is searched *exclusively* if the
+        # object term in a triple pattern is a Literal or a REGEXTerm.  Note,
         # the latter case prevents the matching of URIRef nodes as the objects
         # of a triple in the store.
         # If the object term is a wildcard (None)
         # Then the Literal paritition is searched in addition to the others
-        # If this parameter is false, the literal partition is searched 
+        # If this parameter is false, the literal partition is searched
         # regardless of what the object of the triple pattern is
         self.STRONGLY_TYPED_TERMS = False
 
@@ -661,6 +674,7 @@ class SQLAlchemy(Store, SQLGenerator):
         self.__node_pickler = None
 
         if configuration is not None:
+            self.configuration = configuration
             self.open(configuration)
 
     def __get_node_pickler(self):
@@ -704,6 +718,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 c.execute(CREATE_QUOTED_STATEMENTS_TABLE%(self._internedId))
                 c.execute(CREATE_NS_BINDS_TABLE%(self._internedId))
                 c.execute(CREATE_LITERAL_STATEMENTS_TABLE%(self._internedId))
+                trans.commit()
                 for tblName,indices in [
                     (
                         "%s_asserted_statements",
@@ -751,8 +766,8 @@ class SQLAlchemy(Store, SQLGenerator):
                     )]:
                     for indexName,columns in indices:
                         c.execute("CREATE INDEX %s on %s (%s)" % (
-                            indexName % self._internedId, 
-                            tblName % (self._internedId), 
+                            indexName % self._internedId,
+                            tblName % (self._internedId),
                             ','.join(columns)))
                 trans.commit()
             except Exception:
@@ -780,6 +795,7 @@ class SQLAlchemy(Store, SQLGenerator):
         if commit_pending_transaction:
             self._db.commit()
         try:
+            self.connection.close()
             self._db.close()
         except:
             pass
@@ -789,20 +805,26 @@ class SQLAlchemy(Store, SQLGenerator):
         FIXME: Add documentation
         """
         name, opts = _parse_rfc1738_args(configuration)
-        self.engine = sqlalchemy.create_engine(configuration)
-        self._db = self.engine.connect().connection
-        c = self._db
-        for tblsuffix in table_name_prefixes:
-            try:
+        if self._db is None:
+            # print("Connecting in order to destroy.")
+            self.engine = sqlalchemy.create_engine(configuration)
+            self.connection = self.engine.connect()
+            self._db = self.connection.connection
+        #     print("Connected")
+        c = self._db.cursor()
+        trans = self.connection.begin()
+        try:
+            for tblsuffix in table_name_prefixes:
                 c.execute('DROP table %s' % tblsuffix % (self._internedId))
-            except:
-                # print "unable to drop table: %s" % (tblsuffix % (self._internedId))
-                pass
+            trans.commit()
+        except Exception, msg:
+            print("unable to drop table: %s - %s" % (tblsuffix % self._internedId, msg))
+            trans.rollback()
         # Note, this only removes the associated tables for the closed
         # world universe given by the identifier
-        # print "Destroyed Close World Universe %s" % (uri)
-        c.commit()
+        # print("Destroyed Close World Universe %s" % (self.identifier))
         c.close()
+        self.connection.close()
 
 
     # Triple Methods
@@ -824,7 +846,13 @@ class SQLAlchemy(Store, SQLGenerator):
             #asserted rdf:type statement
             addCmd, params = self.buildTypeSQLCommand(
                 subject, obj, context, self._internedId)
-        self.executeSQL(c, addCmd, params)
+        trans = self.connection.begin()
+        try:
+            self.executeSQL(c, addCmd, params)
+            trans.commit()
+        except Exception, msg:
+            print("Add failed %s" % msg)
+            trans.rollback()
         c.close()
 
     def addN(self,quads):
@@ -858,17 +886,23 @@ class SQLAlchemy(Store, SQLGenerator):
                 typeTripleInsertCmd = typeTripleInsertCmd is not None and typeTripleInsertCmd or cmd
                 typeTriples.append(params)
 
-        if literalTriples:
             self.executeSQL(
                 c, literalTripleInsertCmd, literalTriples, paramList=True)
-        if typeTriples:
-            self.executeSQL(
-                c, typeTripleInsertCmd, typeTriples, paramList=True)
-        if otherTriples:
-            self.executeSQL(
-                c, otherTripleInsertCmd, otherTriples, paramList=True)
-        
-
+        trans = self.connection.begin()
+        try:
+            if literalTriples:
+                self.executeSQL(
+                    c, literalTripleInsertCmd, literalTriples, paramList=True)
+            if typeTriples:
+                self.executeSQL(
+                    c, typeTripleInsertCmd, typeTriples, paramList=True)
+            if otherTriples:
+                self.executeSQL(
+                    c, otherTripleInsertCmd, otherTriples, paramList=True)
+        except Exception, msg:
+            print("Add failed %s" % msg)
+            trans.rollback()
+        trans.commit()
         c.close()
 
     def remove(self, (subject, predicate, obj), context):
@@ -884,52 +918,58 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
         literal_table = "%s_literal_statements" % self._internedId
-        if not predicate or predicate != RDF.type:
-            #Need to remove predicates other than rdf:type
+        trans = self.connection.begin()
+        try:
+            if not predicate or predicate != RDF.type:
+                #Need to remove predicates other than rdf:type
 
-            if not self.STRONGLY_TYPED_TERMS or isinstance(obj, Literal):
-                #remove literal triple
+                if not self.STRONGLY_TYPED_TERMS or isinstance(obj, Literal):
+                    #remove literal triple
+                    clauseString,params = self.buildClause(
+                        literal_table, subject, predicate, obj, context)
+                    if clauseString:
+                        cmd ="DELETE FROM " + " ".join([literal_table, clauseString])
+                    else:
+                        cmd ="DELETE FROM " + literal_table
+                    self.executeSQL(c, self._normalizeSQLCmd(cmd), params)
+
+                for table in [quoted_table, asserted_table]:
+                    # If asserted non rdf:type table and obj is Literal, don't do
+                    # anything (already taken care of)
+                    if table == asserted_table and isinstance(obj, Literal):
+                        continue
+                    else:
+                        clauseString, params = self.buildClause(
+                            table, subject, predicate, obj, context)
+                        if clauseString:
+                            cmd="DELETE FROM " + " ".join([table, clauseString])
+                        else:
+                            cmd = "DELETE FROM " + table
+                        self.executeSQL(c,self._normalizeSQLCmd(cmd), params)
+
+            if predicate == RDF.type or not predicate:
+                # Need to check rdf:type and quoted partitions (in addition perhaps)
                 clauseString,params = self.buildClause(
-                    literal_table, subject, predicate, obj, context)
+                    asserted_type_table, subject, RDF.type, obj, context, True)
                 if clauseString:
-                    cmd ="DELETE FROM " + " ".join([literal_table, clauseString])
+                    cmd="DELETE FROM " + " ".join([asserted_type_table, clauseString])
                 else:
-                    cmd ="DELETE FROM " + literal_table
+                    cmd='DELETE FROM '+asserted_type_table
+
                 self.executeSQL(c, self._normalizeSQLCmd(cmd), params)
 
-            for table in [quoted_table, asserted_table]:
-                # If asserted non rdf:type table and obj is Literal, don't do 
-                # anything (already taken care of)
-                if table == asserted_table and isinstance(obj, Literal):
-                    continue
+                clauseString, params = self.buildClause(
+                    quoted_table, subject, predicate, obj, context)
+                if clauseString:
+                    cmd=clauseString and "DELETE FROM " + " ".join([quoted_table, clauseString])
                 else:
-                    clauseString, params = self.buildClause(
-                        table, subject, predicate, obj, context)
-                    if clauseString:
-                        cmd="DELETE FROM " + " ".join([table, clauseString])
-                    else:
-                        cmd = "DELETE FROM " + table
-                    self.executeSQL(c,self._normalizeSQLCmd(cmd), params)
+                    cmd = "DELETE FROM " + quoted_table
 
-        if predicate == RDF.type or not predicate:
-            # Need to check rdf:type and quoted partitions (in addition perhaps)
-            clauseString,params = self.buildClause(
-                asserted_type_table, subject, RDF.type, obj, context, True)
-            if clauseString:
-                cmd="DELETE FROM " + " ".join([asserted_type_table, clauseString])
-            else:
-                cmd='DELETE FROM '+asserted_type_table
-
-            self.executeSQL(c, self._normalizeSQLCmd(cmd), params)
-
-            clauseString, params = self.buildClause(
-                quoted_table, subject, predicate, obj, context)
-            if clauseString:
-                cmd=clauseString and "DELETE FROM " + " ".join([quoted_table, clauseString])
-            else:
-                cmd = "DELETE FROM " + quoted_table
-
-            self.executeSQL(c, self._normalizeSQLCmd(cmd), params)
+                self.executeSQL(c, self._normalizeSQLCmd(cmd), params)
+            trans.commit()
+        except Exception, msg:
+            print("Removal failed %s" % msg)
+            trans.rollback()
         c.close()
 
     def triples(self, (subject, predicate, obj), context=None):
@@ -957,7 +997,7 @@ class SQLAlchemy(Store, SQLGenerator):
         parameters = []
 
         if predicate == RDF.type:
-            # select from asserted rdf:type partition and quoted table 
+            # select from asserted rdf:type partition and quoted table
             # (if a context is specified)
             clauseString, params = self.buildClause(
                 'typeTable', subject, RDF.type, obj, context, True)
@@ -974,7 +1014,7 @@ class SQLAlchemy(Store, SQLGenerator):
         elif isinstance(predicate, REGEXTerm) \
                 and predicate.compiledExpr.match(RDF.type) \
                 or not predicate:
-            # Select from quoted partition (if context is specified), 
+            # Select from quoted partition (if context is specified),
             # Literal partition if (obj is Literal or None) and asserted
             # non rdf:type partition (if obj is URIRef or None)
             selects = []
@@ -1018,7 +1058,7 @@ class SQLAlchemy(Store, SQLGenerator):
             )
 
         elif predicate:
-            # select from asserted non rdf:type partition (optionally), 
+            # select from asserted non rdf:type partition (optionally),
             # quoted partition (if context is specified), and literal
             # partition (optionally)
             selects = []
@@ -1097,7 +1137,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     (subject, predicate, object_), context):
                 yield (s1, p1, o1), cg
 
-        
+
         elif isinstance(subject, list):
             assert not isinstance(predicate, list), "subject / predicate are both lists"
             if not subject:
@@ -1106,7 +1146,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     (subject, predicate, object_) ,context):
                 yield (s1, p1, o1), cg
 
-        
+
         elif isinstance(predicate, list):
             assert not isinstance(subject, list), "predicate / subject are both lists"
             if not predicate:
@@ -1121,7 +1161,7 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
         literal_table = "%s_literal_statements" % self._internedId
-        
+
 
         selects = [
             (
@@ -1166,30 +1206,30 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
         literal_table = "%s_literal_statements" % self._internedId
-        
+
 
         parameters = []
         quotedContext = assertedContext = typeContext = literalContext = None
 
-        
+
         clauseParts = self.buildContextClause(context, quoted_table)
         if clauseParts:
             quotedContext, params = clauseParts
             parameters.extend([p for p in params if p])
 
-        
+
         clauseParts = self.buildContextClause(context, asserted_table)
         if clauseParts:
             assertedContext, params = clauseParts
             parameters.extend([p for p in params if p])
 
-        
+
         clauseParts = self.buildContextClause(context, asserted_type_table)
         if clauseParts:
             typeContext, params = clauseParts
             parameters.extend([p for p in params if p])
 
-        
+
         clauseParts = self.buildContextClause(context, literal_table)
         if clauseParts:
             literalContext, params = clauseParts
@@ -1245,9 +1285,11 @@ class SQLAlchemy(Store, SQLGenerator):
                 ),
             ]
             q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
-        
+        # print("Context", context, "Query", self._normalizeSQLCmd(q))
         self.executeSQL(c, self._normalizeSQLCmd(q), parameters)
         rt = c.fetchall()
+        # print(rt)
+        # print(len(rt))
         c.close()
         return reduce(lambda x,y: x + y,  [rtTuple[0] for rtTuple in rt])
 
@@ -1257,7 +1299,7 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
         literal_table = "%s_literal_statements" % self._internedId
-        
+
 
         parameters = []
 
@@ -1277,12 +1319,12 @@ class SQLAlchemy(Store, SQLGenerator):
                       ASSERTED_TYPE_PARTITION
                     ),
                 ]
-            
+
             elif isinstance(predicate, REGEXTerm) \
                 and predicate.compiledExpr.match(RDF.type) \
                 or not predicate:
-                # Select from quoted partition (if context is specified), 
-                # literal partition if (obj is Literal or None) and 
+                # Select from quoted partition (if context is specified),
+                # literal partition if (obj is Literal or None) and
                 # asserted non rdf:type partition (if obj is URIRef
                 # or None)
                 clauseString,params = self.buildClause(
@@ -1325,7 +1367,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     ))
 
             elif predicate:
-                # select from asserted non rdf:type partition (optionally), 
+                # select from asserted non rdf:type partition (optionally),
                 # quoted partition (if context is speciied), and literal
                 # partition (optionally)
                 selects = []
@@ -1356,7 +1398,7 @@ class SQLAlchemy(Store, SQLGenerator):
                       ASSERTED_NON_TYPE_PARTITION
                 ))
 
-            
+
             clauseString,params = self.buildClause(
                     'quoted', subject, predicate, obj)
             parameters.extend(params)
@@ -1397,11 +1439,11 @@ class SQLAlchemy(Store, SQLGenerator):
                 ),
             ]
             q = unionSELECT(selects, distinct=True, selectType=CONTEXT_SELECT)
-        
+
         self.executeSQL(c, self._normalizeSQLCmd(q), parameters)
         rt=c.fetchall()
         for context in [rtTuple[0] for rtTuple in rt]:
-            yield context
+            yield URIRef(context)
         c.close()
 
     def _remove_context(self, identifier):
@@ -1414,14 +1456,20 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
         literal_table = "%s_literal_statements" % self._internedId
-        for table in [quoted_table, asserted_table, 
-                      asserted_type_table, literal_table]:
-            clauseString, params = self.buildContextClause(identifier, table)
-            self.executeSQL(
-                c,
-                self._normalizeSQLCmd("DELETE from %s WHERE %s" % (table, clauseString)),
-                [p for p in params if p]
-            )
+        trans = self.connection.begin()
+        try:
+            for table in [quoted_table, asserted_table,
+                          asserted_type_table, literal_table]:
+                clauseString, params = self.buildContextClause(identifier, table)
+                self.executeSQL(
+                    c,
+                    self._normalizeSQLCmd("DELETE from %s WHERE %s" % (table, clauseString)),
+                    [p for p in params if p]
+                )
+        except Exception, msg:
+            print("Context removal failed %s" % msg)
+            trans.rollback()
+        trans.commit()
         c.close()
 
     # Optional Namespace methods
@@ -1438,7 +1486,7 @@ class SQLAlchemy(Store, SQLGenerator):
         A generator of objects with the given subject and predicate.
         """
         raise Exception("Not implemented")
-    
+
     # Optimized interfaces (others)
     def predicate_objects(self, subject=None):
         """
@@ -1467,8 +1515,8 @@ class SQLAlchemy(Store, SQLGenerator):
 
         It is one of those situations that occur a lot, hence this
         'macro' like utility
-        
-        :param subject: 
+
+        :param subject:
         :param predicate:
         :param object:  -- exactly one must be None
         :param default: -- value to be returned if no values found
@@ -1480,14 +1528,17 @@ class SQLAlchemy(Store, SQLGenerator):
     def bind(self, prefix, namespace):
         """ """
         c = self._db.cursor()
+        trans = self.connection.begin()
         try:
             c.execute("INSERT INTO %s_namespace_binds (prefix,uri) VALUES ('%s', '%s')" % (
                 self._internedId,
                 prefix,
                 namespace)
             )
-        except:
-            pass
+        except Exception, msg:
+            print("Namespace binding failed %s" % msg)
+            trans.rollback()
+        trans.commit()
         c.close()
 
     def prefix(self, namespace):
@@ -1526,7 +1577,7 @@ class SQLAlchemy(Store, SQLGenerator):
         c.close()
         for prefix, uri in rt:
             yield prefix, uri
-    
+
     # Transactional interfaces
     def commit(self):
         """ """
