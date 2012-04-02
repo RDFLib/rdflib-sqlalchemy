@@ -1,5 +1,4 @@
 import unittest
-from rdflib import BNode
 from rdflib import Literal
 # from rdflib import Formula
 from rdflib import plugin
@@ -7,18 +6,21 @@ from rdflib import query
 from rdflib import RDF
 from rdflib import RDFS
 from rdflib import URIRef
-from rdflib import Variable
 from rdflib.store import Store
 from cStringIO import StringIO
 from rdflib.graph import Graph
 from rdflib.graph import ConjunctiveGraph
 from rdflib.graph import ReadOnlyGraphAggregate
 
-plugin.register('xml', query.ResultParser, 'rdfextras.sparql.results.xmlresults','XMLResultParser')
-plugin.register('xml', query.ResultSerializer, 'rdfextras.sparql.results.xmlresults','XMLResultSerializer')
+plugin.register('xml', query.ResultParser,
+    'rdfextras.sparql.results.xmlresults','XMLResultParser')
+plugin.register('xml', query.ResultSerializer,
+    'rdfextras.sparql.results.xmlresults','XMLResultSerializer')
 
-plugin.register('json', query.ResultParser, 'rdfextras.sparql.results.jsonresults','JSONResultParser')
-plugin.register('json', query.ResultSerializer, 'rdfextras.sparql.results.jsonresults','JSONResultSerializer')
+plugin.register('json', query.ResultParser,
+    'rdfextras.sparql.results.jsonresults','JSONResultParser')
+plugin.register('json', query.ResultSerializer,
+    'rdfextras.sparql.results.jsonresults','JSONResultSerializer')
 
 
 testGraph1N3="""
@@ -50,7 +52,6 @@ testGraph3N3="""
 
 sparqlQ = \
 """
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT *
 FROM NAMED <http://example.com/graph1>
 FROM NAMED <http://example.com/graph2>
@@ -61,13 +62,11 @@ WHERE {?sub ?pred rdfs:Class }"""
 
 sparqlQ2 =\
 """
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT ?class
 WHERE { GRAPH ?graph { ?member a ?class } }"""
 
 sparqlQ3 =\
 """
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX log: <http://www.w3.org/2000/10/swap/log#>
 SELECT ?n3Doc
 WHERE {?n3Doc a log:N3Document }"""

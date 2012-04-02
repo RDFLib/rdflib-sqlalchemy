@@ -8,7 +8,7 @@ def setup_python3():
     from distutils.filelist import FileList
     from distutils import dir_util, file_util, util, log
     from os.path import join
-  
+
     tmp_src = join("build", "src")
     log.set_verbosity(1)
     fl = FileList()
@@ -22,9 +22,9 @@ def setup_python3():
         outf, copied = file_util.copy_file(f, join(tmp_src, f), update=1)
         if copied and outf.endswith(".py"):
             outfiles_2to3.append(outf)
-  
+
     util.run_2to3(outfiles_2to3)
-  
+
     # arrange setup to use the copy
     sys.path.insert(0, tmp_src)
 
@@ -57,9 +57,9 @@ config = dict(
     SQLAlchemy store formula-aware implementation.  It stores its triples in the following partitions:
 
     * Asserted non rdf:type statements
-    - Asserted rdf:type statements (in a table which models Class membership). 
-      The motivation for this partition is primarily improved query speed and 
-      scalability as most graphs will always have more rdf:type statements than 
+    - Asserted rdf:type statements (in a table which models Class membership).
+      The motivation for this partition is primarily improved query speed and
+      scalability as most graphs will always have more rdf:type statements than
       others.
     - All Quoted statements
 
@@ -79,9 +79,6 @@ config = dict(
                    "Natural Language :: English",
                    ],
     test_suite = "test",
-    install_requires = ["rdflib>=3.0", 
-                        "rdfextras>=0.1",
-                    ],
     entry_points = {
         'rdf.plugins.store': [
             'SQLAlchemy = rdflib_sqlalchemy.SQLAlchemy:SQLAlchemy',
@@ -92,16 +89,23 @@ config = dict(
     }
 )
 
+install_requires = ["rdflib>=3.0",
+                    "rdfextras>=0.1"]
+
 if sys.version_info[0] >= 3:
     from setuptools import setup
     config.update({'use_2to3': True})
     config.update({'src_root': setup_python3()})
 else:
+    if sys.version_info[:2] < (2,5):
+        install_requires += ['pysqlite','hashlib', 'simplejson==2.3.2']
+    if sys.version_info[:2] < (2,6):
+        install_requires += ['pysqlite','hashlib', 'simplejson']
     try:
         from setuptools import setup
         config.update({'test_suite' : "nose.collector"})
     except ImportError:
         from distutils.core import setup
 
-
+config['install_requires'] = install_requires
 setup(**config)

@@ -17,7 +17,7 @@ from rdfextras.utils.termutils import TERM_INSTANTIATION_DICT
 from rdfextras.utils.termutils import constructGraph
 from rdfextras.utils.termutils import type2TermCombination
 from rdfextras.utils.termutils import statement2TermCombination
-from rdfextras.utils.termutils import escape_quotes
+from rdflib.py3compat import PY3, b
 
 logging.basicConfig(level=logging.ERROR,format="%(message)s")
 _logger = logging.getLogger(__name__)
@@ -255,6 +255,38 @@ def createTerm(termString, termType, store, objLanguage=None, objDatatype=None):
             return rt
 
 class SQLGenerator(object):
+    # def executeSQL(self, cursor, qStr, params=None, paramList=False):
+    #     """
+    #     This takes the query string and parameters and (depending on the
+    #     SQL implementation) either fill in the parameter in-place or pass
+    #     it on to the Python DB impl (if it supports this). The default
+    #     (here) is to fill the parameters in-place surrounding each param
+    #     with quote characters
+    #     """
+    #     def locproc(item):
+    #         if isinstance(item, basestring):
+    #             return unicode("'%s'" % item)
+    #         else:
+    #             return item
+    #     # _logger.debug("SQLGenerator %s - %s" % (qStr,params))
+    #     if not params:
+    #         querystr = b(qStr).replace('"',"'")
+    #         try:
+    #             cursor.execute(unicode(querystr))
+    #         except Exception, msg:
+    #             _logger.debug("Execution error for %s, %s" % (unicode(querystr), msg))
+    #             raise Exception(msg)
+    #     elif paramList:
+    #         raise Exception("Not supported!")
+    #     else:
+    #         params = tuple([locproc(item)
+    #                             for item in params])
+    #         querystr = qStr.replace('"',"'")
+    #         try:
+    #             cursor.execute(querystr%params)
+    #         except Exception, msg:
+    #             _logger.debug("Exception: %s - %s %s" % (msg, querystr, params))
+    #             raise Exception(msg)
     def executeSQL(self, cursor, qStr, params=None, paramList=False):
         """
         This takes the query string and parameters and (depending on the
@@ -263,24 +295,36 @@ class SQLGenerator(object):
         (here) is to fill the parameters in-place surrounding each param
         with quote characters
         """
-        # print("SQLGenerator", qStr,params)
+        # if isinstance(qStr, bytes): qStr = qStr.decode()
+        try:
+            qStr = qStr.decode()
+        except:
+            pass
+        def locproc(item):
+            try:
+                return "'%s'" % item.decode()
+            except:
+                return item
+        # _logger.debug("SQLGenerator %s - %s" % (qStr,params))
         if not params:
             querystr = qStr.replace('"',"'")
             try:
-                cursor.execute(unicode(querystr))
+                cursor.execute(querystr)
             except Exception, msg:
-                print("Execution error for %s, %s" % (unicode(querystr), msg))
+                _logger.debug("Execution error for %s, %s" % (str(querystr), msg))
                 raise Exception(msg)
         elif paramList:
             raise Exception("Not supported!")
         else:
-            params = tuple([not isinstance(item,int) and u"'%s'" % item or item
-                                for item in params])
+            params = tuple([locproc(item) for item in params])
             querystr = qStr.replace('"',"'")
+            querystr = querystr%params
+            # if isinstance(qStr, bytes): qStr = qStr.decode()
             try:
-                cursor.execute(querystr%params)
+                _logger.debug("Query: %s %s" % (querystr, type(querystr)))
+                cursor.execute(querystr)
             except Exception, msg:
-                print(querystr, params)
+                _logger.debug("Exception: %s - %s %s" % (msg, querystr, params))
                 raise Exception(msg)
 
     # FIXME:  This *may* prove to be a performance bottleneck and should
@@ -295,8 +339,7 @@ class SQLGenerator(object):
         if qstr is None:
             tmp = ''
         elif self.configuration.startswith('postgres') \
-              or self.configuration.startswith('sqlite') \
-              or self.configuration.startswith('firebird'):
+              or self.configuration.startswith('sqlite'):
             tmp = qstr.replace("'", "''")
         else:
             try:
@@ -806,11 +849,11 @@ class SQLAlchemy(Store, SQLGenerator):
         """
         name, opts = _parse_rfc1738_args(configuration)
         if self._db is None:
-            # print("Connecting in order to destroy.")
+            # _logger.debug("Connecting in order to destroy.")
             self.engine = sqlalchemy.create_engine(configuration)
             self.connection = self.engine.connect()
             self._db = self.connection.connection
-        #     print("Connected")
+        #     _logger.debug("Connected")
         c = self._db.cursor()
         trans = self.connection.begin()
         try:
@@ -818,11 +861,11 @@ class SQLAlchemy(Store, SQLGenerator):
                 c.execute('DROP table %s' % tblsuffix % (self._internedId))
             trans.commit()
         except Exception, msg:
-            print("unable to drop table: %s - %s" % (tblsuffix % self._internedId, msg))
+            _logger.debug("unable to drop table: %s - %s" % (tblsuffix % self._internedId, msg))
             trans.rollback()
         # Note, this only removes the associated tables for the closed
         # world universe given by the identifier
-        # print("Destroyed Close World Universe %s" % (self.identifier))
+        # _logger.debug("Destroyed Close World Universe %s" % (self.identifier))
         c.close()
         self.connection.close()
 
@@ -851,7 +894,7 @@ class SQLAlchemy(Store, SQLGenerator):
             self.executeSQL(c, addCmd, params)
             trans.commit()
         except Exception, msg:
-            print("Add failed %s" % msg)
+            _logger.debug("Add failed %s" % msg)
             trans.rollback()
         c.close()
 
@@ -900,7 +943,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 self.executeSQL(
                     c, otherTripleInsertCmd, otherTriples, paramList=True)
         except Exception, msg:
-            print("Add failed %s" % msg)
+            _logger.debug("Add failed %s" % msg)
             trans.rollback()
         trans.commit()
         c.close()
@@ -968,7 +1011,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 self.executeSQL(c, self._normalizeSQLCmd(cmd), params)
             trans.commit()
         except Exception, msg:
-            print("Removal failed %s" % msg)
+            _logger.debug("Removal failed %s" % msg)
             trans.rollback()
         c.close()
 
@@ -1285,11 +1328,11 @@ class SQLAlchemy(Store, SQLGenerator):
                 ),
             ]
             q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
-        # print("Context", context, "Query", self._normalizeSQLCmd(q))
+        # _logger.debug("Context %s, Query %s" % (context, self._normalizeSQLCmd(q)))
         self.executeSQL(c, self._normalizeSQLCmd(q), parameters)
         rt = c.fetchall()
-        # print(rt)
-        # print(len(rt))
+        # _logger.debug(rt)
+        # _logger.debug(len(rt))
         c.close()
         return reduce(lambda x,y: x + y,  [rtTuple[0] for rtTuple in rt])
 
@@ -1467,7 +1510,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     [p for p in params if p]
                 )
         except Exception, msg:
-            print("Context removal failed %s" % msg)
+            _logger.debug("Context removal failed %s" % msg)
             trans.rollback()
         trans.commit()
         c.close()
@@ -1536,7 +1579,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 namespace)
             )
         except Exception, msg:
-            print("Namespace binding failed %s" % msg)
+            _logger.debug("Namespace binding failed %s" % msg)
             trans.rollback()
         trans.commit()
         c.close()
