@@ -3,6 +3,7 @@ import sys
 import logging
 import sqlalchemy
 import hashlib
+import rdflib
 from rdflib import BNode
 from rdflib import Literal
 from rdflib import RDF
@@ -23,6 +24,10 @@ logging.basicConfig(level=logging.ERROR,format="%(message)s")
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.ERROR)
 logging.getLogger('sqlalchemy').setLevel(logging.ERROR)
+
+rdflib.plugin.register(
+    "SQLAlchemy", rdflib.store.Store,
+    "rdflib_sqlalchemy.SQLAlchemy", "SQLAlchemy")
 
 COUNT_SELECT   = 0
 CONTEXT_SELECT = 1
