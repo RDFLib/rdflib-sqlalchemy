@@ -12,7 +12,7 @@ from rdflib import Literal
 sqlalchemy_url = Literal("sqlite://")
 
 
-class SQLAlchemySQLiteGraphTestCase(graph_case.GraphTestCase):
+class SQLASQLiteGraphTestCase(graph_case.GraphTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
@@ -28,7 +28,7 @@ class SQLAlchemySQLiteGraphTestCase(graph_case.GraphTestCase):
         raise SkipTest("Known issue.")
 
 
-class SQLAlchemySQLiteContextTestCase(context_case.ContextTestCase):
+class SQLASQLiteContextTestCase(context_case.ContextTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
@@ -43,8 +43,8 @@ class SQLAlchemySQLiteContextTestCase(context_case.ContextTestCase):
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
 
-SQLAlchemySQLiteGraphTestCase.storetest = True
-SQLAlchemySQLiteContextTestCase.storetest = True
+SQLASQLiteGraphTestCase.storetest = True
+SQLASQLiteContextTestCase.storetest = True
 
 
 if __name__ == '__main__':

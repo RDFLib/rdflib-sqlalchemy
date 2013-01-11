@@ -2,11 +2,11 @@ import os
 import unittest
 from nose.exc import SkipTest
 if os.environ.get('DB') != 'pgsql':
-    raise SkipTest("PostgreSQL not under test")
+    raise SkipTest("PgSQL not under test")
 try:
     import psycopg2
 except ImportError:
-    raise SkipTest("psycopg2 not install, skipping PostgreSQL tests")
+    raise SkipTest("psycopg2 not install, skipping PgSQL tests")
 import logging
 _logger = logging.getLogger(__name__)
 import context_case
@@ -17,10 +17,10 @@ if '.virtualenvs/rdflib/' in sys.executable:
     sqlalchemy_url = os.environ['DBURI']
 else:
     sqlalchemy_url = \
-        'postgresql+psycopg2://postgres@localhost/rdflibsqla_test'
+        'PgSQL+psycopg2://postgres@localhost/rdflibsqla_test'
 
 
-class SQLAlchemyPostgreSQLGraphTestCase(graph_case.GraphTestCase):
+class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
@@ -37,7 +37,7 @@ class SQLAlchemyPostgreSQLGraphTestCase(graph_case.GraphTestCase):
         raise SkipTest("Known issue.")
 
 
-class SQLAlchemyPostgreSQLContextTestCase(context_case.ContextTestCase):
+class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
@@ -53,8 +53,8 @@ class SQLAlchemyPostgreSQLContextTestCase(context_case.ContextTestCase):
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
 
-SQLAlchemyPostgreSQLGraphTestCase.storetest = True
-SQLAlchemyPostgreSQLContextTestCase.storetest = True
+SQLAPgSQLGraphTestCase.storetest = True
+SQLAPgSQLContextTestCase.storetest = True
 
 if __name__ == '__main__':
     unittest.main()
