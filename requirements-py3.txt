@@ -1,0 +1,2 @@
+psycopg2
+git+https://github.com/davispuh/MySQL-for-Python-3#egg=MySQL-python

@@ -91,15 +91,14 @@ config = dict(
 )
 
 install_requires = ["rdflib>=3.0",
-                    "rdfextras>=0.1"]
+                    "rdfextras>=0.1",
+                    "SQLAlchemy>=0.8"]
 
 if sys.version_info[0] >= 3:
     from setuptools import setup
     config.update({'use_2to3': True})
     config.update({'src_root': setup_python3()})
 else:
-    if sys.version_info[:2] < (2, 5):
-        install_requires += ['pysqlite', 'hashlib', 'simplejson==2.3.2']
     if sys.version_info[:2] < (2, 6):
         install_requires += ['pysqlite', 'hashlib', 'simplejson']
     try:
