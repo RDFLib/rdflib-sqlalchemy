@@ -1,14 +1,14 @@
 # http://travis-ci.org/#!/gjhiggins/rdflib-postgresql
 language: python
 env:
-    - DB=pgsql
-    - DB=mysql
+#    - DB=pgsql
+#    - DB=mysql
     - DB=sqlite
 python:
-#    - "2.5"
-#    - "2.6"
+    - "2.5"
+    - "2.6"
     - "2.7"
-#    - "3.2"
+    - "3.2"
 before_install:
   - sh -c "if [ '$DB' = 'mysql' ]; then sudo apt-get install python-mysqldb; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then sudo apt-get install python-psycopg2; fi"
