@@ -9,14 +9,13 @@ python:
     - "2.6"
     - "2.7"
     - "3.2"
-before_install:
-  - sh -c "if [ '$DB' = 'mysql' ]; then sudo apt-get install python-mysqldb; fi"
-#  - sh -c "if [ '$DB' = 'pgsql' ]; then sudo apt-get install python-psycopg2; fi"
 install:
     - pip install -r requirements.txt --use-mirrors
     - python setup.py install
 before_script:
   - sh -c "if [ $TRAVIS_PYTHON_VERSION = 'pypy' ]; then pip install --upgrade 'git://github.com/gjhiggins/isodate.git'; fi"
+  - sh -c "if [ $TRAVIS_PYTHON_VERSION = '3.2' ]; then pip install --upgrade 'git://github.com/davispuh/MySQL-for-Python-3.git'; fi"
+  - sh -c "if [ ! $TRAVIS_PYTHON_VERSION = '3.2' ]; then pip install --upgrade MySQL-python; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS rdflibsqla_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'create database rdflibsqla_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS rdflibsqla_test'; fi"
