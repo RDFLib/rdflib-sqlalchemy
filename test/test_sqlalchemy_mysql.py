@@ -14,11 +14,9 @@ import graph_case
 from rdflib import Literal
 
 # Specific to Travis-ci continuous integration and testing ...
-import sys
-if '.virtualenvs/rdflib/' in sys.executable:
-    sqlalchemy_url = Literal(os.environ['DBURI'])
-else:
-    sqlalchemy_url = Literal("mysql://root@127.0.0.1:3306/rdflibsqla_test")
+sqlalchemy_url = Literal(os.environ.get(
+    'DBURI',
+    "mysql://root@127.0.0.1:3306/rdflibsqla_test"))
 # Generally ...
 # sqlalchemy_url = Literal(
 #    "mysql+mysqldb://user:password@hostname:port/database?charset=utf8")

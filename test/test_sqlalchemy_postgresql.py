@@ -6,18 +6,15 @@ if os.environ.get('DB') != 'pgsql':
 try:
     import psycopg2
 except ImportError:
-    raise SkipTest("psycopg2 not install, skipping PgSQL tests")
+    raise SkipTest("psycopg2 not installed, skipping PgSQL tests")
 import logging
 _logger = logging.getLogger(__name__)
 import context_case
 import graph_case
 
-import sys
-if '.virtualenvs/rdflib/' in sys.executable:
-    sqlalchemy_url = os.environ['DBURI']
-else:
-    sqlalchemy_url = \
-        'PgSQL+psycopg2://postgres@localhost/rdflibsqla_test'
+sqlalchemy_url = os.environ.get(
+    'DBURI',
+    'postgresql+psycopg2://postgres@localhost/rdflibsqla_test')
 
 
 class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
