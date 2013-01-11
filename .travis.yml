@@ -1,0 +1,27 @@
+# http://travis-ci.org/#!/gjhiggins/rdflib-postgresql
+language: python
+env:
+    - DB=pgsql
+    - DB=mysql
+    - DB=sqlite
+python:
+    - 2.5
+    - 2.6
+    - 2.7
+    - 3.2
+before_install:
+  - sh -c "if [ '$DB' = 'mysql' ]; then apt-get install python-mysqldb; fi"
+  - sh -c "if [ '$DB' = 'pgsql' ]; then apt-get install psycopg2; fi"
+install:
+    - pip install -r requirements.txt --use-mirrors
+    - python setup.py install
+before_script:
+  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS rdflibsqla_test;' -U postgres; fi"
+  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'psql -c 'create database rdflibsqla_test;' -U postgres; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS rdflibsqla_test'; fi"
+script:
+    # Must cd somewhere else so python3 doesn't get confused and run
+    # the python2 code from the current directory instead of the installed
+    # 2to3 version.
+    - if [[ $TRAVIS_PYTHON_VERSION != '3.2' ]]; then nosetests; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then nosetests --where=./build/src; fi
