@@ -1,9 +1,9 @@
 # http://travis-ci.org/#!/gjhiggins/rdflib-postgresql
 language: python
 env:
-#    - DB=pgsql
+    - DB=pgsql
 #    - DB=mysql
-    - DB=sqlite
+#    - DB=sqlite
 python:
     - "2.5"
     - "2.6"
