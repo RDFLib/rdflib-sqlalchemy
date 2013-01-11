@@ -11,7 +11,7 @@ python:
     - "3.2"
 before_install:
   - sh -c "if [ '$DB' = 'mysql' ]; then sudo apt-get install python-mysqldb; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then sudo apt-get install python-psycopg2; fi"
+#  - sh -c "if [ '$DB' = 'pgsql' ]; then sudo apt-get install python-psycopg2; fi"
 install:
     - pip install -r requirements.txt --use-mirrors
     - python setup.py install
