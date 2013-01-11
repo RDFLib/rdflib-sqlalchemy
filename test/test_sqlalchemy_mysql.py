@@ -24,7 +24,7 @@ else:
 #    "mysql+mysqldb://user:password@hostname:port/database?charset=utf8")
 
 
-class SQLAlchemyMySQLGraphTestCase(graph_case.GraphTestCase):
+class SQLAMySQLGraphTestCase(graph_case.GraphTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
@@ -40,7 +40,7 @@ class SQLAlchemyMySQLGraphTestCase(graph_case.GraphTestCase):
         raise SkipTest("Known issue.")
 
 
-class SQLAlchemyMySQLContextTestCase(context_case.ContextTestCase):
+class SQLAMySQLContextTestCase(context_case.ContextTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
@@ -55,8 +55,8 @@ class SQLAlchemyMySQLContextTestCase(context_case.ContextTestCase):
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
 
-SQLAlchemyMySQLGraphTestCase.storetest = True
-SQLAlchemyMySQLContextTestCase.storetest = True
+SQLAMySQLGraphTestCase.storetest = True
+SQLAMySQLContextTestCase.storetest = True
 
 if __name__ == '__main__':
     unittest.main()
