@@ -8,6 +8,7 @@ from rdflib import plugin
 
 # logging.getLogger('sqlalchemy.engine').setLevel(logging.WARN)
 
+
 class ContextTestCase(unittest.TestCase):
     storetest = True
     identifier = URIRef("rdflib_test")
@@ -36,9 +37,10 @@ class ContextTestCase(unittest.TestCase):
 
     def get_context(self, identifier):
         assert isinstance(identifier, URIRef) or \
-               isinstance(identifier, BNode), type(identifier)
+            isinstance(identifier, BNode), type(identifier)
         return Graph(store=self.graph.store, identifier=identifier,
-                         namespace_manager=self)
+                     namespace_manager=self)
+
     def addStuff(self):
         tarek = self.tarek
         michel = self.michel
@@ -56,7 +58,7 @@ class ContextTestCase(unittest.TestCase):
         graph.add((michel, likes, cheese))
         graph.add((bob, likes, cheese))
         graph.add((bob, hates, pizza))
-        graph.add((bob, hates, michel)) # gasp!
+        graph.add((bob, hates, michel))  # gasp!
 
     def removeStuff(self):
         tarek = self.tarek
@@ -75,12 +77,12 @@ class ContextTestCase(unittest.TestCase):
         graph.remove((michel, likes, cheese))
         graph.remove((bob, likes, cheese))
         graph.remove((bob, hates, pizza))
-        graph.remove((bob, hates, michel)) # gasp!
+        graph.remove((bob, hates, michel))  # gasp!
 
     def addStuffInMultipleContexts(self):
         c1 = self.c1
         c2 = self.c2
-        triple = (self.pizza, self.hates, self.tarek) # revenge!
+        triple = (self.pizza, self.hates, self.tarek)  # revenge!
 
         # add to default context
         self.graph.add(triple)
@@ -98,7 +100,8 @@ class ContextTestCase(unittest.TestCase):
         graph = Graph(self.graph.store, self.c1)
         graph.add(triple)
         # print("Graph", graph.identifier, graph.serialize(format="nt"))
-        # print("Selfgraph", self.graph.identifier, self.graph.serialize(format="nt"))
+        # print("Selfgraph", self.graph.identifier,
+        #                    self.graph.serialize(format="nt"))
         self.assertEquals(len(self.graph.store), len(graph.store))
 
     def testAdd(self):
@@ -133,19 +136,21 @@ class ContextTestCase(unittest.TestCase):
         # addStuffInMultipleContexts is adding the same triple to
         # three different contexts. So it's only + 1
         print("No context", len(list(self.graph.triples((None, None, None)))))
-        print("Context context-1", len(list(self.graph.triples((None, None, None), context=self.c1))))
-        print("Context context-2", len(list(self.graph.triples((None, None, None), context=self.c2))))
+        print("Context context-1", len(
+            list(self.graph.triples((None, None, None), context=self.c1))))
+        print("Context context-2", len(
+            list(self.graph.triples((None, None, None), context=self.c2))))
         self.assertEquals(len(self.graph.store), oldLen + 1,
-            [self.graph.store, oldLen+1])
+                          [self.graph.store, oldLen + 1])
 
         graph = Graph(self.graph.store, self.c1)
         self.assertEquals(len(graph.store), oldLen + 1,
-            [graph.store, oldLen+1])
+                          [graph.store, oldLen + 1])
 
     def testRemoveInMultipleContexts(self):
         c1 = self.c1
         c2 = self.c2
-        triple = (self.pizza, self.hates, self.tarek) # revenge!
+        triple = (self.pizza, self.hates, self.tarek)  # revenge!
 
         self.addStuffInMultipleContexts()
 
@@ -167,9 +172,10 @@ class ContextTestCase(unittest.TestCase):
         self.assert_(triple not in self.graph)
 
     def testContexts(self):
-        triple = (self.pizza, self.hates, self.tarek) # revenge!
+        triple = (self.pizza, self.hates, self.tarek)  # revenge!
 
         self.addStuffInMultipleContexts()
+
         def cid(c):
             if not isinstance(c, basestring):
                 return c.identifier
@@ -303,18 +309,30 @@ class ContextTestCase(unittest.TestCase):
             asserte(set(c.predicates(bob, pizza)), set([hates]))
             asserte(set(c.predicates(bob, michel)), set([hates]))
 
-            asserte(set(c.subject_objects(hates)), set([(bob, pizza), (bob, michel)]))
-            asserte(set(c.subject_objects(likes)), set([(tarek, cheese), (michel, cheese), (michel, pizza), (bob, cheese), (tarek, pizza)]))
+            asserte(set(
+                c.subject_objects(hates)), set([(bob, pizza), (bob, michel)]))
+            asserte(set(c.subject_objects(likes)),
+                    set([(tarek, cheese), (michel, cheese),
+                         (michel, pizza), (bob, cheese), (tarek, pizza)]))
 
-            asserte(set(c.predicate_objects(michel)), set([(likes, cheese), (likes, pizza)]))
-            asserte(set(c.predicate_objects(bob)), set([(likes, cheese), (hates, pizza), (hates, michel)]))
-            asserte(set(c.predicate_objects(tarek)), set([(likes, cheese), (likes, pizza)]))
+            asserte(set(c.predicate_objects(
+                michel)), set([(likes, cheese), (likes, pizza)]))
+            asserte(set(c.predicate_objects(bob)), set([(likes,
+                    cheese), (hates, pizza), (hates, michel)]))
+            asserte(set(c.predicate_objects(
+                tarek)), set([(likes, cheese), (likes, pizza)]))
 
-            asserte(set(c.subject_predicates(pizza)), set([(bob, hates), (tarek, likes), (michel, likes)]))
-            asserte(set(c.subject_predicates(cheese)), set([(bob, likes), (tarek, likes), (michel, likes)]))
+            asserte(set(c.subject_predicates(
+                pizza)), set([(bob, hates), (tarek, likes), (michel, likes)]))
+            asserte(set(c.subject_predicates(cheese)), set([(
+                bob, likes), (tarek, likes), (michel, likes)]))
             asserte(set(c.subject_predicates(michel)), set([(bob, hates)]))
 
-            asserte(set(c), set([(bob, hates, michel), (bob, likes, cheese), (tarek, likes, pizza), (michel, likes, pizza), (michel, likes, cheese), (bob, hates, pizza), (tarek, likes, cheese)]))
+            asserte(set(c), set([
+                    (bob, hates, michel), (bob, likes, cheese),
+                    (tarek, likes, pizza), (michel, likes, pizza),
+                    (michel, likes, cheese), (bob, hates, pizza),
+                    (tarek, likes, cheese)]))
 
         # remove stuff and make sure the graph is empty again
         self.removeStuff()
