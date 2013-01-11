@@ -92,7 +92,7 @@ config = dict(
 
 install_requires = ["rdflib>=3.0",
                     "rdfextras>=0.1",
-                    "SQLAlchemy>=0.8"]
+                    "SQLAlchemy"]
 
 if sys.version_info[0] >= 3:
     from setuptools import setup
