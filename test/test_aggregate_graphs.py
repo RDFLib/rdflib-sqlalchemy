@@ -1,8 +1,5 @@
-from nose.exc import SkipTest
-raise SkipTest("AggregateGraph tests temporarily skipped.")
 import unittest
 from rdflib import Literal
-# from rdflib import Formula
 from rdflib import plugin
 from rdflib import query
 from rdflib import RDF
@@ -75,11 +72,11 @@ WHERE {?n3Doc a log:N3Document }"""
 
 
 class GraphAggregates1(unittest.TestCase):
-    sqlalchemy_url = Literal('sqlite://')
+    dburi = Literal('sqlite://')
 
     def setUp(self):
         memStore = plugin.get('SQLAlchemy', Store)(
-            identifier="rdflib_test", configuration=self.sqlalchemy_url)
+            identifier="rdflib_test", configuration=self.dburi)
         self.graph1 = Graph(memStore)
         self.graph2 = Graph(memStore)
         self.graph3 = Graph(memStore)
