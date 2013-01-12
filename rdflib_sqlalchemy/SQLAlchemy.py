@@ -321,7 +321,8 @@ class SQLGenerator(object):
         """
         # print("SQLGenerator", qStr,params)
         if not params:
-            cursor.execute(unicode(qStr))
+            querystr = qStr.replace('"', "'")
+            cursor.execute(unicode(querystr))
         elif paramList:
             raise Exception("Not supported!")
         else:
