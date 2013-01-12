@@ -1,11 +1,11 @@
-# import os
-# import logging
-# import test_context
-# import test_graph
-# from nose.exc import SkipTest
-# from rdflib import Literal
-
-# _logger = logging.getLogger(__name__)
+#import os
+import logging
+import context_case
+import graph_case
+from rdflib import Literal
+from nose.exc import SkipTest
+raise SkipTest("SQLAlchemyBase not yet fir to test")
+_logger = logging.getLogger(__name__)
 
 # sqlalchemy_url = Literal("mysql://username:password@hostname:port/database-name?other-parameter")
 # sqlalchemy_url = Literal("mysql+mysqldb://user:password@hostname:port/database?charset=utf8")
@@ -14,31 +14,38 @@
 # sqlalchemy_url = Literal("sqlite:///%(here)s/development.sqlite" % {"here": os.getcwd()})
 # #sqlalchemy_url = Literal('sqlite://')
 # #sqlalchemy_url = Literal("mysql://gjh:50uthf0rk@localhost:3306/test")
+sqlalchemy_url = Literal('sqlite://')
 
-# class SQLAlchemyBaseGraphTestCase(test_graph.GraphTestCase):
-#     storetest = True
-#     storename = "SQLAlchemyBase"
-#     uri = sqlalchemy_url
-#     def setUp(self):
-#         test_graph.GraphTestCase.setUp(self, uri=self.uri, storename=self.storename)
-    
-#     def tearDown(self):
-#         self.create = False
-#         test_graph.GraphTestCase.tearDown(self, uri=self.uri)
-   
-#     def testStatementNode(self):
-#         raise SkipTest("RDF Statements not supported in FOPL model.")
 
-# # class SQLAlchemyBaseContextTestCase(test_context.ContextTestCase):
-# #     storetest = True
-# #     storename = "SQLAlchemyBase"
-# #     uri = sqlalchemy_url
-# #     def setUp(self):
-# #         test_context.ContextTestCase.setUp(self, uri=self.uri, storename=self.storename)
+class SQLAlchemyBaseGraphTestCase(graph_case.GraphTestCase):
+    storetest = True
+    storename = "SQLAlchemyBase"
+    uri = sqlalchemy_url
 
-# #     def tearDown(self):
-# #         self.create = False
-# #         test_context.ContextTestCase.tearDown(self, uri=self.uri)
-   
-# SQLAlchemyBaseGraphTestCase.storetest = True
-# # SQLAlchemyBaseContextTestCase.storetest = True
+    def setUp(self):
+        graph_case.GraphTestCase.setUp(
+            self, uri=self.uri, storename=self.storename)
+
+    def tearDown(self):
+        self.create = False
+        graph_case.GraphTestCase.tearDown(self, uri=self.uri)
+
+    def testStatementNode(self):
+        raise SkipTest("RDF Statements not supported in FOPL model.")
+
+
+class SQLAlchemyBaseContextTestCase(context_case.ContextTestCase):
+    storetest = True
+    storename = "SQLAlchemyBase"
+    uri = sqlalchemy_url
+
+    def setUp(self):
+        context_case.ContextTestCase.setUp(
+            self, uri=self.uri, storename=self.storename)
+
+    def tearDown(self):
+        self.create = False
+        context_case.ContextTestCase.tearDown(self, uri=self.uri)
+
+SQLAlchemyBaseGraphTestCase.storetest = True
+SQLAlchemyBaseContextTestCase.storetest = True
