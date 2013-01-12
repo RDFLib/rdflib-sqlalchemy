@@ -115,7 +115,7 @@ def queryAnalysis(query, store, cursor):
     cursor.execute(store._normalizeSQLCmd('explain ' + query))
     rt = cursor.fetchall()[0]
     table, joinType, posKeys, _key, key_len, \
-                        comparedCol, rowsExamined, extra = rt
+        comparedCol, rowsExamined, extra = rt
     if not _key:
         assert joinType == 'ALL'
         if not hasattr(store, 'queryOptMarks'):
@@ -158,7 +158,7 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
                    %s.klass as object, %s.context as context, \
                    %s.termComb as termComb, NULL as objLanguage, \
                    NULL as objDatatype""" % (
-                    tableAlias, RDF.type, tableAlias, tableAlias, tableAlias)
+                tableAlias, RDF.type, tableAlias, tableAlias, tableAlias)
             tableSource = " from %s as %s " % (tableName, tableAlias)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
             selectString =\
@@ -185,15 +185,15 @@ def extractTriple(tupleRt, store, hardCodedContext=None):
     """
     try:
         subject, predicate, obj, rtContext, termComb, \
-                            objLanguage, objDatatype = tupleRt
+            objLanguage, objDatatype = tupleRt
         termCombString = REVERSE_TERM_COMBINATIONS[termComb]
         subjTerm, predTerm, objTerm, ctxTerm = termCombString
     except ValueError:
         subject, subjTerm, predicate, predTerm, obj, objTerm, \
-                rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
+            rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
     context = rtContext is not None \
-                and rtContext \
-                or hardCodedContext.identifier
+        and rtContext \
+        or hardCodedContext.identifier
     s = createTerm(subject, subjTerm, store)
     p = createTerm(predicate, predTerm, store)
     o = createTerm(obj, objTerm, store, objLanguage, objDatatype)
@@ -442,7 +442,7 @@ class SQLGenerator(object):
             int(type2TermCombination(member, klass, context))]
 
     def buildLiteralTripleSQLCommand(
-                self, subject, predicate, obj, context, storeId):
+            self, subject, predicate, obj, context, storeId):
         """
         Builds an insert command for literal triples (statements where the
         object is a Literal)
@@ -463,12 +463,12 @@ class SQLGenerator(object):
             isinstance(obj, Literal) and obj.datatype or 'NULL']
 
     def buildTripleSQLCommand(
-                self, subject, predicate, obj, context, storeId, quoted):
+            self, subject, predicate, obj, context, storeId, quoted):
         """
         Builds an insert command for regular triple table
         """
         stmt_table = quoted and "%s_quoted_statements" % storeId \
-                        or "%s_asserted_statements" % storeId
+            or "%s_asserted_statements" % storeId
         triplePattern = statement2TermCombination(
             subject, predicate, obj, context)
         if quoted:
@@ -505,7 +505,7 @@ class SQLGenerator(object):
         parameters = []
         if typeTable:
             rdf_type_memberClause = rdf_type_contextClause = \
-                                    rdf_type_contextClause = None
+                rdf_type_contextClause = None
 
             clauseParts = self.buildTypeMemberClause(
                 self.normalizeTerm(subject), tableName)
@@ -1150,11 +1150,10 @@ class SQLAlchemy(Store, SQLGenerator):
                 'typeTable', subject, RDF.type, obj, context, True)
             parameters.extend(params)
             selects = [
-                (
-                  asserted_type_table,
-                  'typeTable',
-                  clauseString,
-                  ASSERTED_TYPE_PARTITION
+                (asserted_type_table,
+                 'typeTable',
+                 clauseString,
+                 ASSERTED_TYPE_PARTITION
                 ),
             ]
 
@@ -1617,8 +1616,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     c,
                     self._normalizeSQLCmd(
                         "DELETE from %s WHERE %s" % (table, clauseString)),
-                    [p for p in params if p]
-                )
+                    [p for p in params if p])
         except Exception, msg:
             _logger.debug("Context removal failed %s" % msg)
             trans.rollback()
@@ -1691,12 +1689,11 @@ class SQLAlchemy(Store, SQLGenerator):
                 "(prefix,uri) VALUES ('%s', '%s')" % (
                     self._internedId,
                     prefix,
-                    namespace)
-            )
+                    namespace))
+            trans.commit()
         except Exception, msg:
             _logger.debug("Namespace binding failed %s" % msg)
             trans.rollback()
-        trans.commit()
         c.close()
 
     def prefix(self, namespace):
@@ -1704,8 +1701,7 @@ class SQLAlchemy(Store, SQLGenerator):
         c = self._db.cursor()
         c.execute("SELECT prefix FROM %s_namespace_binds WHERE uri = '%s'" % (
             self._internedId,
-            namespace)
-        )
+            namespace))
         rt = [rtTuple[0] for rtTuple in c.fetchall()]
         c.close()
         return rt and rt[0] or None
@@ -1717,8 +1713,7 @@ class SQLAlchemy(Store, SQLGenerator):
             c.execute(
                 "SELECT uri FROM %s_namespace_binds WHERE prefix = '%s'" % (
                 self._internedId,
-                prefix)
-                      )
+                prefix))
         except:
             return None
         rt = [rtTuple[0] for rtTuple in c.fetchall()]
@@ -1729,9 +1724,7 @@ class SQLAlchemy(Store, SQLGenerator):
         """ """
         c = self._db.cursor()
         c.execute("SELECT prefix, uri FROM %s_namespace_binds;" % (
-            self._internedId
-            )
-        )
+            self._internedId))
         rt = c.fetchall()
         c.close()
         for prefix, uri in rt:
