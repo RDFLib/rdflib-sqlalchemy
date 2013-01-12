@@ -3,14 +3,17 @@ from rdflib.store import Store
 import os
 
 
+# Work in progress
+
+
 def investigate_len_issue():
     store = plugin.get('SQLAlchemy', Store)(
         identifier=URIRef("rdflib_test"),
         configuration=Literal("sqlite:///%(here)s/development.sqlite" % {
                                                         "here": os.getcwd()}))
     g = Graph(store)
-    statementId = BNode()
     print(len(g))
+    statementId = BNode()
     g.add((statementId, RDF.type, RDF.Statement))
     g.add((statementId, RDF.subject,
            URIRef(u'http://rdflib.net/store/ConjunctiveGraph')))
@@ -26,3 +29,6 @@ def investigate_len_issue():
     g.remove((statementId, RDF.type, RDF.Statement))
     print(len(g))
     os.unlink("%(here)s/development.sqlite" % {"here": os.getcwd()})
+
+if __name__ == '__main__':
+    investigate_len_issue()
