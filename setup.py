@@ -48,7 +48,7 @@ __version__ = find_version('rdflib_sqlalchemy/__init__.py')
 config = dict(
     name='rdflib-sqlalchemy',
     version=__version__,
-    description="rdflib extension adding SQLite as back-end store",
+    description="rdflib extension adding SQLAlchemy as an AbstractSQLStore back-end store",
     author="Graham Higgins",
     author_email="gjhiggins@gmail.com",
     url="http://github.com/RDFLib/rdflib-sqlalchemy",
@@ -86,6 +86,7 @@ config = dict(
     entry_points={
         'rdf.plugins.store': [
             'SQLAlchemy = rdflib_sqlalchemy.SQLAlchemy:SQLAlchemy',
+            # 'SQLAlchemyBase = rdflib_sqlalchemy.SQLAlchemyBase:SQLAlchemy',
         ],
     }
 )
