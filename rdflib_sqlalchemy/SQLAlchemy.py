@@ -342,6 +342,8 @@ class SQLGenerator(object):
         """
         # if isinstance(qStr, bytes): qStr = qStr.decode()
         try:
+            if qStr is None:
+                raise ValueError("Query must be a string, it cannot be None")
             qStr = qStr.decode()
         except:
             pass
@@ -1521,10 +1523,10 @@ class SQLAlchemy(Store, SQLGenerator):
                     self._normalizeSQLCmd(
                         "DELETE from %s WHERE %s" % (table, clauseString)),
                     [p for p in params if p])
+            trans.commit()
         except Exception, msg:
             _logger.debug("Context removal failed %s" % msg)
             trans.rollback()
-        trans.commit()
         c.close()
 
     # Optional Namespace methods
