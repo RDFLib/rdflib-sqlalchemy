@@ -1,5 +1,9 @@
 # http://travis-ci.org/#!/gjhiggins/rdflib-sqlalchemy
 language: python
+branches:
+  only:
+    - master
+    - reunif
 env:
     - DB=pgsql
     - DB=mysql
@@ -9,6 +13,7 @@ python:
     - "2.6"
     - "2.7"
     - "3.2"
+    - "3.3"
 install:
     - if [[ $TRAVIS_PYTHON_VERSION != '3.2' ]]; then pip install -r requirements-py2.txt --use-mirrors; fi
     - if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then pip install -r requirements-py3.txt --use-mirrors; fi
