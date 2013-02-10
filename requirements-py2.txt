@@ -1,2 +1,3 @@
 psycopg2
 MySQL-python
+-e git+https://github.com/gjhiggins/rdflib.git#egg=rdflib

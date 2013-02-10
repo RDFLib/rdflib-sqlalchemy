@@ -1,2 +1,3 @@
 psycopg2
-git+https://github.com/davispuh/MySQL-for-Python-3#egg=MySQL-python
+-e git+https://github.com/gjhiggins/rdflib.git#egg=rdflib
+-e git+https://github.com/davispuh/MySQL-for-Python-3#egg=MySQL-python
