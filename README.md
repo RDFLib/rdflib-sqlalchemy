@@ -54,7 +54,7 @@ An illustrative unit test:
 Running the tests
 =================
 
-This is slightly baroque because of the text matrix (PostgreSQL|MySQL|SQLite
+This is slightly baroque because of the test matrix (PostgreSQL|MySQL|SQLite
 x Python2.5|2.6|2.7|3.2) ...
 
 Using nose::
