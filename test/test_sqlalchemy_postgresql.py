@@ -30,10 +30,6 @@ class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
     def tearDown(self):
         graph_case.GraphTestCase.tearDown(self, uri=self.uri)
 
-    def testStatementNode(self):
-        raise SkipTest(
-            "RDF Statements not supported in AbstractSQLStore model.")
-
 
 class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
     storetest = True
