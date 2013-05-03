@@ -10,13 +10,13 @@ from rdflib import URIRef
 from rdflib.graph import Graph
 from rdflib.graph import QuotedGraph
 from rdflib.store import Store  # , NodePickler
-from rdfextras.store.REGEXMatching import PYTHON_REGEX
-from rdfextras.store.REGEXMatching import REGEXTerm
-from rdfextras.utils.termutils import REVERSE_TERM_COMBINATIONS
-from rdfextras.utils.termutils import TERM_INSTANTIATION_DICT
-from rdfextras.utils.termutils import constructGraph
-from rdfextras.utils.termutils import type2TermCombination
-from rdfextras.utils.termutils import statement2TermCombination
+from rdflib.plugins.stores.regexmatching import PYTHON_REGEX
+from rdflib.plugins.stores.regexmatching import REGEXTerm
+from .termutils import REVERSE_TERM_COMBINATIONS
+from .termutils import TERM_INSTANTIATION_DICT
+from .termutils import constructGraph
+from .termutils import type2TermCombination
+from .termutils import statement2TermCombination
 from rdflib.py3compat import PY3
 
 logging.basicConfig(level=logging.ERROR, format="%(message)s")

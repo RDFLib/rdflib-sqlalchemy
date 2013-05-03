@@ -77,6 +77,7 @@ config = dict(
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.2",
+        "Programming Language :: Python :: 3.3",
         "License :: OSI Approved :: BSD License",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Operating System :: OS Independent",
@@ -92,7 +93,6 @@ config = dict(
 )
 
 install_requires = ["rdflib>=3.0",
-                    "rdfextras>=0.1",
                     "SQLAlchemy"]
 
 if sys.version_info[0] >= 3:
