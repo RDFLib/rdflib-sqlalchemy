@@ -120,7 +120,7 @@ class GraphAggregates1(unittest.TestCase):
 
 
 class GraphAggregates2(unittest.TestCase):
-    known_issue = True
+    # known_issue = True
 
     def setUp(self):
         memStore = plugin.get('SQLAlchemy', Store)(
