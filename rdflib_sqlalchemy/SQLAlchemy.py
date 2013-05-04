@@ -861,7 +861,6 @@ class SQLAlchemy(Store, SQLGenerator):
                 c.execute(CREATE_QUOTED_STATEMENTS_TABLE % (self._internedId))
                 c.execute(CREATE_NS_BINDS_TABLE % (self._internedId))
                 c.execute(CREATE_LITERAL_STATEMENTS_TABLE % (self._internedId))
-                trans.commit()
                 for tblName, indices in [
                         (
                             "%s_asserted_statements",
@@ -1676,8 +1675,8 @@ CREATE TABLE %s_literal_statements (
     object        text,
     context       text not NULL,
     termComb      integer not NULL,
-    objLanguage   varchar(3),
-    objDatatype   text)"""
+    objLanguage   varchar(255),
+    objDatatype   varchar(255))"""
 
 CREATE_QUOTED_STATEMENTS_TABLE = """
 CREATE TABLE %s_quoted_statements (
@@ -1686,8 +1685,8 @@ CREATE TABLE %s_quoted_statements (
     object        text,
     context       text not NULL,
     termComb      integer not NULL,
-    objLanguage   varchar(3),
-    objDatatype   text)"""
+    objLanguage   varchar(255),
+    objDatatype   varchar(255))"""
 
 CREATE_NS_BINDS_TABLE = """
 CREATE TABLE %s_namespace_binds (
