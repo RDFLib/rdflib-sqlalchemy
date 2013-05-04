@@ -50,8 +50,30 @@ class SQLAMySQLContextTestCase(context_case.ContextTestCase):
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
 
+
+class SQLAMySQLIssueTestCase(unittest.TestCase):
+    storetest = True
+    storename = "SQLAlchemy"
+    uri = sqlalchemy_url
+
+    def test_issue_4(self):
+        from rdflib.graph import ConjunctiveGraph as Graph
+        from rdflib.store import NO_STORE, VALID_STORE
+        from rdflib.term import URIRef
+
+        ident = URIRef("rdflib_test")
+        g = Graph(store="SQLAlchemy", identifier=ident)
+        rt = g.open(self.uri, create=True)
+        if rt == NO_STORE:
+            g.open(self.uri, create=True)
+        else:
+            assert rt == VALID_STORE, "The underlying store is corrupt"
+        g.destroy(self.uri)
+
+
 SQLAMySQLGraphTestCase.storetest = True
 SQLAMySQLContextTestCase.storetest = True
+SQLAMySQLIssueTestCase.storetest = True
 
 if __name__ == '__main__':
     unittest.main()
