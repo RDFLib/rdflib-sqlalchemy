@@ -12,14 +12,14 @@ from rdflib.graph import ConjunctiveGraph
 from rdflib.graph import ReadOnlyGraphAggregate
 
 plugin.register('xml', query.ResultParser,
-                'rdfextras.sparql.results.xmlresults', 'XMLResultParser')
+                'rdflib.plugins.sparql.results.xmlresults', 'XMLResultParser')
 plugin.register('xml', query.ResultSerializer,
-                'rdfextras.sparql.results.xmlresults', 'XMLResultSerializer')
+                'rdflib.plugins.sparql.results.xmlresults', 'XMLResultSerializer')
 
 plugin.register('json', query.ResultParser,
-                'rdfextras.sparql.results.jsonresults', 'JSONResultParser')
+                'rdflib.plugins.sparql.results.jsonresults', 'JSONResultParser')
 plugin.register('json', query.ResultSerializer,
-                'rdfextras.sparql.results.jsonresults', 'JSONResultSerializer')
+                'rdflib.plugins.sparql.results.jsonresults', 'JSONResultSerializer')
 
 
 testGraph1N3 = """
