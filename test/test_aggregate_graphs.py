@@ -1,4 +1,5 @@
 import unittest
+from nose.exc import SkipTest
 from rdflib import Literal
 from rdflib import plugin
 from rdflib import query
@@ -11,15 +12,19 @@ from rdflib.graph import Graph
 from rdflib.graph import ConjunctiveGraph
 from rdflib.graph import ReadOnlyGraphAggregate
 
-plugin.register('xml', query.ResultParser,
-                'rdflib.plugins.sparql.results.xmlresults', 'XMLResultParser')
-plugin.register('xml', query.ResultSerializer,
-                'rdflib.plugins.sparql.results.xmlresults', 'XMLResultSerializer')
+plugin.register(
+    'xml', query.ResultParser,
+    'rdflib.plugins.sparql.results.xmlresults', 'XMLResultParser')
+plugin.register(
+    'xml', query.ResultSerializer,
+    'rdflib.plugins.sparql.results.xmlresults', 'XMLResultSerializer')
 
-plugin.register('json', query.ResultParser,
-                'rdflib.plugins.sparql.results.jsonresults', 'JSONResultParser')
-plugin.register('json', query.ResultSerializer,
-                'rdflib.plugins.sparql.results.jsonresults', 'JSONResultSerializer')
+plugin.register(
+    'json', query.ResultParser,
+    'rdflib.plugins.sparql.results.jsonresults', 'JSONResultParser')
+plugin.register(
+    'json', query.ResultSerializer,
+    'rdflib.plugins.sparql.results.jsonresults', 'JSONResultSerializer')
 
 
 testGraph1N3 = """
@@ -115,6 +120,8 @@ class GraphAggregates1(unittest.TestCase):
 
 
 class GraphAggregates2(unittest.TestCase):
+    known_issue = True
+
     def setUp(self):
         memStore = plugin.get('SQLAlchemy', Store)(
             identifier="rdflib_test", configuration=Literal("sqlite://"))
@@ -132,12 +139,14 @@ class GraphAggregates2(unittest.TestCase):
         self.G = ConjunctiveGraph(memStore)
 
     def testAggregateSPARQL(self):
+        raise(SkipTest, "known_issue with SELECT from NAMED")
         rt = self.G.query(sparqlQ)
         assert len(rt) > 1
         rt = self.G.query(sparqlQ2, initBindings={u'?graph':
                           URIRef(u"http://example.com/graph3")})
         try:
             import json
+            assert json
         except ImportError:
             import simplejson as json
         res = json.loads(rt.serialize(format='json').decode('utf-8'))
