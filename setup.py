@@ -97,13 +97,15 @@ install_requires = ["rdflib>=3.4.1-dev",
 
 if sys.version_info[0] >= 3:
     from setuptools import setup
+    assert setup
     config.update({'use_2to3': True})
     config.update({'src_root': setup_python3()})
 else:
     if sys.version_info[:2] < (2, 6):
-        install_requires += ['pysqlite', 'hashlib', 'simplejson']
+        install_requires += ['pysqlite']
     try:
         from setuptools import setup
+        assert setup
         config.update({'test_suite': "nose.collector"})
     except ImportError:
         from distutils.core import setup
