@@ -3,12 +3,12 @@ language: python
 branches:
   only:
     - master
-    - reunif
 env:
     - DB=pgsql
     - DB=mysql
     - DB=sqlite
 python:
+    - "2.5"
     - "2.6"
     - "2.7"
     - "3.2"
