@@ -17,7 +17,6 @@ install:
     - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '2' ]]; then pip install -r requirements-py2.txt --use-mirrors; fi
     - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '3' ]]; then pip install -r requirements-py3.txt --use-mirrors; fi
     - if [[ ${TRAVIS_PYTHON_VERSION} == 'pypy' ]]; then pip install --upgrade 'git+https://github.com/gjhiggins/isodate#egg=isodate'; fi
-    - if [[ ${TRAVIS_PYTHON_VERSION} == '2.5' ]]; then pip uninstall simplejson; fi
     - python setup.py install
 before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS rdflibsqla_test;' -U postgres; fi"
