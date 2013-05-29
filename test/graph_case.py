@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 from rdflib import Graph
 from rdflib import RDF
 from rdflib import URIRef
+from rdflib import Literal
 from rdflib import plugin
 from rdflib.store import Store
 
@@ -268,6 +271,29 @@ class GraphTestCase(unittest.TestCase):
 
         self.assertEquals((michel, likes, cheese) in g1, True)
 
+    def testStoreLiterals(self):
+        bob = self.bob
+        says = URIRef(u'says')
+        hello = Literal(u'hello', lang='en')
+        konichiwa = Literal(u'こんにちは', lang='ja')
+        something = Literal(u'something')
+
+        self.graph.add((bob, says, hello))
+        self.graph.add((bob, says, konichiwa))
+        self.graph.add((bob, says, something))
+        self.graph.commit()
+
+        objs = list(self.graph.objects(subject=bob, predicate=says))
+        for o in objs:
+            if o.value == u'hello':
+                self.assertEquals(o.language, 'en')
+            elif o.value == u'こんにちは':
+                self.assertEquals(o.language, 'ja')
+            elif o.value == u'something':
+                self.assertIsNone(o.language)
+            else:
+                self.fail()
+        self.assertEquals(len(list(objs)), 3)
 
 xmltestdoc = """<?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF
