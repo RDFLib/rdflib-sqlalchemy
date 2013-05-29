@@ -326,9 +326,13 @@ class SQLGenerator(object):
         elif paramList:
             raise Exception("Not supported!")
         else:
-            params = tuple([
-                not isinstance(item, int) and u"'%s'" % item or item
-                for item in params])
+            def py_to_sql(param):
+                if param is None:
+                    return 'NULL'
+                if isinstance(param, int):
+                    return param
+                return u"'%s'" % param
+            params = tuple(map(py_to_sql, params))
             querystr = qStr.replace('"', "'")
             cursor.execute(querystr % params)
 
@@ -461,8 +465,8 @@ class SQLGenerator(object):
             self.normalizeTerm(obj),
             self.normalizeTerm(context.identifier),
             triplePattern,
-            isinstance(obj, Literal) and obj.language or 'NULL',
-            isinstance(obj, Literal) and obj.datatype or 'NULL']
+            isinstance(obj, Literal) and obj.language or None,
+            isinstance(obj, Literal) and obj.datatype or None]
 
     def buildTripleSQLCommand(
             self, subject, predicate, obj, context, storeId, quoted):
@@ -484,8 +488,8 @@ class SQLGenerator(object):
                 self.normalizeTerm(obj),
                 self.normalizeTerm(context.identifier),
                 triplePattern,
-                isinstance(obj, Literal) and obj.language or 'NULL',
-                isinstance(obj, Literal) and obj.datatype or 'NULL']
+                isinstance(obj, Literal) and obj.language or None,
+                isinstance(obj, Literal) and obj.datatype or None]
         else:
             command = "INSERT INTO %s " % stmt_table + \
                       "(subject,predicate,object,context,termComb) " + \
