@@ -331,7 +331,7 @@ class SQLGenerator(object):
                     return 'NULL'
                 if isinstance(param, int):
                     return param
-                return u"'%s'" % param
+                return "'%s'" % param
             params = tuple(map(py_to_sql, params))
             querystr = qStr.replace('"', "'")
             cursor.execute(querystr % params)
