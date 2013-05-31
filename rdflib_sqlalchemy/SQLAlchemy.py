@@ -745,7 +745,6 @@ class SQLAlchemy(Store, SQLGenerator):
     formula_aware = True
     transaction_aware = True
     regex_matching = PYTHON_REGEX
-    autocommit_default = False
     configuration = Literal("sqlite://")
 
     def __init__(self, identifier=None, configuration=None):
@@ -934,8 +933,6 @@ class SQLAlchemy(Store, SQLGenerator):
     # Triple Methods
     def add(self, (subject, predicate, obj), context=None, quoted=False):
         """ Add a triple to the store of triples. """
-        if self.autocommit_default:
-            self.connection.execute("""SET AUTOCOMMIT=0""")
         if quoted or predicate != RDF.type:
             # Quoted statement or non rdf:type predicate
             # check if object is a literal
@@ -958,8 +955,6 @@ class SQLAlchemy(Store, SQLGenerator):
             trans.rollback()
 
     def addN(self, quads):
-        if self.autocommit_default:
-            self.connection.execute("""SET AUTOCOMMIT=0""")
         literalTriples = []
         typeTriples = []
         otherTriples = []
@@ -1014,8 +1009,6 @@ class SQLAlchemy(Store, SQLGenerator):
             if subject is None and predicate is None and object is None:
                 self._remove_context(context)
                 return
-        if self.autocommit_default:
-            self.connection.execute("""SET AUTOCOMMIT=0""")
         quoted_table = "%s_quoted_statements" % self._internedId
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
@@ -1446,8 +1439,6 @@ class SQLAlchemy(Store, SQLGenerator):
     def _remove_context(self, identifier):
         """ """
         assert identifier
-        if self.autocommit_default:
-            self.connection.execute("""SET AUTOCOMMIT=0""")
         quoted_table = "%s_quoted_statements" % self._internedId
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
