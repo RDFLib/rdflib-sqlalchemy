@@ -19,10 +19,7 @@ from .termutils import type2TermCombination
 from .termutils import statement2TermCombination
 from rdflib.py3compat import PY3
 
-logging.basicConfig(level=logging.ERROR, format="%(message)s")
 _logger = logging.getLogger(__name__)
-_logger.setLevel(logging.ERROR)
-logging.getLogger('sqlalchemy').setLevel(logging.ERROR)
 
 COUNT_SELECT = 0
 CONTEXT_SELECT = 1
