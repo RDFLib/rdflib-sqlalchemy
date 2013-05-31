@@ -104,13 +104,13 @@ def _parse_rfc1738_args(name):
         raise ValueError("Could not parse rfc1738 URL from string '%s'" % name)
 
 
-def queryAnalysis(query, store, cursor):
+def queryAnalysis(query, store, connection):
     """
     Helper function for executing EXPLAIN on all dispatched SQL statements -
     for the pupose of analyzing index usage
     """
-    cursor.execute(store._normalizeSQLCmd('explain ' + query))
-    rt = cursor.fetchall()[0]
+    res = connection.execute(store._normalizeSQLCmd('explain ' + query))
+    rt = res.fetchall()[0]
     table, joinType, posKeys, _key, key_len, \
         comparedCol, rowsExamined, extra = rt
     if not _key:
