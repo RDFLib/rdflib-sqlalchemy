@@ -1,0 +1,3 @@
+.tox
+.noseids
+rdflib_sqlalchemy.egg-info

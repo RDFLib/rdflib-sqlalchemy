@@ -11,13 +11,14 @@ from rdflib.graph import Graph
 from rdflib.graph import QuotedGraph
 from rdflib.store import Store  # , NodePickler
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX
+from rdflib.py3compat import PY3
 from rdflib.plugins.stores.regexmatching import REGEXTerm
+from sqlalchemy import Column, Table, MetaData, Index, types
 from .termutils import REVERSE_TERM_COMBINATIONS
 from .termutils import TERM_INSTANTIATION_DICT
 from .termutils import constructGraph
 from .termutils import type2TermCombination
 from .termutils import statement2TermCombination
-from rdflib.py3compat import PY3
 
 _logger = logging.getLogger(__name__)
 
@@ -274,7 +275,7 @@ def createTerm(
 
 class SQLGenerator(object):
 
-    def py2executeSQL(self, qStr, params=None, paramList=False):
+    def py2executeSQL(self, connection, qStr, params=None, paramList=False):
         """
         This takes the query string and parameters and (depending on the
         SQL implementation) either fill in the parameter in-place or pass
@@ -285,7 +286,7 @@ class SQLGenerator(object):
         # print("SQLGenerator", qStr,params)
         if not params:
             querystr = qStr.replace('"', "'")
-            return self.connection.execute(unicode(querystr))
+            return connection.execute(unicode(querystr))
         elif paramList:
             raise Exception("Not supported!")
         else:
@@ -297,9 +298,9 @@ class SQLGenerator(object):
                 return "'%s'" % param
             params = tuple(map(py_to_sql, params))
             querystr = qStr.replace('"', "'")
-            return self.connection.execute(querystr % params)
+            return connection.execute(querystr % params)
 
-    def pycompat_executeSQL(self, qStr, params=None, paramList=False):
+    def pycompat_executeSQL(self, connection, qStr, params=None, paramList=False):
         """
         This takes the query string and parameters and (depending on the
         SQL implementation) either fill in the parameter in-place or pass
@@ -324,7 +325,7 @@ class SQLGenerator(object):
         if not params:
             querystr = qStr.replace('"', "'")
             try:
-                return self.connection.execute(querystr)
+                return connection.execute(querystr)
             except Exception, msg:
                 _logger.debug(
                     "Execution error for %s, %s" % (str(querystr), msg))
@@ -338,16 +339,24 @@ class SQLGenerator(object):
             # if isinstance(qStr, bytes): qStr = qStr.decode()
             try:
                 _logger.debug("Query: %s %s" % (querystr, type(querystr)))
-                return self.connection.execute(querystr)
+                return connection.execute(querystr)
             except Exception, msg:
                 _logger.debug(
                     "Exception: %s - %s %s" % (msg, querystr, params))
                 raise Exception(msg)
 
-    if PY3:
-        executeSQL = pycompat_executeSQL
-    else:
-        executeSQL = py2executeSQL
+    def executeSQL(self, qStr, params=None, paramList=False, connection=None):
+        conn = connection
+        if conn is None:
+            conn = self.engine.connect()
+        try:
+            if PY3:
+                return self.pycompat_executeSQL(conn, qStr, params, paramList)
+            else:
+                return self.py2executeSQL(conn, qStr, params, paramList)
+        finally:
+            if connection is None:
+                conn.close()
 
     # FIXME:  This *may* prove to be a performance bottleneck and should
     # perhaps be implemented in C (as it was in 4Suite RDF)
@@ -778,6 +787,8 @@ class SQLAlchemy(Store, SQLGenerator):
         self.otherCache = {}
         self.__node_pickler = None
 
+        self.__create_table_definitions()
+
         if configuration is not None:
             self.configuration = configuration
             self.open(configuration)
@@ -813,71 +824,15 @@ class SQLAlchemy(Store, SQLGenerator):
         store."""
         name, opts = _parse_rfc1738_args(configuration)
         self.engine = sqlalchemy.create_engine(configuration)
-        self.connection = self.engine.connect()
-        trans = self.connection.begin()
-        if create:
-            try:
-                self.connection.execute(
-                    CREATE_ASSERTED_STATEMENTS_TABLE % (self._internedId))
-                self.connection.execute(CREATE_ASSERTED_TYPE_STATEMENTS_TABLE %
-                          (self._internedId))
-                self.connection.execute(CREATE_QUOTED_STATEMENTS_TABLE % (self._internedId))
-                self.connection.execute(CREATE_NS_BINDS_TABLE % (self._internedId))
-                self.connection.execute(CREATE_LITERAL_STATEMENTS_TABLE % (self._internedId))
-                for tblName, indices in [
-                        (
-                            "%s_asserted_statements",
-                            [
-                                ("%s_A_termComb_index", ('termComb',)),
-                                ("%s_A_s_index", ('subject',)),
-                                ("%s_A_p_index", ('predicate',)),
-                                ("%s_A_o_index", ('object',)),
-                                ("%s_A_c_index", ('context',)),
-                            ],
-                        ),
-                        (
-                            "%s_type_statements",
-                            [
-                                ("%s_T_termComb_index", ('termComb',)),
-                                ("%s_member_index", ('member',)),
-                                ("%s_klass_index", ('klass',)),
-                                ("%s_c_index", ('context',)),
-                            ],
-                        ),
-                        (
-                            "%s_literal_statements",
-                            [
-                                ("%s_L_termComb_index", ('termComb',)),
-                                ("%s_L_s_index", ('subject',)),
-                                ("%s_L_p_index", ('predicate',)),
-                                ("%s_L_c_index", ('context',)),
-                            ],
-                        ),
-                        (
-                            "%s_quoted_statements",
-                            [
-                                ("%s_Q_termComb_index", ('termComb',)),
-                                ("%s_Q_s_index", ('subject',)),
-                                ("%s_Q_p_index", ('predicate',)),
-                                ("%s_Q_o_index", ('object',)),
-                                ("%s_Q_c_index", ('context',)),
-                            ],
-                        ),
-                        (
-                            "%s_namespace_binds",
-                            [
-                                ("%s_uri_index", ('uri',)),
-                            ],
-                        )]:
-                    for indexName, columns in indices:
-                        self.connection.execute("CREATE INDEX %s on %s (%s)" % (
-                            indexName % self._internedId,
-                            tblName % (self._internedId),
-                            ','.join(columns)))
-                trans.commit()
-            except Exception:
-                trans.rollback()
-        # self._db.create_function("regexp", 2, regexp)
+        with self.engine.connect() as connection:
+            trans = connection.begin()
+            if create:
+                try:
+                    self.metadata.create_all(self.engine)
+                    trans.commit()
+                except Exception:
+                    trans.rollback()
+        #self._db.create_function("regexp", 2, regexp)
         if configuration:
             from sqlalchemy.engine import reflection
             insp = reflection.Inspector.from_engine(self.engine)
@@ -898,10 +853,11 @@ class SQLAlchemy(Store, SQLGenerator):
         """
         FIXME:  Add documentation!!
         """
-        if commit_pending_transaction:
-            self.connection.commit()
+        pass
+        #if commit_pending_transaction:
+        #    self.connection.commit()
         try:
-            self.connection.close()
+            self.engine.close()
         except:
             pass
 
@@ -910,25 +866,22 @@ class SQLAlchemy(Store, SQLGenerator):
         FIXME: Add documentation
         """
         name, opts = _parse_rfc1738_args(configuration)
-        if self.connection is None:
+        if self.engine is None:
             # _logger.debug("Connecting in order to destroy.")
             self.engine = sqlalchemy.create_engine(configuration)
-            self.connection = self.engine.connect()
         #     _logger.debug("Connected")
-        trans = self.connection.begin()
-        try:
-            for tblsuffix in table_name_prefixes:
-                self.connection.execute('DROP table %s' % tblsuffix % (self._internedId))
-            trans.commit()
-        except Exception, msg:
-            _logger.debug("unable to drop table: %s - %s" % (
-                tblsuffix % self._internedId, msg))
-            trans.rollback()
+        with self.engine.connect() as connection:
+            trans = connection.begin()
+            try:
+                self.metadata.drop_all(self.engine)
+                trans.commit()
+            except Exception, msg:
+                _logger.debug("unable to drop table: %s " % (msg))
+                trans.rollback()
         # Note, this only removes the associated tables for the closed
         # world universe given by the identifier
         # _logger.debug(
         #       "Destroyed Close World Universe %s" % (self.identifier))
-        self.connection.close()
 
     # Triple Methods
     def add(self, (subject, predicate, obj), context=None, quoted=False):
@@ -946,13 +899,14 @@ class SQLAlchemy(Store, SQLGenerator):
             #asserted rdf:type statement
             addCmd, params = self.buildTypeSQLCommand(
                 subject, obj, context, self._internedId)
-        trans = self.connection.begin()
-        try:
-            self.executeSQL(addCmd, params)
-            trans.commit()
-        except Exception, msg:
-            _logger.debug("Add failed %s" % msg)
-            trans.rollback()
+        with self.engine.connect() as connection:
+            trans = connection.begin()
+            try:
+                self.executeSQL(addCmd, params, connection=connection)
+                trans.commit()
+            except Exception, msg:
+                _logger.debug("Add failed %s with commands %s" % (msg, addCmd))
+                trans.rollback()
 
     def addN(self, quads):
         literalTriples = []
@@ -990,18 +944,19 @@ class SQLAlchemy(Store, SQLGenerator):
                 typeTriples.append(params)
 
             self.executeSQL(literalTripleInsertCmd, literalTriples, paramList=True)
-        trans = self.connection.begin()
-        try:
-            if literalTriples:
-                self.executeSQL(literalTripleInsertCmd, literalTriples, paramList=True)
-            if typeTriples:
-                self.executeSQL(typeTripleInsertCmd, typeTriples, paramList=True)
-            if otherTriples:
-                self.executeSQL(otherTripleInsertCmd, otherTriples, paramList=True)
-        except Exception, msg:
-            _logger.debug("Add failed %s" % msg)
-            trans.rollback()
-        trans.commit()
+        with self.engine.connect() as connection:
+            trans = connection.begin()
+            try:
+                if literalTriples:
+                    self.executeSQL(literalTripleInsertCmd, literalTriples, paramList=True, connection=connection)
+                if typeTriples:
+                    self.executeSQL(typeTripleInsertCmd, typeTriples, paramList=True, connection=connection)
+                if otherTriples:
+                    self.executeSQL(otherTripleInsertCmd, otherTriples, paramList=True, connection=connection)
+            except Exception, msg:
+                _logger.debug("AddN failed %s" % msg)
+                trans.rollback()
+            trans.commit()
 
     def remove(self, (subject, predicate, obj), context):
         """ Remove a triple from the store """
@@ -1013,63 +968,64 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
         literal_table = "%s_literal_statements" % self._internedId
-        trans = self.connection.begin()
-        try:
-            if not predicate or predicate != RDF.type:
-                #Need to remove predicates other than rdf:type
+        with self.engine.connect() as connection:
+            trans = connection.begin()
+            try:
+                if not predicate or predicate != RDF.type:
+                    #Need to remove predicates other than rdf:type
 
-                if not self.STRONGLY_TYPED_TERMS or isinstance(obj, Literal):
-                    #remove literal triple
-                    clauseString, params = self.buildClause(
-                        literal_table, subject, predicate, obj, context)
-                    if clauseString:
-                        cmd = "DELETE FROM " + \
-                            " ".join([literal_table, clauseString])
-                    else:
-                        cmd = "DELETE FROM " + literal_table
-                    self.executeSQL(self._normalizeSQLCmd(cmd), params)
-
-                for table in [quoted_table, asserted_table]:
-                    # If asserted non rdf:type table and obj is Literal, don't
-                    # do anything (already taken care of)
-                    if table == asserted_table and isinstance(obj, Literal):
-                        continue
-                    else:
+                    if not self.STRONGLY_TYPED_TERMS or isinstance(obj, Literal):
+                        #remove literal triple
                         clauseString, params = self.buildClause(
-                            table, subject, predicate, obj, context)
+                            literal_table, subject, predicate, obj, context)
                         if clauseString:
                             cmd = "DELETE FROM " + \
-                                " ".join([table, clauseString])
+                                  " ".join([literal_table, clauseString])
                         else:
-                            cmd = "DELETE FROM " + table
-                        self.executeSQL(self._normalizeSQLCmd(cmd), params)
+                            cmd = "DELETE FROM " + literal_table
+                        self.executeSQL(self._normalizeSQLCmd(cmd), params, connection=connection)
 
-            if predicate == RDF.type or not predicate:
-                # Need to check rdf:type and quoted partitions (in addition
-                # perhaps)
-                clauseString, params = self.buildClause(
-                    asserted_type_table, subject, RDF.type, obj, context, True)
-                if clauseString:
-                    cmd = "DELETE FROM " + " ".join(
-                        [asserted_type_table, clauseString])
-                else:
-                    cmd = 'DELETE FROM ' + asserted_type_table
+                    for table in [quoted_table, asserted_table]:
+                        # If asserted non rdf:type table and obj is Literal, don't
+                        # do anything (already taken care of)
+                        if table == asserted_table and isinstance(obj, Literal):
+                            continue
+                        else:
+                            clauseString, params = self.buildClause(
+                                table, subject, predicate, obj, context)
+                            if clauseString:
+                                cmd = "DELETE FROM " + \
+                                      " ".join([table, clauseString])
+                            else:
+                                cmd = "DELETE FROM " + table
+                            self.executeSQL(self._normalizeSQLCmd(cmd), params, connection=connection)
 
-                self.executeSQL(self._normalizeSQLCmd(cmd), params)
+                if predicate == RDF.type or not predicate:
+                    # Need to check rdf:type and quoted partitions (in addition
+                    # perhaps)
+                    clauseString, params = self.buildClause(
+                        asserted_type_table, subject, RDF.type, obj, context, True)
+                    if clauseString:
+                        cmd = "DELETE FROM " + " ".join(
+                            [asserted_type_table, clauseString])
+                    else:
+                        cmd = 'DELETE FROM ' + asserted_type_table
 
-                clauseString, params = self.buildClause(
-                    quoted_table, subject, predicate, obj, context)
-                if clauseString:
-                    cmd = clauseString and "DELETE FROM " + \
-                        " ".join([quoted_table, clauseString])
-                else:
-                    cmd = "DELETE FROM " + quoted_table
+                    self.executeSQL(self._normalizeSQLCmd(cmd), params, connection=connection)
 
-                self.executeSQL(self._normalizeSQLCmd(cmd), params)
-            trans.commit()
-        except Exception, msg:
-            _logger.debug("Removal failed %s" % msg)
-            trans.rollback()
+                    clauseString, params = self.buildClause(
+                        quoted_table, subject, predicate, obj, context)
+                    if clauseString:
+                        cmd = clauseString and "DELETE FROM " + \
+                              " ".join([quoted_table, clauseString])
+                    else:
+                        cmd = "DELETE FROM " + quoted_table
+
+                    self.executeSQL(self._normalizeSQLCmd(cmd), params, connection=connection)
+                trans.commit()
+            except Exception, msg:
+                _logger.debug("Removal failed %s" % msg)
+                trans.rollback()
 
     def triples(self, (subject, predicate, obj), context=None):
         """
@@ -1443,20 +1399,21 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_table = "%s_asserted_statements" % self._internedId
         asserted_type_table = "%s_type_statements" % self._internedId
         literal_table = "%s_literal_statements" % self._internedId
-        trans = self.connection.begin()
-        try:
-            for table in [quoted_table, asserted_table,
-                          asserted_type_table, literal_table]:
-                clauseString, params = self.buildContextClause(
-                    identifier, table)
-                self.executeSQL(
-                    self._normalizeSQLCmd(
+        with self.engine.connect() as connection:
+            trans = connection.begin()
+            try:
+                for table in [quoted_table, asserted_table,
+                              asserted_type_table, literal_table]:
+                    clauseString, params = self.buildContextClause(
+                        identifier, table)
+                    self.executeSQL(
+                        self._normalizeSQLCmd(
                         "DELETE from %s WHERE %s" % (table, clauseString)),
-                    [p for p in params if p])
-            trans.commit()
-        except Exception, msg:
-            _logger.debug("Context removal failed %s" % msg)
-            trans.rollback()
+                        [p for p in params if p])
+                trans.commit()
+            except Exception, msg:
+                _logger.debug("Context removal failed %s" % msg)
+                trans.rollback()
 
     # Optional Namespace methods
     # Placeholder optimized interfaces (those needed in order to port Versa)
@@ -1516,35 +1473,38 @@ class SQLAlchemy(Store, SQLGenerator):
     # Namespace persistence interface implementation
     def bind(self, prefix, namespace):
         """ """
-        trans = self.connection.begin()
-        try:
-            self.connection.execute(
-                "INSERT INTO %s_namespace_binds " +
-                "(prefix,uri) VALUES ('%s', '%s')" % (
+        with self.engine.connect() as connection:
+            trans = connection.begin()
+            try:
+                connection.execute(
+                    "INSERT INTO %s_namespace_binds " +
+                    "(prefix,uri) VALUES ('%s', '%s')" % (
                     self._internedId,
                     prefix,
                     namespace))
-            trans.commit()
-        except Exception, msg:
-            _logger.debug("Namespace binding failed %s" % msg)
-            trans.rollback()
+                trans.commit()
+            except Exception, msg:
+                _logger.debug("Namespace binding failed %s" % msg)
+                trans.rollback()
 
     def prefix(self, namespace):
         """ """
-        res = self.connection.execute("SELECT prefix FROM %s_namespace_binds WHERE uri = '%s'" % (
-            self._internedId,
-            namespace))
-        rt = [rtTuple[0] for rtTuple in res.fetchall()]
-        return rt and rt[0] or None
+        with self.engine.connect() as connection:
+            res = connection.execute("SELECT prefix FROM %s_namespace_binds WHERE uri = '%s'" % (
+                self._internedId,
+                namespace))
+            rt = [rtTuple[0] for rtTuple in res.fetchall()]
+            return rt and rt[0] or None
 
     def namespace(self, prefix):
         """ """
         res = None
         try:
-            res = self.connection.execute(
-                "SELECT uri FROM %s_namespace_binds WHERE prefix = '%s'" % (
-                self._internedId,
-                prefix))
+            with self.engine.connect() as connection:
+                res = connection.execute(
+                    "SELECT uri FROM %s_namespace_binds WHERE prefix = '%s'" % (
+                        self._internedId,
+                        prefix))
         except:
             return None
         rt = [rtTuple[0] for rtTuple in res.fetchall()]
@@ -1552,11 +1512,76 @@ class SQLAlchemy(Store, SQLGenerator):
 
     def namespaces(self):
         """ """
-        res = self.connection.execute("SELECT prefix, uri FROM %s_namespace_binds;" % (
-            self._internedId))
-        rt = res.fetchall()
-        for prefix, uri in rt:
-            yield prefix, uri
+        with self.engine.connect() as connection:
+            res = connection.execute("SELECT prefix, uri FROM %s_namespace_binds;" % (
+                self._internedId))
+            rt = res.fetchall()
+            for prefix, uri in rt:
+                yield prefix, uri
+
+    def __create_table_definitions(self):
+        self.metadata = MetaData()
+        self.tables = {
+            'asserted_statements': 
+                Table('%s_asserted_statements' % self._internedId, self.metadata,
+                      Column('subject', types.Text, nullable=False),
+                      Column('predicate', types.Text, nullable=False),
+                      Column('object', types.Text, nullable=False),
+                      Column('context', types.Text, nullable=False),
+                      Column('termcomb', types.Integer, nullable=False, key="termComb"),
+                      Index("%s_A_termComb_index" % self._internedId, 'termComb'),
+                      Index("%s_A_s_index" % self._internedId, 'subject'),
+                      Index("%s_A_p_index" % self._internedId, 'predicate'),
+                      Index("%s_A_o_index" % self._internedId, 'object'),
+                      Index("%s_A_c_index" % self._internedId, 'context')
+                  ),
+            'type_statements':
+                Table('%s_type_statements' % self._internedId, self.metadata,
+                      Column('member', types.Text, nullable=False),
+                      Column('klass', types.Text, nullable=False),
+                      Column('context', types.Text, nullable=False),
+                      Column('termcomb', types.Integer, nullable=False, key="termComb"),
+                      Index("%s_T_termComb_index" % self._internedId, 'termComb'),
+                      Index("%s_member_index" % self._internedId, 'member'),
+                      Index("%s_klass_index" % self._internedId, 'klass'),
+                      Index("%s_c_index" % self._internedId, 'context')
+                  ),
+            'literal_statements':
+                Table('%s_literal_statements' % self._internedId, self.metadata,
+                      Column('subject', types.Text, nullable=False),
+                      Column('predicate', types.Text, nullable=False),
+                      Column('object', types.Text),
+                      Column('context', types.Text, nullable=False),
+                      Column('termcomb', types.Integer, nullable=False, key="termComb"),
+                      Column('objlanguage', types.String(255), key="objLanguage"),
+                      Column('objdatatype', types.String(255), key="objDatatype"),
+                      Index("%s_L_termComb_index" % self._internedId, 'termComb'),
+                      Index("%s_L_s_index" %  self._internedId, 'subject'),
+                      Index("%s_L_p_index" % self._internedId, 'predicate'),
+                      Index("%s_L_c_index" % self._internedId, 'context')
+                  ),
+            'quoted_statements':
+                Table("%s_quoted_statements" % self._internedId, self.metadata,
+                      Column('subject', types.Text, nullable=False),
+                      Column('predicate', types.Text, nullable=False),
+                      Column('object', types.Text),
+                      Column('context', types.Text, nullable=False),
+                      Column('termcomb', types.Integer, nullable=False, key="termComb"),
+                      Column('objlanguage', types.String(255), key="objLanguage"),
+                      Column('objdatatype', types.String(255), key="objDatatype"),
+                      Index("%s_Q_termComb_index" % self._internedId, 'termComb'),
+                      Index("%s_Q_s_index" % self._internedId, 'subject'),
+                      Index("%s_Q_p_index" % self._internedId, 'predicate'),
+                      Index("%s_Q_o_index" % self._internedId, 'object'),
+                      Index("%s_Q_c_index" % self._internedId, 'context')
+                  ),
+            'namespace_binds':
+                Table("%s_namespace_binds" % self._internedId, self.metadata,
+                      Column('prefix', types.String(20), unique=True, nullable=False, primary_key=True),
+                      Column('uri', types.Text),
+                      Index("%s_uri_index" % self._internedId, 'uri')
+                  )
+        }
 
 
 table_name_prefixes = [
@@ -1566,44 +1591,3 @@ table_name_prefixes = [
     '%s_namespace_binds',
     '%s_literal_statements'
 ]
-
-CREATE_ASSERTED_STATEMENTS_TABLE = """
-CREATE TABLE %s_asserted_statements (
-    subject       text not NULL,
-    predicate     text not NULL,
-    object        text not NULL,
-    context       text not NULL,
-    termComb      integer not NULL)"""
-
-CREATE_ASSERTED_TYPE_STATEMENTS_TABLE = """
-CREATE TABLE %s_type_statements (
-    member        text not NULL,
-    klass         text not NULL,
-    context       text not NULL,
-    termComb      integer not NULL)"""
-
-CREATE_LITERAL_STATEMENTS_TABLE = """
-CREATE TABLE %s_literal_statements (
-    subject       text not NULL,
-    predicate     text not NULL,
-    object        text,
-    context       text not NULL,
-    termComb      integer not NULL,
-    objLanguage   varchar(255),
-    objDatatype   varchar(255))"""
-
-CREATE_QUOTED_STATEMENTS_TABLE = """
-CREATE TABLE %s_quoted_statements (
-    subject       text not NULL,
-    predicate     text not NULL,
-    object        text,
-    context       text not NULL,
-    termComb      integer not NULL,
-    objLanguage   varchar(255),
-    objDatatype   varchar(255))"""
-
-CREATE_NS_BINDS_TABLE = """
-CREATE TABLE %s_namespace_binds (
-    prefix        varchar(20) UNIQUE not NULL,
-    uri           text,
-    PRIMARY KEY (prefix))"""
