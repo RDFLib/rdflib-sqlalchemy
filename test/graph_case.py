@@ -290,7 +290,7 @@ class GraphTestCase(unittest.TestCase):
             elif o.value == u'こんにちは':
                 self.assertEquals(o.language, 'ja')
             elif o.value == u'something':
-                self.assertIsNone(o.language)
+                self.assertEquals(o.language, None)
             else:
                 self.fail()
         self.assertEquals(len(list(objs)), 3)
