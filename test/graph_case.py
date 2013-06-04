@@ -300,14 +300,19 @@ class GraphTestCase(unittest.TestCase):
     def testStoreLiteralsXml(self):
         bob = self.bob
         says = URIRef(u'http://www.rdflib.net/terms/says')
-        imtheone = Literal(u'I\'m the one', lang='en')
+        objects = [
+            Literal(u'I\'m the one', lang='en'),
+            Literal(u'こんにちは', lang='ja'),
+            Literal(u'les garçons à Noël reçoivent des œufs', lang='fr')]
 
         self.graph.parse(StringInputSource(xmltestdocXml), formal='xml')
 
         objs = list(self.graph)
         self.assertEquals(len(objs), 3)
-        o = objs[0]
-        self.assertEquals(o, (bob, says, imtheone))
+        for o in objs:
+            self.assertEquals(o[0], bob)
+            self.assertEquals(o[1], says)
+            self.assertTrue(o[2] in objects)
 
 
     def testStoreLiteralsXmlQuote(self):

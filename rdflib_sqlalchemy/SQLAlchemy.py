@@ -14,6 +14,7 @@ from rdflib.plugins.stores.regexmatching import PYTHON_REGEX
 from rdflib.py3compat import PY3
 from rdflib.plugins.stores.regexmatching import REGEXTerm
 from sqlalchemy import Column, Table, MetaData, Index, types
+from sqlalchemy.sql import select
 from .termutils import REVERSE_TERM_COMBINATIONS
 from .termutils import TERM_INSTANTIATION_DICT
 from .termutils import constructGraph
@@ -272,6 +273,16 @@ def createTerm(
             store.otherCache[(termType, termString)] = rt
             return rt
 
+class TermType(types.TypeDecorator):
+
+    impl = types.Text
+    
+    def process_bind_param(self, value, dialect):
+        if isinstance(value, (QuotedGraph, Graph)):
+            return value.identifier
+        else:
+            return value
+    
 
 class SQLGenerator(object):
 
@@ -406,72 +417,67 @@ class SQLGenerator(object):
         else:
             return term.encode('utf-8')
 
-    def buildTypeSQLCommand(self, member, klass, context, storeId):
+    def buildTypeSQLCommand(self, member, klass, context):
         """
         Builds an insert command for a type table
         """
         #columns: member,klass,context
-        rt = "INSERT INTO %s_type_statements" % storeId + \
-            " (member,klass,context,termComb) VALUES (%s, %s, %s,%s)"
-        return rt, [
-            self.normalizeTerm(member),
-            self.normalizeTerm(klass),
-            self.normalizeTerm(context.identifier),
-            int(type2TermCombination(member, klass, context))]
+        rt = self.tables['type_statements'].insert()
+        return rt, {
+            'member': member,
+            'klass' : klass,
+            'context': context.identifier,
+            'termComb': int(type2TermCombination(member, klass, context))}
 
     def buildLiteralTripleSQLCommand(
-            self, subject, predicate, obj, context, storeId):
+            self, subject, predicate, obj, context):
         """
         Builds an insert command for literal triples (statements where the
         object is a Literal)
         """
         triplePattern = int(
             statement2TermCombination(subject, predicate, obj, context))
-        literal_table = "%s_literal_statements" % storeId
-        command = "INSERT INTO %s " % literal_table + \
-                  "(subject,predicate,object,context,termComb,objLanguage," + \
-                  "objDatatype) VALUES (%s, %s, %s, %s, %s,%s,%s)"
-        return command, [
-            self.normalizeTerm(subject),
-            self.normalizeTerm(predicate),
-            self.normalizeTerm(obj),
-            self.normalizeTerm(context.identifier),
-            triplePattern,
-            isinstance(obj, Literal) and obj.language or None,
-            isinstance(obj, Literal) and obj.datatype or None]
+        command = self.tables['literal_statements'].insert()
+        values = {
+            'subject': subject,
+            'predicate': predicate,
+            'object': obj,
+            'context': context.identifier,
+            'termComb': triplePattern,
+            'objLanguage': isinstance(obj, Literal) and obj.language or None,
+            'objDatatype': isinstance(obj, Literal) and obj.datatype or None
+        }
+        return command, values
+            
 
     def buildTripleSQLCommand(
-            self, subject, predicate, obj, context, storeId, quoted):
+            self, subject, predicate, obj, context, quoted):
         """
         Builds an insert command for regular triple table
         """
-        stmt_table = quoted and "%s_quoted_statements" % storeId \
-            or "%s_asserted_statements" % storeId
+        stmt_table = quoted and self.tables['quoted_statements'] \
+            or self.tables['asserted_statements']
         triplePattern = statement2TermCombination(
             subject, predicate, obj, context)
+        command = stmt_table.insert()
         if quoted:
-            command = "INSERT INTO %s " % stmt_table + \
-                      "(subject,predicate,object,context,termComb," + \
-                      "objLanguage,objDatatype) VALUES " + \
-                      "(%s, %s, %s, %s, %s,%s,%s)"
-            params = [
-                self.normalizeTerm(subject),
-                self.normalizeTerm(predicate),
-                self.normalizeTerm(obj),
-                self.normalizeTerm(context.identifier),
-                triplePattern,
-                isinstance(obj, Literal) and obj.language or None,
-                isinstance(obj, Literal) and obj.datatype or None]
+            params = {
+                'subject': subject,
+                'predicate': predicate,
+                'object': obj,
+                'context': context.identifier,
+                'termComb' : triplePattern,
+                'objLanguage': isinstance(obj, Literal) and obj.language or None,
+                'objDatatype': isinstance(obj, Literal) and obj.datatype or None
+            }
         else:
-            command = "INSERT INTO %s " % stmt_table + \
-                      "(subject,predicate,object,context,termComb) " + \
-                      "VALUES (%s, %s, %s, %s, %s)"
-            params = [
-                self.normalizeTerm(subject),
-                self.normalizeTerm(predicate),
-                self.normalizeTerm(obj),
-                self.normalizeTerm(context.identifier),
-                triplePattern]
+            params = {
+                'subject': subject,
+                'predicate': predicate,
+                'object': obj,
+                'context': context.identifier,
+                'termComb': triplePattern
+            }
         return command, params
 
     def buildClause(
@@ -853,9 +859,6 @@ class SQLAlchemy(Store, SQLGenerator):
         """
         FIXME:  Add documentation!!
         """
-        pass
-        #if commit_pending_transaction:
-        #    self.connection.commit()
         try:
             self.engine.close()
         except:
@@ -883,76 +886,56 @@ class SQLAlchemy(Store, SQLGenerator):
         # _logger.debug(
         #       "Destroyed Close World Universe %s" % (self.identifier))
 
-    # Triple Methods
-    def add(self, (subject, predicate, obj), context=None, quoted=False):
-        """ Add a triple to the store of triples. """
+    def __getBuildCommand(self, (subject, predicate, obj), context=None, quoted=False):
+
+        buildCommandType = None
         if quoted or predicate != RDF.type:
             # Quoted statement or non rdf:type predicate
             # check if object is a literal
             if isinstance(obj, Literal):
                 addCmd, params = self.buildLiteralTripleSQLCommand(
-                    subject, predicate, obj, context, self._internedId)
+                    subject, predicate, obj, context)
+                buildCommandType = 'literal'
             else:
                 addCmd, params = self.buildTripleSQLCommand(
-                    subject, predicate, obj, context, self._internedId, quoted)
+                    subject, predicate, obj, context, quoted)
+                buildCommandType = 'other'
         elif predicate == RDF.type:
             #asserted rdf:type statement
-            addCmd, params = self.buildTypeSQLCommand(
-                subject, obj, context, self._internedId)
+            addCmd, params = self.buildTypeSQLCommand(subject, obj, context)
+            buildCommandType = 'type'
+        return buildCommandType, addCmd, params
+
+
+    # Triple Methods
+    def add(self, (subject, predicate, obj), context=None, quoted=False):
+        """ Add a triple to the store of triples. """
+
+        _, addCmd, params = self.__getBuildCommand((subject, predicate, obj), context, quoted)
         with self.engine.connect() as connection:
-            trans = connection.begin()
             try:
-                self.executeSQL(addCmd, params, connection=connection)
-                trans.commit()
+                connection.execute(addCmd, params)
             except Exception, msg:
-                _logger.debug("Add failed %s with commands %s" % (msg, addCmd))
-                trans.rollback()
+                _logger.debug("Add failed %s with commands %s params %s" % (msg, str(addCmd), repr(params)))
 
     def addN(self, quads):
-        literalTriples = []
-        typeTriples = []
-        otherTriples = []
-        literalTripleInsertCmd = None
-        typeTripleInsertCmd = None
-        otherTripleInsertCmd = None
-        for subject, predicate, obj, context in quads:
-            if isinstance(context, QuotedGraph) or predicate != RDF.type:
-                # Quoted statement or non rdf:type predicate
-                # check if object is a literal
-                if isinstance(obj, Literal):
-                    cmd, params = self.buildLiteralTripleSQLCommand(
-                        subject, predicate, obj, context, self._internedId)
-                    literalTripleInsertCmd = \
-                        literalTripleInsertCmd is not None \
-                        and literalTripleInsertCmd or cmd
-                    literalTriples.append(params)
-                else:
-                    cmd, params = self.buildTripleSQLCommand(
-                        subject, predicate, obj, context, self._internedId,
-                        isinstance(context, QuotedGraph))
-                    otherTripleInsertCmd = \
-                        otherTripleInsertCmd is not None \
-                        and otherTripleInsertCmd or cmd
-                    otherTriples.append(params)
-            elif predicate == RDF.type:
-                #asserted rdf:type statement
-                cmd, params = self.buildTypeSQLCommand(
-                    subject, obj, context, self._internedId)
-                typeTripleInsertCmd = \
-                    typeTripleInsertCmd is not None \
-                    and typeTripleInsertCmd or cmd
-                typeTriples.append(params)
+        
+        cmdTriplesDict = {
+        }
 
-            self.executeSQL(literalTripleInsertCmd, literalTriples, paramList=True)
+        for subject, predicate, obj, context in quads:
+            buildCommandType, cmd, params = \
+                self.__getBuildCommand((subject, predicate, obj), context, isinstance(context, QuotedGraph))
+
+            cmdTriple = cmdTripleDict.get(buildCommandType, {})
+            cmdTriple.setdefault('cmd', cmd)
+            cmdTriple.setdefault('params', []).append(params)
+
         with self.engine.connect() as connection:
             trans = connection.begin()
             try:
-                if literalTriples:
-                    self.executeSQL(literalTripleInsertCmd, literalTriples, paramList=True, connection=connection)
-                if typeTriples:
-                    self.executeSQL(typeTripleInsertCmd, typeTriples, paramList=True, connection=connection)
-                if otherTriples:
-                    self.executeSQL(otherTripleInsertCmd, otherTriples, paramList=True, connection=connection)
+                for cmdTriple in cmdTripleDict.values():
+                    connection.execute(cmdTriple['cmd'], cmdTriple['params'])
             except Exception, msg:
                 _logger.debug("AddN failed %s" % msg)
                 trans.rollback()
@@ -1474,26 +1457,20 @@ class SQLAlchemy(Store, SQLGenerator):
     def bind(self, prefix, namespace):
         """ """
         with self.engine.connect() as connection:
-            trans = connection.begin()
             try:
-                connection.execute(
-                    "INSERT INTO %s_namespace_binds " +
-                    "(prefix,uri) VALUES ('%s', '%s')" % (
-                    self._internedId,
-                    prefix,
-                    namespace))
-                trans.commit()
+                ins = self.tables['namespace_binds'].insert().values(prefix=prefix, uri=namesapce)
+                connection.execute(ins)
             except Exception, msg:
                 _logger.debug("Namespace binding failed %s" % msg)
-                trans.rollback()
 
     def prefix(self, namespace):
         """ """
         with self.engine.connect() as connection:
-            res = connection.execute("SELECT prefix FROM %s_namespace_binds WHERE uri = '%s'" % (
-                self._internedId,
-                namespace))
+            nb_table = self.tables['namespace_binds']
+            s = select([nb_table.c.prefix]).where(nb_table.c.uri == namespace)
+            res = connection.execute(s)
             rt = [rtTuple[0] for rtTuple in res.fetchall()]
+            res.close()
             return rt and rt[0] or None
 
     def namespace(self, prefix):
@@ -1501,22 +1478,20 @@ class SQLAlchemy(Store, SQLGenerator):
         res = None
         try:
             with self.engine.connect() as connection:
-                res = connection.execute(
-                    "SELECT uri FROM %s_namespace_binds WHERE prefix = '%s'" % (
-                        self._internedId,
-                        prefix))
+                nb_table = self.tables['namespace_binds']
+                s = select([nb_table.c.uri]).where(nb_table.c.prefix == prefix)
+                res = connection.execute(s)
         except:
             return None
         rt = [rtTuple[0] for rtTuple in res.fetchall()]
+        res.close()
         return rt and rt[0] or None
 
     def namespaces(self):
         """ """
         with self.engine.connect() as connection:
-            res = connection.execute("SELECT prefix, uri FROM %s_namespace_binds;" % (
-                self._internedId))
-            rt = res.fetchall()
-            for prefix, uri in rt:
+            res = connection.execute(self.tables['namespace_binds'].select())
+            for prefix, uri in res.fetchall():
                 yield prefix, uri
 
     def __create_table_definitions(self):
@@ -1524,10 +1499,10 @@ class SQLAlchemy(Store, SQLGenerator):
         self.tables = {
             'asserted_statements': 
                 Table('%s_asserted_statements' % self._internedId, self.metadata,
-                      Column('subject', types.Text, nullable=False),
-                      Column('predicate', types.Text, nullable=False),
-                      Column('object', types.Text, nullable=False),
-                      Column('context', types.Text, nullable=False),
+                      Column('subject', TermType, nullable=False),
+                      Column('predicate', TermType, nullable=False),
+                      Column('object', TermType, nullable=False),
+                      Column('context', TermType, nullable=False),
                       Column('termcomb', types.Integer, nullable=False, key="termComb"),
                       Index("%s_A_termComb_index" % self._internedId, 'termComb'),
                       Index("%s_A_s_index" % self._internedId, 'subject'),
@@ -1537,9 +1512,9 @@ class SQLAlchemy(Store, SQLGenerator):
                   ),
             'type_statements':
                 Table('%s_type_statements' % self._internedId, self.metadata,
-                      Column('member', types.Text, nullable=False),
-                      Column('klass', types.Text, nullable=False),
-                      Column('context', types.Text, nullable=False),
+                      Column('member', TermType, nullable=False),
+                      Column('klass', TermType, nullable=False),
+                      Column('context', TermType, nullable=False),
                       Column('termcomb', types.Integer, nullable=False, key="termComb"),
                       Index("%s_T_termComb_index" % self._internedId, 'termComb'),
                       Index("%s_member_index" % self._internedId, 'member'),
@@ -1548,10 +1523,10 @@ class SQLAlchemy(Store, SQLGenerator):
                   ),
             'literal_statements':
                 Table('%s_literal_statements' % self._internedId, self.metadata,
-                      Column('subject', types.Text, nullable=False),
-                      Column('predicate', types.Text, nullable=False),
-                      Column('object', types.Text),
-                      Column('context', types.Text, nullable=False),
+                      Column('subject', TermType, nullable=False),
+                      Column('predicate', TermType, nullable=False),
+                      Column('object', TermType),
+                      Column('context', TermType, nullable=False),
                       Column('termcomb', types.Integer, nullable=False, key="termComb"),
                       Column('objlanguage', types.String(255), key="objLanguage"),
                       Column('objdatatype', types.String(255), key="objDatatype"),
@@ -1562,10 +1537,10 @@ class SQLAlchemy(Store, SQLGenerator):
                   ),
             'quoted_statements':
                 Table("%s_quoted_statements" % self._internedId, self.metadata,
-                      Column('subject', types.Text, nullable=False),
-                      Column('predicate', types.Text, nullable=False),
-                      Column('object', types.Text),
-                      Column('context', types.Text, nullable=False),
+                      Column('subject', TermType, nullable=False),
+                      Column('predicate', TermType, nullable=False),
+                      Column('object', TermType),
+                      Column('context', TermType, nullable=False),
                       Column('termcomb', types.Integer, nullable=False, key="termComb"),
                       Column('objlanguage', types.String(255), key="objLanguage"),
                       Column('objdatatype', types.String(255), key="objDatatype"),
