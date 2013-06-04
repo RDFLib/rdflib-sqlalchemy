@@ -352,11 +352,16 @@ class SQLGenerator(object):
         except:
             pass
 
-        def locproc(item):
+        def py_to_sql(param):
+            if param is None:
+                return 'NULL'
+            if isinstance(param, int):
+                return param
             try:
-                return "'%s'" % item.decode()
+                return "'%s'" % param.decode()
             except:
-                return item
+                return param
+
         # _logger.debug("SQLGenerator %s - %s" % (qStr,params))
         if not params:
             querystr = qStr.replace('"', "'")
@@ -369,7 +374,7 @@ class SQLGenerator(object):
         elif paramList:
             raise Exception("Not supported!")
         else:
-            params = tuple([locproc(item) for item in params])
+            params = tuple(map(py_to_sql, params))
             querystr = qStr.replace('"', "'")
             querystr = querystr % params
             # if isinstance(qStr, bytes): qStr = qStr.decode()
