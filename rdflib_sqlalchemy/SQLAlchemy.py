@@ -3,10 +3,12 @@ import sys
 import logging
 import sqlalchemy
 import hashlib
-from rdflib import BNode
-from rdflib import Literal
-from rdflib import RDF
-from rdflib import URIRef
+from rdflib import (
+	BNode,
+	Literal,
+	RDF,
+	URIRef
+)
 from rdflib.graph import Graph
 from rdflib.graph import QuotedGraph
 from rdflib.store import Store  # , NodePickler
@@ -224,7 +226,7 @@ def createTerm(
                 rt = Literal(termString, objLanguage)
                 store.literalCache[((termString, objLanguage))] = rt
             elif objDatatype and not objLanguage:
-                rt = Literal(termString, objDatatype)
+                rt = Literal(termString, datatype=objDatatype)
                 store.literalCache[((termString, objDatatype))] = rt
             elif not objLanguage and not objDatatype:
                 rt = Literal(termString)
@@ -319,7 +321,7 @@ class SQLGenerator(object):
         (here) is to fill the parameters in-place surrounding each param
         with quote characters
         """
-        # print("SQLGenerator", qStr,params)
+        # print("py2executeSQL", qStr, params)
         if not params:
             querystr = qStr.replace('"', "'")
             cursor.execute(unicode(querystr))
@@ -345,6 +347,7 @@ class SQLGenerator(object):
         with quote characters
         """
         # if isinstance(qStr, bytes): qStr = qStr.decode()
+        # print("pycompat_executeSQL", qStr, params)
         try:
             if qStr is None:
                 raise ValueError("Query must be a string, it cannot be None")
@@ -352,7 +355,7 @@ class SQLGenerator(object):
         except:
             pass
 
-        def py_to_sql(param):
+        def py3_to_sql(param):
             if param is None:
                 return 'NULL'
             if isinstance(param, int):
@@ -360,7 +363,7 @@ class SQLGenerator(object):
             try:
                 return "'%s'" % param.decode()
             except:
-                return param
+                return "'%s'" % param
 
         # _logger.debug("SQLGenerator %s - %s" % (qStr,params))
         if not params:
@@ -374,7 +377,7 @@ class SQLGenerator(object):
         elif paramList:
             raise Exception("Not supported!")
         else:
-            params = tuple(map(py_to_sql, params))
+            params = tuple(map(py3_to_sql, params))
             querystr = qStr.replace('"', "'")
             querystr = querystr % params
             # if isinstance(qStr, bytes): qStr = qStr.decode()
@@ -1331,10 +1334,10 @@ class SQLAlchemy(Store, SQLGenerator):
                     "contexts, %s classification assertions, " +
                     "%s quoted statements, %s property/value " +
                     "assertions, and %s other assertions>" % (
-                        len([c for c in self.contexts()]),
+                        len([ctx for ctx in self.contexts()]),
                         typeLen, quotedLen, literalLen, assertedLen))
         except Exception:
-            return "<Partitioned MySQL N3 Store>"
+            return "<Partitioned SQL N3 Store>"
 
     def __len__(self, context=None):
         """ Number of statements in the store. """
@@ -1599,8 +1602,8 @@ class SQLAlchemy(Store, SQLGenerator):
         trans = self.connection.begin()
         try:
             c.execute(
-                "INSERT INTO %s_namespace_binds " +
-                "(prefix,uri) VALUES ('%s', '%s')" % (
+                ("INSERT INTO %s_namespace_binds " +
+                 "(prefix,uri) VALUES ('%s', '%s')") % (
                     self._internedId,
                     prefix,
                     namespace))
