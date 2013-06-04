@@ -49,8 +49,3 @@ def registerplugins():
     plugin.register(
         'SQLAlchemy', Store,
         'rdflib_sqlalchemy.SQLAlchemy', 'SQLAlchemy')
-
-    # # Work in progress
-    # plugin.register(
-    #     'SQLAlchemyBase', store.Store,
-    #     'rdflib_sqlalchemy.SQLAlchemyBase', 'SQLAlchemy')
