@@ -9,7 +9,9 @@ import context_case
 import graph_case
 from rdflib import Literal
 
-sqlalchemy_url = Literal(os.environ.get('DBURI',"sqlite://"))
+sqlalchemy_url = Literal(os.environ.get(
+    'DBURI',
+    "sqlite://"))
 
 
 class SQLASQLiteGraphTestCase(graph_case.GraphTestCase):
