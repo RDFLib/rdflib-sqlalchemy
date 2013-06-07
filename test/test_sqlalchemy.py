@@ -78,10 +78,10 @@ class SQLATestCase(unittest.TestCase):
         self.assertRaises(ValueError, _parse_rfc1738_args, 'Not parseable')
 
     def test_namespaces(self):
-        self.assert_(self.graph.namespaces() != [])
+        self.assert_(list(self.graph.namespaces()) != [])
 
     def test_contexts_without_triple(self):
-        self.assert_(self.graph.contexts() != [])
+        self.assert_(list(self.graph.contexts()) == [])
 
     def test_contexts_with_triple(self):
         statemnt = (michel, likes, pizza)

@@ -5,10 +5,12 @@ import sys
 import logging
 import sqlalchemy
 import hashlib
-from rdflib import BNode
-from rdflib import Literal
-from rdflib import RDF
-from rdflib import URIRef
+from rdflib import (
+	BNode,
+	Literal,
+	RDF,
+	URIRef
+)
 from rdflib.graph import Graph
 from rdflib.graph import QuotedGraph
 from rdflib.store import Store  # , NodePickler
@@ -231,7 +233,7 @@ def createTerm(
                 rt = Literal(termString, objLanguage)
                 store.literalCache[((termString, objLanguage))] = rt
             elif objDatatype and not objLanguage:
-                rt = Literal(termString, objDatatype)
+                rt = Literal(termString, datatype=objDatatype)
                 store.literalCache[((termString, objDatatype))] = rt
             elif not objLanguage and not objDatatype:
                 rt = Literal(termString)
@@ -903,7 +905,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     "contexts, %s classification assertions, " +
                     "%s quoted statements, %s property/value " +
                     "assertions, and %s other assertions>" % (
-                        len([c for c in self.contexts()]),
+                        len([ctx for ctx in self.contexts()]),
                         typeLen, quotedLen, literalLen, assertedLen))
         except Exception:
             return "<Partitioned SQL N3 Store>"
