@@ -9,8 +9,8 @@ except ImportError:
     raise SkipTest("psycopg2 not installed, skipping PgSQL tests")
 import logging
 _logger = logging.getLogger(__name__)
-import context_case
-import graph_case
+from . import context_case
+from . import graph_case
 
 sqlalchemy_url = os.environ.get(
     'DBURI',

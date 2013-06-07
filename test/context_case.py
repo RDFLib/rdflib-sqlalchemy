@@ -182,10 +182,10 @@ class ContextTestCase(unittest.TestCase):
             if (PY3 and not isinstance(c,(str, bytes))) or not isinstance(c, basestring):
                 return c.identifier
             return c
-        self.assert_(self.c1 in map(cid, self.graph.contexts()))
-        self.assert_(self.c2 in map(cid, self.graph.contexts()))
+        self.assert_(self.c1 in list(map(cid, self.graph.contexts())))
+        self.assert_(self.c2 in list(map(cid, self.graph.contexts())))
 
-        contextList = map(cid, list(self.graph.contexts(triple)))
+        contextList = list(map(cid, list(self.graph.contexts(triple))))
         self.assert_(self.c1 in contextList)
         self.assert_(self.c2 in contextList)
 
