@@ -7,6 +7,7 @@ from rdflib import URIRef
 from rdflib import Literal
 from rdflib import plugin
 from rdflib.store import Store
+from rdflib.py3compat import PY3
 from rdflib.parser import StringInputSource
 
 
@@ -305,7 +306,9 @@ class GraphTestCase(unittest.TestCase):
             Literal(u'こんにちは', lang='ja'),
             Literal(u'les garçons à Noël reçoivent des œufs', lang='fr')]
 
-        self.graph.parse(StringInputSource(xmltestdocXml), formal='xml')
+        testdoc = (PY3 and bytes(xmltestdocXml,"UTF-8")) or xmltestdocXml
+
+        self.graph.parse(StringInputSource(testdoc), formal='xml')
 
         objs = list(self.graph)
         self.assertEquals(len(objs), 3)
@@ -320,7 +323,9 @@ class GraphTestCase(unittest.TestCase):
         says = URIRef(u'http://www.rdflib.net/terms/says')
         imtheone = Literal(u'I\'m the one', lang='en')
 
-        self.graph.parse(StringInputSource(xmltestdocXmlQuote), formal='xml')
+        testdoc = (PY3 and bytes(xmltestdocXmlQuote,"UTF-8")) or xmltestdocXmlQuote
+
+        self.graph.parse(StringInputSource(testdoc), formal='xml')
 
         objs = list(self.graph)
         self.assertEquals(len(objs), 1)

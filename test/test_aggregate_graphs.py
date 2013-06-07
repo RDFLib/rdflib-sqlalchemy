@@ -7,10 +7,16 @@ from rdflib import RDF
 from rdflib import RDFS
 from rdflib import URIRef
 from rdflib.store import Store
-from cStringIO import StringIO
 from rdflib.graph import Graph
 from rdflib.graph import ConjunctiveGraph
 from rdflib.graph import ReadOnlyGraphAggregate
+from rdflib.py3compat import PY3
+
+if PY3:
+    from io import StringIO
+else:
+    from cStringIO import StringIO
+
 
 plugin.register(
     'xml', query.ResultParser,
@@ -139,7 +145,7 @@ class GraphAggregates2(unittest.TestCase):
         self.G = ConjunctiveGraph(memStore)
 
     def testAggregateSPARQL(self):
-        raise(SkipTest, "known_issue with SELECT from NAMED")
+        raise SkipTest("known_issue with SELECT from NAMED")
         rt = self.G.query(sparqlQ)
         assert len(rt) > 1
         rt = self.G.query(sparqlQ2, initBindings={u'?graph':
