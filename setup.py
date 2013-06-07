@@ -92,7 +92,7 @@ config = dict(
     }
 )
 
-install_requires = ["rdflib>=3.4.1-dev",
+install_requires = ["rdflib>=4.0",
                     "SQLAlchemy"]
 
 if sys.version_info[0] >= 3:
