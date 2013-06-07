@@ -27,6 +27,9 @@ from .termutils import statement2TermCombination
 
 if PY3:
     from functools import reduce
+    from urllib.parse import unquote_plus
+else:
+    from urllib import unquote_plus
 
 _logger = logging.getLogger(__name__)
 
@@ -107,7 +110,7 @@ def _parse_rfc1738_args(name):
         opts = {'username': username, 'password': password, 'host':
                 host, 'port': port, 'database': database, 'query': query}
         if opts['password'] is not None:
-            opts['password'] = urllib.unquote_plus(opts['password'])
+            opts['password'] = unquote_plus(opts['password'])
         return (name, opts)
     else:
         raise ValueError("Could not parse rfc1738 URL from string '%s'" % name)
@@ -1124,7 +1127,7 @@ class SQLAlchemy(Store, SQLGenerator):
         """ """
         with self.engine.connect() as connection:
             try:
-                ins = self.tables['namespace_binds'].insert().values(prefix=prefix, uri=namesapce)
+                ins = self.tables['namespace_binds'].insert().values(prefix=prefix, uri=namespace)
                 connection.execute(ins)
             except Exception:
                 e = sys.exc_info()[1]
