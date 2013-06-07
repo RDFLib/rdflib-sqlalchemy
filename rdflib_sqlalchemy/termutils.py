@@ -179,11 +179,12 @@ def constructGraph(key):
     return GRAPH_TERM_DICT[key]
 
 
-def triplePattern2termCombinations((s, p, o)):
+def triplePattern2termCombinations(triple):
     """
     Maps a triple pattern to term combinations (non-functioning)
 
     """
+    s, p, o = triple
     combinations = []
     # combinations.update(TERM_COMBINATIONS)
     if isinstance(o, Literal):

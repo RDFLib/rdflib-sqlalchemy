@@ -5,8 +5,8 @@ if os.environ.get('DB') != 'sqlite':
 import unittest
 import logging
 _logger = logging.getLogger(__name__)
-import context_case
-import graph_case
+from . import context_case
+from . import graph_case
 from rdflib import Literal
 
 sqlalchemy_url = Literal(os.environ.get('DBURI',"sqlite://"))

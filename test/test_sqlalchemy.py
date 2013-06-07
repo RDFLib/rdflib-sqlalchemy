@@ -77,18 +77,6 @@ class SQLATestCase(unittest.TestCase):
         from rdflib_sqlalchemy.SQLAlchemy import _parse_rfc1738_args
         self.assertRaises(ValueError, _parse_rfc1738_args, 'Not parseable')
 
-    def test_pycompat_executeSQL(self):
-        from rdflib_sqlalchemy.SQLAlchemy import SQLGenerator
-        s = SQLGenerator()
-        cursor = mock_cursor()
-        qStr = None
-        self.assertRaises(AttributeError, s.pycompat_executeSQL, cursor, qStr)
-        qStr = ""
-        paramList = ['unsupported']
-        self.assertRaises(Exception, s.pycompat_executeSQL, cursor, qStr)
-        self.assertRaises(
-            Exception, s.pycompat_executeSQL, cursor, qStr, paramList)
-
     def test_namespaces(self):
         self.assert_(self.graph.namespaces() != [])
 
