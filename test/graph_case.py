@@ -285,7 +285,6 @@ class GraphTestCase(unittest.TestCase):
         self.graph.add((bob, says, something))
         self.graph.commit()
 
-
         objs = list(self.graph.objects(subject=bob, predicate=says))
         for o in objs:
             if o.value == u'hello':
@@ -293,11 +292,11 @@ class GraphTestCase(unittest.TestCase):
             elif o.value == u'こんにちは':
                 self.assertEquals(o.language, 'ja')
             elif o.value == u'something':
-                self.assertIsNone(o.language)
+                self.assertEquals(o.language, None)
             else:
                 self.fail()
         self.assertEquals(len(list(objs)), 3)
-    
+
     def testStoreLiteralsXml(self):
         bob = self.bob
         says = URIRef(u'http://www.rdflib.net/terms/says')
@@ -306,7 +305,7 @@ class GraphTestCase(unittest.TestCase):
             Literal(u'こんにちは', lang='ja'),
             Literal(u'les garçons à Noël reçoivent des œufs', lang='fr')]
 
-        testdoc = (PY3 and bytes(xmltestdocXml,"UTF-8")) or xmltestdocXml
+        testdoc = (PY3 and bytes(xmltestdocXml, "UTF-8")) or xmltestdocXml
 
         self.graph.parse(StringInputSource(testdoc), formal='xml')
 
@@ -317,13 +316,13 @@ class GraphTestCase(unittest.TestCase):
             self.assertEquals(o[1], says)
             self.assertTrue(o[2] in objects)
 
-
     def testStoreLiteralsXmlQuote(self):
         bob = self.bob
         says = URIRef(u'http://www.rdflib.net/terms/says')
         imtheone = Literal(u'I\'m the one', lang='en')
 
-        testdoc = (PY3 and bytes(xmltestdocXmlQuote,"UTF-8")) or xmltestdocXmlQuote
+        testdoc = (PY3 and bytes(xmltestdocXmlQuote, "UTF-8")
+            ) or xmltestdocXmlQuote
 
         self.graph.parse(StringInputSource(testdoc), formal='xml')
 
@@ -371,7 +370,6 @@ xmltestdocXmlQuote = """<?xml version="1.0" encoding="UTF-8"?>
   </rdf:Description>
 </rdf:RDF>
 """
-
 
 
 n3testdoc = """@prefix : <http://example.org/> .
