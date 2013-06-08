@@ -184,9 +184,9 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
                      expression.literal_column('predicate'),
                      expression.literal_column('object')]
     if distinct:
-        return expression.union(*selects, order_by=orderStmt)
+        return expression.union(*selects, **{'order_by':orderStmt})
     else:
-        return expression.union_all(*selects, order_by=orderStmt)
+        return expression.union_all(*selects, **{'order_by':orderStmt})
 
 
 def extractTriple(tupleRt, store, hardCodedContext=None):
@@ -854,7 +854,7 @@ class SQLAlchemy(Store, SQLGenerator):
 
         q = unionSELECT(selects, selectType=TRIPLE_SELECT_NO_ORDER)
         with self.engine.connect() as connection:
-            _logger.debug("Triples query : %s", q)
+            _logger.debug("Triples query : %s" % str(q))
             res = connection.execute(q)
             # TODO: False but it may have limitations on text column. Check
             # NOTE: SQLite does not support ORDER BY terms that aren't
