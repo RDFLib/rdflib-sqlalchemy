@@ -9,8 +9,8 @@ except ImportError:
     raise SkipTest("psycopg2 not installed, skipping PgSQL tests")
 import logging
 _logger = logging.getLogger(__name__)
-import context_case
-import graph_case
+from . import context_case
+from . import graph_case
 
 sqlalchemy_url = os.environ.get(
     'DBURI',
@@ -24,11 +24,11 @@ class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
     create = True
 
     def setUp(self):
-        graph_case.GraphTestCase.setUp(
-            self, uri=self.uri, storename=self.storename)
+        super(SQLAPgSQLGraphTestCase, self).setUp(
+            uri=self.uri, storename=self.storename)
 
     def tearDown(self):
-        graph_case.GraphTestCase.tearDown(self, uri=self.uri)
+        super(SQLAPgSQLGraphTestCase, self).tearDown(uri=self.uri)
 
 
 class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
@@ -38,11 +38,11 @@ class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
     create = True
 
     def setUp(self):
-        context_case.ContextTestCase.setUp(
-            self, uri=self.uri, storename=self.storename)
+        super(SQLAPgSQLContextTestCase, self).setUp(
+            uri=self.uri, storename=self.storename)
 
     def tearDown(self):
-        context_case.ContextTestCase.tearDown(self, uri=self.uri)
+        super(SQLAPgSQLContextTestCase, self).tearDown(uri=self.uri)
 
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")

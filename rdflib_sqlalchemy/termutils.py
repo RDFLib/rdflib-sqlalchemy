@@ -114,21 +114,18 @@ def term2Letter(term):
     * :class:`~rdflib.graph.Graph`
     * :class:`~rdflib.graph.QuotedGraph`
 
-    >>> import rdflib
-    >>> from rdflib import plugin
-    >>> from rdflib import URIRef, Namespace
-    >>> from rdflib.term import BNode, Literal, Variable
+    >>> from rdflib import URIRef
+    >>> from rdflib.term import BNode
     >>> # from rdflib.term import Statement
-    >>> from rdflib.graph import Graph, ConjunctiveGraph, QuotedGraph
-    >>> from rdflib.store import Store
+    >>> from rdflib.graph import Graph, QuotedGraph
     >>> from rdflib_sqlalchemy.termutils import term2Letter
     >>> term2Letter(URIRef('http://purl.org/net/bel-epa.com/'))
     'U'
     >>> term2Letter(BNode())
     'B'
-    >>> term2Letter(Literal(%(u)s''))
+    >>> term2Letter(Literal(%(u)s''))  # noqa
     'L'
-    >>> term2Letter(Variable(%(u)s'x'))
+    >>> term2Letter(Variable(%(u)s'x'))  # noqa
     'V'
     >>> term2Letter(Graph())
     'B'
@@ -179,11 +176,12 @@ def constructGraph(key):
     return GRAPH_TERM_DICT[key]
 
 
-def triplePattern2termCombinations((s, p, o)):
+def triplePattern2termCombinations(triple):
     """
     Maps a triple pattern to term combinations (non-functioning)
 
     """
+    s, p, o = triple
     combinations = []
     # combinations.update(TERM_COMBINATIONS)
     if isinstance(o, Literal):

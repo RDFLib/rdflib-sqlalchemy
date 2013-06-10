@@ -5,6 +5,7 @@ from rdflib import Graph
 from rdflib import URIRef
 from rdflib.store import Store
 from rdflib import plugin
+from rdflib.py3compat import PY3
 
 # logging.getLogger('sqlalchemy.engine').setLevel(logging.WARN)
 
@@ -112,6 +113,7 @@ class ContextTestCase(unittest.TestCase):
         self.removeStuff()
 
     def testLenInOneContext(self):
+
         c1 = self.c1
         # make sure context is empty
 
@@ -177,13 +179,13 @@ class ContextTestCase(unittest.TestCase):
         self.addStuffInMultipleContexts()
 
         def cid(c):
-            if not isinstance(c, basestring):
+            if (PY3 and not isinstance(c,(str, bytes))) or not isinstance(c, basestring):
                 return c.identifier
             return c
-        self.assert_(self.c1 in map(cid, self.graph.contexts()))
-        self.assert_(self.c2 in map(cid, self.graph.contexts()))
+        self.assert_(self.c1 in list(map(cid, self.graph.contexts())))
+        self.assert_(self.c2 in list(map(cid, self.graph.contexts())))
 
-        contextList = map(cid, list(self.graph.contexts(triple)))
+        contextList = list(map(cid, list(self.graph.contexts(triple))))
         self.assert_(self.c1 in contextList)
         self.assert_(self.c2 in contextList)
 

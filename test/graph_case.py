@@ -7,6 +7,8 @@ from rdflib import URIRef
 from rdflib import Literal
 from rdflib import plugin
 from rdflib.store import Store
+from rdflib.py3compat import PY3
+from rdflib.parser import StringInputSource
 
 
 class GraphTestCase(unittest.TestCase):
@@ -295,6 +297,41 @@ class GraphTestCase(unittest.TestCase):
                 self.fail()
         self.assertEquals(len(list(objs)), 3)
 
+    def testStoreLiteralsXml(self):
+        bob = self.bob
+        says = URIRef(u'http://www.rdflib.net/terms/says')
+        objects = [
+            Literal(u'I\'m the one', lang='en'),
+            Literal(u'こんにちは', lang='ja'),
+            Literal(u'les garçons à Noël reçoivent des œufs', lang='fr')]
+
+        testdoc = (PY3 and bytes(xmltestdocXml, "UTF-8")) or xmltestdocXml
+
+        self.graph.parse(StringInputSource(testdoc), formal='xml')
+
+        objs = list(self.graph)
+        self.assertEquals(len(objs), 3)
+        for o in objs:
+            self.assertEquals(o[0], bob)
+            self.assertEquals(o[1], says)
+            self.assertTrue(o[2] in objects)
+
+    def testStoreLiteralsXmlQuote(self):
+        bob = self.bob
+        says = URIRef(u'http://www.rdflib.net/terms/says')
+        imtheone = Literal(u'I\'m the one', lang='en')
+
+        testdoc = (PY3 and bytes(xmltestdocXmlQuote, "UTF-8")
+            ) or xmltestdocXmlQuote
+
+        self.graph.parse(StringInputSource(testdoc), formal='xml')
+
+        objs = list(self.graph)
+        self.assertEquals(len(objs), 1)
+        o = objs[0]
+        self.assertEquals(o, (bob, says, imtheone))
+
+
 xmltestdoc = """<?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF
    xmlns="http://example.org/"
@@ -305,6 +342,35 @@ xmltestdoc = """<?xml version="1.0" encoding="UTF-8"?>
   </rdf:Description>
 </rdf:RDF>
 """
+
+xmltestdocXml = """<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:ns1="http://www.rdflib.net/terms/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:about="bob">
+    <ns1:says xml:lang="en">I'm the one</ns1:says>
+  </rdf:Description>
+  <rdf:Description rdf:about="bob">
+    <ns1:says xml:lang="ja">こんにちは</ns1:says>
+  </rdf:Description>
+  <rdf:Description rdf:about="bob">
+    <ns1:says xml:lang="fr">les garçons à Noël reçoivent des œufs</ns1:says>
+  </rdf:Description>
+</rdf:RDF>
+"""
+
+xmltestdocXmlQuote = """<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:ns1="http://www.rdflib.net/terms/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:about="bob">
+    <ns1:says xml:lang="en">I'm the one</ns1:says>
+  </rdf:Description>
+</rdf:RDF>
+"""
+
 
 n3testdoc = """@prefix : <http://example.org/> .
 
