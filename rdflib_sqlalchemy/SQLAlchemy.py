@@ -11,6 +11,7 @@ from rdflib import (
     RDF,
     URIRef
 )
+from rdflib.term import Node
 from rdflib.graph import Graph
 from rdflib.graph import QuotedGraph
 from rdflib.store import Store  # , NodePickler
@@ -47,6 +48,8 @@ ASSERTED_LITERAL_PARTITION = 6
 FULL_TRIPLE_PARTITIONS = [QUOTED_PARTITION, ASSERTED_LITERAL_PARTITION]
 
 INTERNED_PREFIX = 'kb_'
+
+MYSQL_MAX_INDEX_LENGTH = 200
 
 Any = None
 
@@ -294,6 +297,8 @@ class TermType(types.TypeDecorator):
     def process_bind_param(self, value, dialect):
         if isinstance(value, (QuotedGraph, Graph)):
             return value.identifier
+        elif isinstance(value, Node):
+            return str(value) if PY3 else unicode(value)
         else:
             return value
 
@@ -578,13 +583,8 @@ class SQLAlchemy(Store, SQLGenerator):
         name, opts = _parse_rfc1738_args(configuration)
         self.engine = sqlalchemy.create_engine(configuration)
         with self.engine.connect() as connection:
-            trans = connection.begin()
             if create:
-                try:
-                    self.metadata.create_all(self.engine)
-                    trans.commit()
-                except Exception:
-                    trans.rollback()
+                self.metadata.create_all(self.engine)
         #self._db.create_function("regexp", 2, regexp)
         if configuration:
             from sqlalchemy.engine import reflection
@@ -1211,10 +1211,10 @@ class SQLAlchemy(Store, SQLGenerator):
                        nullable=False, key="termComb"),
                 Index("%s_A_termComb_index" % self._internedId,
                       'termComb'),
-                Index("%s_A_s_index" % self._internedId, 'subject'),
-                Index("%s_A_p_index" % self._internedId, 'predicate'),
-                Index("%s_A_o_index" % self._internedId, 'object'),
-                Index("%s_A_c_index" % self._internedId, 'context')),
+                Index("%s_A_s_index" % self._internedId, 'subject', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_A_p_index" % self._internedId, 'predicate', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_A_o_index" % self._internedId, 'object', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_A_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
             'type_statements':
             Table('%s_type_statements' % self._internedId, self.metadata,
                   Column('member', TermType, nullable=False),
@@ -1224,9 +1224,9 @@ class SQLAlchemy(Store, SQLGenerator):
                          key="termComb"),
                   Index("%s_T_termComb_index" % self._internedId,
                         'termComb'),
-                  Index("%s_member_index" % self._internedId, 'member'),
-                  Index("%s_klass_index" % self._internedId, 'klass'),
-                  Index("%s_c_index" % self._internedId, 'context')),
+                  Index("%s_member_index" % self._internedId, 'member', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                  Index("%s_klass_index" % self._internedId, 'klass', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                  Index("%s_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
             'literal_statements':
             Table(
                 '%s_literal_statements' % self._internedId, self.metadata,
@@ -1242,9 +1242,9 @@ class SQLAlchemy(Store, SQLGenerator):
                        key="objDatatype"),
                 Index("%s_L_termComb_index" % self._internedId,
                       'termComb'),
-                Index("%s_L_s_index" % self._internedId, 'subject'),
-                Index("%s_L_p_index" % self._internedId, 'predicate'),
-                Index("%s_L_c_index" % self._internedId, 'context')),
+                Index("%s_L_s_index" % self._internedId, 'subject', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_L_p_index" % self._internedId, 'predicate', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_L_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
             'quoted_statements':
             Table(
                 "%s_quoted_statements" % self._internedId, self.metadata,
@@ -1260,17 +1260,17 @@ class SQLAlchemy(Store, SQLGenerator):
                        key="objDatatype"),
                 Index("%s_Q_termComb_index" % self._internedId,
                       'termComb'),
-                Index("%s_Q_s_index" % self._internedId, 'subject'),
-                Index("%s_Q_p_index" % self._internedId, 'predicate'),
-                Index("%s_Q_o_index" % self._internedId, 'object'),
-                Index("%s_Q_c_index" % self._internedId, 'context')),
+                Index("%s_Q_s_index" % self._internedId, 'subject', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_Q_p_index" % self._internedId, 'predicate', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_Q_o_index" % self._internedId, 'object', mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_Q_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
             'namespace_binds':
             Table(
                 "%s_namespace_binds" % self._internedId, self.metadata,
                 Column('prefix', types.String(20), unique=True,
                        nullable=False, primary_key=True),
                 Column('uri', types.Text),
-                Index("%s_uri_index" % self._internedId, 'uri'))
+                Index("%s_uri_index" % self._internedId, 'uri', mysql_length=MYSQL_MAX_INDEX_LENGTH))
         }
 
 
