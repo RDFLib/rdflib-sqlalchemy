@@ -164,7 +164,7 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
         elif tableType == ASSERTED_TYPE_PARTITION:
             selectClause = expression.select(
                 [table.c.member.label('subject'),
-                 expression.literal(RDF.type).label('predicate'),
+                 expression.literal(str(RDF.type) if PY3 else unicode(RDF.type)).label('predicate'),
                  table.c.klass.label('object'),
                  table.c.context.label('context'),
                  table.c.termComb.label('termcomb'),
@@ -296,7 +296,7 @@ class TermType(types.TypeDecorator):
 
     def process_bind_param(self, value, dialect):
         if isinstance(value, (QuotedGraph, Graph)):
-            return value.identifier
+            return str(value.identifier) if PY3 else unicode(value.identifier)
         elif isinstance(value, Node):
             return str(value) if PY3 else unicode(value)
         else:
@@ -581,6 +581,7 @@ class SQLAlchemy(Store, SQLGenerator):
         exists, but there is insufficient permissions to open the
         store."""
         name, opts = _parse_rfc1738_args(configuration)
+
         self.engine = sqlalchemy.create_engine(configuration)
         with self.engine.connect() as connection:
             if create:
@@ -1170,6 +1171,7 @@ class SQLAlchemy(Store, SQLGenerator):
         """ """
         with self.engine.connect() as connection:
             nb_table = self.tables['namespace_binds']
+            namespace = str(namespace) if PY3 else unicode(namespace)
             s = select([nb_table.c.prefix]).where(nb_table.c.uri == namespace)
             res = connection.execute(s)
             rt = [rtTuple[0] for rtTuple in res.fetchall()]
@@ -1179,10 +1181,11 @@ class SQLAlchemy(Store, SQLGenerator):
     def namespace(self, prefix):
         """ """
         res = None
+        prefix_val = str(prefix) if PY3 else unicode(prefix)
         try:
             with self.engine.connect() as connection:
                 nb_table = self.tables['namespace_binds']
-                s = select([nb_table.c.uri]).where(nb_table.c.prefix == prefix)
+                s = select([nb_table.c.uri]).where(nb_table.c.prefix == prefix_val)
                 res = connection.execute(s)
                 rt = [rtTuple[0] for rtTuple in res.fetchall()]
                 res.close()
