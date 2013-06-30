@@ -9,14 +9,14 @@ except ImportError:
     raise SkipTest("MySQLdb not found, skipping MySQL tests")
 import logging
 _logger = logging.getLogger(__name__)
-import context_case
-import graph_case
+from . import context_case
+from . import graph_case
 from rdflib import Literal
 
 # Specific to Travis-ci continuous integration and testing ...
 sqlalchemy_url = Literal(os.environ.get(
     'DBURI',
-    "mysql://root@127.0.0.1:3306/rdflibsqla_test"))
+    "mysql://root@127.0.0.1:3306/rdflibsqla_test?charset=utf8"))
 # Generally ...
 # sqlalchemy_url = Literal(
 #    "mysql+mysqldb://user:password@hostname:port/database?charset=utf8")
@@ -26,31 +26,33 @@ class SQLAMySQLGraphTestCase(graph_case.GraphTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
+    create = True
 
     def setUp(self):
-        graph_case.GraphTestCase.setUp(
-            self, uri=self.uri, storename=self.storename)
+        super(SQLAMySQLGraphTestCase,self).setUp(
+            uri=self.uri, storename=self.storename)
 
     def tearDown(self):
-        graph_case.GraphTestCase.tearDown(self, uri=self.uri)
+        super(SQLAMySQLGraphTestCase, self).tearDown(uri=self.uri)
 
 
 class SQLAMySQLContextTestCase(context_case.ContextTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
+    create = True
 
     def setUp(self):
-        context_case.ContextTestCase.setUp(
-            self, uri=self.uri, storename=self.storename)
+        super(SQLAMySQLContextTestCase, self).setUp(
+            uri=self.uri, storename=self.storename)
 
     def tearDown(self):
-        context_case.ContextTestCase.tearDown(self, uri=self.uri)
+        super(SQLAMySQLContextTestCase, self).tearDown(uri=self.uri)
 
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
 
-
+    
 class SQLAMySQLIssueTestCase(unittest.TestCase):
     storetest = True
     storename = "SQLAlchemy"
