@@ -1,12 +1,21 @@
 import unittest
 from nose import SkipTest
+from rdflib.py3compat import PY3
 import os
 if os.environ.get('DB') != 'mysql':
     raise SkipTest("MySQL not under test")
-try:
-    import MySQLdb
-except ImportError:
-    raise SkipTest("MySQLdb not found, skipping MySQL tests")
+if PY3:
+    try:
+        import mysql
+        assert mysql
+    except ImportError:
+        raise SkipTest("MySQL-connector not found, skipping MySQL tests")
+else:
+    try:
+        import MySQLdb
+        assert MySQLdb
+    except ImportError:
+        raise SkipTest("MySQLdb not found, skipping MySQL tests")
 import logging
 _logger = logging.getLogger(__name__)
 from . import context_case
@@ -16,7 +25,7 @@ from rdflib import Literal
 # Specific to Travis-ci continuous integration and testing ...
 sqlalchemy_url = Literal(os.environ.get(
     'DBURI',
-    "mysql://root@127.0.0.1:3306/rdflibsqla_test?charset=utf8"))
+    "mysql+mysqlconnector://root@127.0.0.1:3306/rdflibsqla_test?charset=utf8"))
 # Generally ...
 # sqlalchemy_url = Literal(
 #    "mysql+mysqldb://user:password@hostname:port/database?charset=utf8")
@@ -52,7 +61,7 @@ class SQLAMySQLContextTestCase(context_case.ContextTestCase):
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
 
-    
+
 class SQLAMySQLIssueTestCase(unittest.TestCase):
     storetest = True
     storename = "SQLAlchemy"
