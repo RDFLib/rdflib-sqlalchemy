@@ -5,13 +5,11 @@ if os.environ.get('DB') != 'sqlite':
 import unittest
 import logging
 _logger = logging.getLogger(__name__)
-import context_case
-import graph_case
+from . import context_case
+from . import graph_case
 from rdflib import Literal
 
-sqlalchemy_url = Literal(os.environ.get(
-    'DBURI',
-    "sqlite://"))
+sqlalchemy_url = Literal(os.environ.get('DBURI',"sqlite://"))
 
 
 class SQLASQLiteGraphTestCase(graph_case.GraphTestCase):
@@ -20,11 +18,11 @@ class SQLASQLiteGraphTestCase(graph_case.GraphTestCase):
     uri = sqlalchemy_url
 
     def setUp(self):
-        graph_case.GraphTestCase.setUp(
-            self, uri=self.uri, storename=self.storename)
+        super(SQLASQLiteGraphTestCase, self).setUp(
+            uri=self.uri, storename=self.storename)
 
     def tearDown(self):
-        graph_case.GraphTestCase.tearDown(self, uri=self.uri)
+        super(SQLASQLiteGraphTestCase, self).tearDown(uri=self.uri)
 
 
 class SQLASQLiteContextTestCase(context_case.ContextTestCase):
@@ -33,11 +31,11 @@ class SQLASQLiteContextTestCase(context_case.ContextTestCase):
     uri = sqlalchemy_url
 
     def setUp(self):
-        context_case.ContextTestCase.setUp(
-            self, uri=self.uri, storename=self.storename)
+        super(SQLASQLiteContextTestCase, self).setUp(
+            uri=self.uri, storename=self.storename)
 
     def tearDown(self):
-        context_case.ContextTestCase.tearDown(self, uri=self.uri)
+        super(SQLASQLiteContextTestCase, self).tearDown(uri=self.uri)
 
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
