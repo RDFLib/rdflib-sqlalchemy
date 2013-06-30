@@ -8,12 +8,14 @@ if PY3:
     try:
         import mysql
         assert mysql
+        dialect = "mysqlconnector"
     except ImportError:
         raise SkipTest("MySQL-connector not found, skipping MySQL tests")
 else:
     try:
         import MySQLdb
         assert MySQLdb
+        dialect = "mysqldb"
     except ImportError:
         raise SkipTest("MySQLdb not found, skipping MySQL tests")
 import logging
@@ -25,7 +27,7 @@ from rdflib import Literal
 # Specific to Travis-ci continuous integration and testing ...
 sqlalchemy_url = Literal(os.environ.get(
     'DBURI',
-    "mysql+mysqlconnector://root@127.0.0.1:3306/rdflibsqla_test?charset=utf8"))
+    "mysql+%s://root@127.0.0.1:3306/rdflibsqla_test?charset=utf8" % dialect))
 # Generally ...
 # sqlalchemy_url = Literal(
 #    "mysql+mysqldb://user:password@hostname:port/database?charset=utf8")
