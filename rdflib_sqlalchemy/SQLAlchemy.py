@@ -685,7 +685,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     context,
                     isinstance(context, QuotedGraph))
 
-            cmdTriple = cmdTripleDict.get(buildCommandType, {})
+            cmdTriple = cmdTripleDict.setdefault(buildCommandType, {})
             cmdTriple.setdefault('cmd', cmd)
             cmdTriple.setdefault('params', []).append(params)
 
