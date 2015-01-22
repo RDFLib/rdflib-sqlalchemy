@@ -8,14 +8,11 @@ env:
     - DB=mysql
     - DB=sqlite
 python:
-    - "2.5"
     - "2.6"
     - "2.7"
-    - "3.2"
     - "3.3"
     - "3.4"
 install:
-    - if [[ ${TRAVIS_PYTHON_VERSION} == '2.5' ]]; then pip install simplejson==2.0.9; fi
     - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '2' ]]; then pip install -r requirements-py2.txt --use-mirrors; fi
     - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '3' ]]; then pip install -r requirements-py3.txt --use-mirrors; fi
     - if [[ ${TRAVIS_PYTHON_VERSION} == 'pypy' ]]; then pip install --upgrade 'git+https://github.com/gjhiggins/isodate#egg=isodate'; fi
