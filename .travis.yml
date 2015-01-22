@@ -13,6 +13,7 @@ python:
     - "2.7"
     - "3.2"
     - "3.3"
+    - "3.4"
 install:
     - if [[ ${TRAVIS_PYTHON_VERSION} == '2.5' ]]; then pip install simplejson==2.0.9; fi
     - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '2' ]]; then pip install -r requirements-py2.txt --use-mirrors; fi
@@ -29,3 +30,4 @@ script:
     # 2to3 version.
     - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '2' ]]; then nosetests; fi
     - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '3' ]]; then nosetests --where=./build/src; fi
+    
