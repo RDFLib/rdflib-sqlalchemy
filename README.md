@@ -12,6 +12,26 @@ scalability as most graphs will always have more rdf:type statements than others
 
 In addition, it persists namespace mappings in a separate table.
 
+Back-end persistence
+--------------------
+
+Back-end persistence is provided by SQLAlchemy.
+
+Tested dialects are:
+
+- SQLite, using the built-in Python driver or, for Python 2.5, pysqlite
+- MySQL, using the MySQLdb-python driver or, for Python 3, mysql-connector
+- PostgreSQL, using the psycopg2 driver
+
+pysqlite: https://pypi.python.org/pypi/pysqlite
+
+MySQLdb-python: https://pypi.python.org/pypi/MySQL-python
+
+mysql-connector: http://dev.mysql.com/doc/connector-python/en/connector-python.html
+
+psycopg2: https://pypi.python.org/pypi/psycopg2
+
+
 Development
 ===========
 Github repository: https://github.com/RDFLib/rdflib-sqlalchemy

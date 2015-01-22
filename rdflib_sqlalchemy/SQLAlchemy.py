@@ -855,7 +855,7 @@ class SQLAlchemy(Store, SQLGenerator):
 
         q = unionSELECT(selects, selectType=TRIPLE_SELECT_NO_ORDER)
         with self.engine.connect() as connection:
-            _logger.debug("Triples query : %s" % str(q))
+            # _logger.debug("Triples query : %s" % str(q))
             res = connection.execute(q)
             # TODO: False but it may have limitations on text column. Check
             # NOTE: SQLite does not support ORDER BY terms that aren't
@@ -980,7 +980,7 @@ class SQLAlchemy(Store, SQLGenerator):
                  ASSERTED_LITERAL_PARTITION), ]
             q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
 
-        _logger.debug("Length query : %s" % str(q))
+        # _logger.debug("Length query : %s" % str(q))
 
         with self.engine.connect() as connection:
             res = connection.execute(q)
@@ -1189,7 +1189,9 @@ class SQLAlchemy(Store, SQLGenerator):
                 res = connection.execute(s)
                 rt = [rtTuple[0] for rtTuple in res.fetchall()]
                 res.close()
-                return rt and rt[0] or None
+                # return rt and rt[0] or None
+                from rdflib import URIRef
+                return rt and URIRef(rt[0]) or None
         except:
             return None
 
