@@ -1,5 +1,4 @@
-# -e git+https://github.com/RDFLib/rdflib.git#egg=rdflib
--e git+https://github.com/gjhiggins/rdflib.git#egg=rdflib
+-e git+https://github.com/RDFLib/rdflib.git#egg=rdflib
 psycopg2
 http://cdn.mysql.com/Downloads/Connector-Python/mysql-connector-python-2.0.2.zip
 -e git+https://github.com/davispuh/MySQL-for-Python-3#egg=MySQL-python
