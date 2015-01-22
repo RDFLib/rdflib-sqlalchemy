@@ -927,20 +927,23 @@ class SQLAlchemy(Store, SQLGenerator):
             (expression.alias(literal_table, 'literal'),
                 None, ASSERTED_LITERAL_PARTITION), ]
         q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
-        with self.engine.connect() as connection:
-            res = connection.execute(q)
-            rt = res.fetchall()
-            typeLen, quotedLen, assertedLen, literalLen = [
-                rtTuple[0] for rtTuple in rt]
-        try:
-            return ("<Partitioned SQL N3 Store: %s " +
-                    "contexts, %s classification assertions, " +
-                    "%s quoted statements, %s property/value " +
-                    "assertions, and %s other assertions>" % (
-                        len([ctx for ctx in self.contexts()]),
-                        typeLen, quotedLen, literalLen, assertedLen))
-        except Exception:
-            return "<Partitioned SQL N3 Store>"
+        if hasattr(self, 'engine'):
+            with self.engine.connect() as connection:
+                res = connection.execute(q)
+                rt = res.fetchall()
+                typeLen, quotedLen, assertedLen, literalLen = [
+                    rtTuple[0] for rtTuple in rt]
+            try:
+                return ("<Partitioned SQL N3 Store: %s " +
+                        "contexts, %s classification assertions, " +
+                        "%s quoted statements, %s property/value " +
+                        "assertions, and %s other assertions>" % (
+                            len([ctx for ctx in self.contexts()]),
+                            typeLen, quotedLen, literalLen, assertedLen))
+            except Exception:
+                return "<Partitioned SQL N3 Store>"
+        else:
+            return "<Partitioned unopened SQL N3 Store>"
 
     def __len__(self, context=None):
         """ Number of statements in the store. """
