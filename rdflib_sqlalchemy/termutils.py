@@ -19,9 +19,7 @@ SUBJECT = 0
 PREDICATE = 1
 OBJECT = 2
 CONTEXT = 3
-TERM_COMBINATIONS = dict(
-    [(term, index) for index, term, in enumerate(
-     [
+TERM_COMBINATIONS = dict([(term, index) for index, term, in enumerate([
      'UUUU', 'UUUB', 'UUUF', 'UUVU', 'UUVB', 'UUVF', 'UUBU', 'UUBB', 'UUBF',
      'UULU', 'UULB', 'UULF', 'UUFU', 'UUFB', 'UUFF',
      #
@@ -51,7 +49,7 @@ TERM_COMBINATIONS = dict(
      #
      # 'sVUU', 'sVUB', 'sVUF', 'sVVU', 'sVVB', 'sVVF', 'sVBU', 'sVBB', 'sVBF',
      # 'sVLU', 'sVLB', 'sVLF', 'sVFU', 'sVFB', 'sVFF'
-     ])])
+])])
 
 REVERSE_TERM_COMBINATIONS = dict(
     [(value, key) for key, value in TERM_COMBINATIONS.items()])
@@ -72,8 +70,8 @@ GRAPH_TERM_DICT = {
 
 @format_doctest_out
 def normalizeGraph(graph):
-    """Takes an instance of a ``Graph`` and returns the instance's identifier
-    and  ``type``.
+    """
+    Take an instance of a ``Graph`` and return the instance's identifier and  ``type``.
 
     Types are ``U`` for a :class:`~rdflib.graph.Graph`, ``F`` for
     a :class:`~rdflib.graph.QuotedGraph` and ``B`` for a
@@ -104,7 +102,8 @@ def normalizeGraph(graph):
 
 @format_doctest_out
 def term2Letter(term):
-    """Relate a given term to one of several key types:
+    """
+    Relate a given term to one of several key types.
 
     * :class:`~rdflib.term.BNode`,
     * :class:`~rdflib.term.Literal`,
@@ -161,8 +160,10 @@ def term2Letter(term):
 
 
 def constructGraph(key):
-    """Given a key (one of 'F', 'U' or 'B'), returns
-    a tuple containing a ``Graph`` and an appropriate referent.
+    """
+    Return a tuple containing a ``Graph`` and an appropriate referent.
+
+    Takes a key (one of 'F', 'U' or 'B')
 
     >>> from rdflib_sqlalchemy.termutils import constructGraph
     >>> constructGraph('F')
@@ -177,10 +178,7 @@ def constructGraph(key):
 
 
 def triplePattern2termCombinations(triple):
-    """
-    Maps a triple pattern to term combinations (non-functioning)
-
-    """
+    """Map a triple pattern to term combinations (non-functioning)."""
     s, p, o = triple
     combinations = []
     # combinations.update(TERM_COMBINATIONS)
@@ -192,10 +190,7 @@ def triplePattern2termCombinations(triple):
 
 
 def type2TermCombination(member, klass, context):
-    """
-    Maps a type to a TermCombo
-
-    """
+    """Map a type to a TermCombo."""
     try:
         rt = TERM_COMBINATIONS['%sU%s%s' %
                                (term2Letter(member),
@@ -209,10 +204,7 @@ def type2TermCombination(member, klass, context):
 
 
 def statement2TermCombination(subject, predicate, obj, context):
-    """
-    Maps a statement to a Term Combo
-
-    """
+    """Map a statement to a Term Combo."""
     return TERM_COMBINATIONS['%s%s%s%s' %
                              (term2Letter(subject), term2Letter(predicate),
                               term2Letter(obj), normalizeGraph(context)[-1])]
@@ -220,6 +212,8 @@ def statement2TermCombination(subject, predicate, obj, context):
 
 def escape_quotes(qstr):
     """
+    Escape backslashes.
+
     #FIXME:  This *may* prove to be a performance bottleneck and should
              perhaps be implemented in C (as it was in 4Suite RDF)
 
