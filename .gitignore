@@ -1,3 +1,7 @@
 .tox
 .noseids
 rdflib_sqlalchemy.egg-info
+.eggs/
+__pycache__/
+*.pyc
+build/
