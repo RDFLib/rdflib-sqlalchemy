@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-"""
-SQLAlchemy Store plugin for RDFLib
-"""
+"""SQLAlchemy Store plugin for RDFLib."""
+import logging
 __author__ = "Graham Higgins"
 __version__ = "0.2"
 
-import logging
-
 
 class NullHandler(logging.Handler):
-    """
+    r"""
+    Null handler.
+
     c.f.
     http://docs.python.org/howto/logging.html#library-config
     and
     http://docs.python.org/release/3.1.3/library/logging.\
     html#configuring-logging-for-a-library
     """
+
     def emit(self, record):
+        """Emit."""
         pass
 
 hndlr = NullHandler()
@@ -25,6 +26,8 @@ logging.getLogger("rdflib").addHandler(hndlr)
 
 def registerplugins():
     """
+    Register plugins.
+
     If setuptools is used to install rdflib-sqlalchemy, all the provided
     plugins are registered through entry_points. This is strongly recommended.
 
