@@ -1214,6 +1214,7 @@ class SQLAlchemy(Store, SQLGenerator):
             'asserted_statements':
             Table(
                 '%s_asserted_statements' % self._internedId, self.metadata,
+                Column('id', types.Integer, nullable=False, primary_key=True),
                 Column('subject', TermType, nullable=False),
                 Column('predicate', TermType, nullable=False),
                 Column('object', TermType, nullable=False),
@@ -1228,6 +1229,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 Index("%s_A_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
             'type_statements':
             Table('%s_type_statements' % self._internedId, self.metadata,
+                  Column('id', types.Integer, nullable=False, primary_key=True),
                   Column('member', TermType, nullable=False),
                   Column('klass', TermType, nullable=False),
                   Column('context', TermType, nullable=False),
@@ -1241,6 +1243,7 @@ class SQLAlchemy(Store, SQLGenerator):
             'literal_statements':
             Table(
                 '%s_literal_statements' % self._internedId, self.metadata,
+                Column('id', types.Integer, nullable=False, primary_key=True),
                 Column('subject', TermType, nullable=False),
                 Column('predicate', TermType, nullable=False),
                 Column('object', TermType),
@@ -1259,6 +1262,7 @@ class SQLAlchemy(Store, SQLGenerator):
             'quoted_statements':
             Table(
                 "%s_quoted_statements" % self._internedId, self.metadata,
+                Column('id', types.Integer, nullable=False, primary_key=True),
                 Column('subject', TermType, nullable=False),
                 Column('predicate', TermType, nullable=False),
                 Column('object', TermType),
