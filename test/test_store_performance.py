@@ -1,3 +1,4 @@
+"""Store performance tests."""
 import unittest
 import gc
 import os
@@ -7,34 +8,46 @@ from random import random
 from tempfile import mkdtemp
 from rdflib import Graph
 from rdflib import URIRef
+try:
+    from urllib.request import pathname2url
+except:
+    from urllib import pathname2url
+from nose import SkipTest
+
+raise SkipTest("Store performance test suspended")
 
 
 def random_uri():
+    """Return random URI."""
     return URIRef("%s" % random())
 
 
 class StoreTestCase(unittest.TestCase):
     """
-    Test case for testing store performance... probably should be
-    something other than a unit test... but for now we'll add it as a
-    unit test.
+    Test case for testing store performance.
+
+    Probably should be something other than a unit test
+    but for now we'll add it as a unit test.
     """
+
     store = 'IOMemory'
     path = None
     storetest = True
     performancetest = True
 
     def setUp(self):
+        """Setup."""
         self.gcold = gc.isenabled()
         gc.collect()
         gc.disable()
-
         self.graph = Graph(store=self.store)
-        self.tmppath = mkdtemp()
-        self.graph.open(self.tmppath)
+        if self.path is None:
+            self.path = pathname2url(mkdtemp())
+        self.graph.open(self.path)
         self.input = Graph()
 
     def tearDown(self):
+        """Teardown."""
         self.graph.close()
         if self.gcold:
             gc.enable()
@@ -53,6 +66,7 @@ class StoreTestCase(unittest.TestCase):
                     os.remove(self.path)
 
     def testTime(self):
+        """Test timing."""
         # number = 1
         print('"%s": [' % self.store)
         for i in ['500triples', '1ktriples', '2ktriples',
@@ -80,9 +94,12 @@ class StoreTestCase(unittest.TestCase):
 
 
 class SQLAlchemyStoreTestCase(StoreTestCase):
+    """SQLAlchemy Store."""
+
     store = "SQLAlchemy"
 
     def setUp(self):
+        """Setup."""
         self.store = "SQLAlchemy"
         self.path = "sqlite:///%(here)s/test/tmpdb.sqlite" % {
             "here": os.getcwd()}

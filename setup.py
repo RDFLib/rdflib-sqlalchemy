@@ -1,19 +1,21 @@
 #!/usr/bin/env python
+"""Setup."""
 # -*- coding: utf-8 -*-
 import sys
 import re
 
 
 def setup_python3():
-    # Taken from "distribute" setup.py
+    """Taken from "distribute" setup.py."""
     from distutils.filelist import FileList
-    from distutils import dir_util, file_util, util, log
+    from distutils import dir_util, file_util, util
     from os.path import join, exists
 
     tmp_src = join("build", "src")
+    # Not covered by "setup.py clean --all", so explicit deletion required.
     if exists(tmp_src):
         dir_util.remove_tree(tmp_src)
-    log.set_verbosity(1)
+    # log.set_verbosity(1)
     fl = FileList()
     for line in open("MANIFEST.in"):
         if not line.strip():
@@ -33,10 +35,33 @@ def setup_python3():
 
     return tmp_src
 
+kwargs = {}
+if sys.version_info[0] >= 3:
+    from setuptools import setup
+    # kwargs['use_2to3'] = True  # is done in setup_python3 above already
+    kwargs['install_requires'] = ["rdflib>=4.0", "SQLAlchemy"]
+    kwargs['tests_require'] = ['coveralls']
+    kwargs['requires'] = []
+    kwargs['src_root'] = setup_python3()
+    assert setup
+else:
+    try:
+        from setuptools import setup
+        assert setup
+        kwargs['test_suite'] = "nose.collector"
+        kwargs['install_requires'] = ["rdflib>=4.0", "SQLAlchemy"]
+        kwargs['tests_require'] = ['coveralls']
 
-# Find version. We have to do this because we can't import it in Python 3 until
-# its been automatically converted in the setup process.
+    except ImportError:
+        from distutils.core import setup
+
+
 def find_version(filename):
+    """Find version.
+
+    We have to do this because we can't import it in Python 3 until
+    its been automatically converted in the setup process.
+    """
     _version_re = re.compile(r'__version__ = "(.*)"')
     for line in open(filename):
         version_match = _version_re.match(line)
@@ -45,7 +70,7 @@ def find_version(filename):
 
 __version__ = find_version('rdflib_sqlalchemy/__init__.py')
 
-config = dict(
+setup(
     name='rdflib-sqlalchemy',
     version=__version__,
     description="rdflib extension adding SQLAlchemy as an AbstractSQLStore back-end store",
@@ -73,42 +98,21 @@ config = dict(
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 2.5",
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
         "License :: OSI Approved :: BSD License",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Operating System :: OS Independent",
         "Natural Language :: English",
-        ],
-    test_suite="test",
+    ],
     entry_points={
         'rdf.plugins.store': [
-            'SQLAlchemy = rdflib_sqlalchemy.SQLAlchemy:SQLAlchemy',
+            # 'SQLAlchemy = rdflib_sqlalchemy.SQLAlchemy:SQLAlchemy',
             # 'SQLAlchemyBase = rdflib_sqlalchemy.SQLAlchemyBase:SQLAlchemy',
         ],
-    }
+    },
+    **kwargs
 )
-
-install_requires = ["rdflib>=4.0",
-                    "SQLAlchemy"]
-
-if sys.version_info[0] >= 3:
-    from setuptools import setup
-    assert setup
-    config.update({'use_2to3': True})
-    config.update({'src_root': setup_python3()})
-else:
-    if sys.version_info[:2] < (2, 6):
-        install_requires += ['pysqlite']
-    try:
-        from setuptools import setup
-        assert setup
-        config.update({'test_suite': "nose.collector"})
-    except ImportError:
-        from distutils.core import setup
-
-config['install_requires'] = install_requires
-setup(**config)

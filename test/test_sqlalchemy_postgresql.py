@@ -14,7 +14,7 @@ from . import graph_case
 
 sqlalchemy_url = os.environ.get(
     'DBURI',
-    'postgresql+psycopg2://postgres@localhost/rdflibsqla_test')
+    'postgresql+psycopg2://postgres@localhost/test')
 
 
 class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):

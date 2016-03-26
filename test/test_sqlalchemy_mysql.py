@@ -27,7 +27,7 @@ from rdflib import Literal
 # Specific to Travis-ci continuous integration and testing ...
 sqlalchemy_url = Literal(os.environ.get(
     'DBURI',
-    "mysql+%s://root@127.0.0.1:3306/rdflibsqla_test?charset=utf8" % dialect))
+    "mysql+%s://root@127.0.0.1:3306/test?charset=utf8" % dialect))
 # Generally ...
 # sqlalchemy_url = Literal(
 #    "mysql+mysqldb://user:password@hostname:port/database?charset=utf8")
