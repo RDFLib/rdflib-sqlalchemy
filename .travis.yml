@@ -3,6 +3,7 @@ language: python
 branches:
   only:
     - master
+    - idkey
 env:
     - DB=pgsql
     - DB=mysql
