@@ -50,7 +50,7 @@ Continuous integration: https://travis-ci.org/RDFLib/rdflib-sqlalchemy/
 An illustrative unit test:
 ==========================
 
-.. code-block:: python
+```python
 
     import unittest
     from rdflib import plugin, Graph, Literal, URIRef
@@ -79,6 +79,7 @@ An illustrative unit test:
 
     if __name__ == '__main__':
         unittest.main()
+```
 
 Running the tests
 =================
