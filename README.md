@@ -34,10 +34,10 @@ Development
 ===========
 Github repository: https://github.com/RDFLib/rdflib-sqlalchemy
 
-![Travis CI](https://travis-ci.org/RDFLib/rdflib-sqlalchemy.png?branch=master)]
+![Travis CI](https://travis-ci.org/RDFLib/rdflib-sqlalchemy.png?branch=master)
 ![PyPI](https://img.shields.io/pypi/v/rdflib-sqlalchemy.svg)
 ![PyPI](https://img.shields.io/pypi/status/rdflib-sqlalchemy.svg)
-![PyPI](https://img.shields.io/pypi/dm/rdflib-sqlalchemy.svg)
+![PyPI](https://img.shields.io/pypi/dw/rdflib-sqlalchemy.svg)
 ![PyPI](https://img.shields.io/pypi/pyversions/rdflib-sqlalchemy.svg)
 ![PyPI](https://img.shields.io/pypi/l/rdflib-sqlalchemy.svg)
 ![PyPI](https://img.shields.io/pypi/wheel/rdflib-sqlalchemy.svg)
