@@ -7,3 +7,4 @@ rdflib_sqlalchemy.egg-info
 *.project
 *.pydevproject
 /.eggs/
+/dist/
