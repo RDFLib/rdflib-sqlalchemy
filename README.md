@@ -4,11 +4,9 @@ RDFLib-SQLAlchemy
 A SQLAlchemy-backed, formula-aware RDFLib Store. It stores its triples
 in the following partitions:
 
-- Asserted non rdf:type statements
-- Asserted rdf:type statements (in a table which models Class membership)
-The motivation for this partition is primarily query speed and
-scalability as most graphs will always have more rdf:type statements than others
-- All Quoted statements
+- Asserted non rdf:type statements.
+- Asserted rdf:type statements (in a table which models Class membership). The motivation for this partition is primarily query speed and scalability as most graphs will always have more rdf:type statements than others.
+- All Quoted statements.
 
 In addition, it persists namespace mappings in a separate table.
 
@@ -36,7 +34,15 @@ Development
 ===========
 Github repository: https://github.com/RDFLib/rdflib-sqlalchemy
 
-Travis-CI build status: [![Build Status](https://travis-ci.org/RDFLib/rdflib-sqlalchemy.png?branch=master)](https://travis-ci.org/RDFLib/rdflib-sqlalchemy)
+![Travis CI](https://travis-ci.org/RDFLib/rdflib-sqlalchemy.png?branch=master)]
+![PyPI](https://img.shields.io/pypi/v/rdflib-sqlalchemy.svg)
+![PyPI](https://img.shields.io/pypi/status/rdflib-sqlalchemy.svg)
+![PyPI](https://img.shields.io/pypi/dm/rdflib-sqlalchemy.svg)
+![PyPI](https://img.shields.io/pypi/pyversions/rdflib-sqlalchemy.svg)
+![PyPI](https://img.shields.io/pypi/l/rdflib-sqlalchemy.svg)
+![PyPI](https://img.shields.io/pypi/wheel/rdflib-sqlalchemy.svg)
+![PyPI](https://img.shields.io/pypi/format/rdflib-sqlalchemy.svg)
+
 
 An illustrative unit test:
 ==========================
