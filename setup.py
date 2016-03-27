@@ -86,11 +86,11 @@ setup(
     the following partitions:
 
     * Asserted non rdf:type statements
-    - Asserted rdf:type statements (in a table which models Class membership).
+    * Asserted rdf:type statements (in a table which models Class membership).
       The motivation for this partition is primarily improved query speed and
       scalability as most graphs will always have more rdf:type statements than
       others.
-    - All Quoted statements
+    * All Quoted statements
 
     In addition it persists namespace mappings in a separate table
     """,
