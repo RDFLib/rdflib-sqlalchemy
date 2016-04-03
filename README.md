@@ -19,7 +19,7 @@ Tested dialects are:
 
 - SQLite, using the built-in Python driver or, for Python 2.5, pysqlite
 - MySQL, using the MySQLdb-python driver or, for Python 3, mysql-connector
-- PostgreSQL, using the psycopg2 driver (or, on trial, the pg8000 driver)
+- PostgreSQL, using the psycopg2 driver or the pg8000 driver.
 
 pysqlite: https://pypi.python.org/pypi/pysqlite
 
@@ -29,7 +29,7 @@ mysql-connector: http://dev.mysql.com/doc/connector-python/en/connector-python.h
 
 psycopg2: https://pypi.python.org/pypi/psycopg2
 
-pg8000: https://pypi.python.org/pypi/pg8000 (checkout "pg8000" branch)
+pg8000: https://pypi.python.org/pypi/pg8000
 
 Development
 ===========
