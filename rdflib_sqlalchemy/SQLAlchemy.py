@@ -26,6 +26,7 @@ from .termutils import TERM_INSTANTIATION_DICT
 from .termutils import constructGraph
 from .termutils import type2TermCombination
 from .termutils import statement2TermCombination
+from . import __version__
 
 if PY3:
     from functools import reduce
@@ -168,13 +169,14 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
             selectClause = table.select(whereClause)
         elif tableType == ASSERTED_TYPE_PARTITION:
             selectClause = expression.select(
-                [table.c.member.label('subject'),
+                [table.c.id.label('id'),
+                 table.c.member.label('subject'),
                  expression.literal(str(RDF.type) if PY3 else unicode(RDF.type)).label('predicate'),
                  table.c.klass.label('object'),
                  table.c.context.label('context'),
                  table.c.termComb.label('termcomb'),
                  expression.literal_column("NULL").label('objlanguage'),
-                 expression.literal_column("NULL").label('objdatatype')],
+                 expression.literal_column("NULL").label('objdatatype')][1 if __version__ <= '0.2' else 0:],
                 whereClause)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
             selectClause = expression.select(
@@ -205,14 +207,25 @@ def extractTriple(tupleRt, store, hardCodedContext=None):
     converts it to a tuple of terms using the termComb integer
     to interpret how to instantiate each term
     """
-    try:
-        subject, predicate, obj, rtContext, termComb, \
-            objLanguage, objDatatype = tupleRt
-        termCombString = REVERSE_TERM_COMBINATIONS[termComb]
-        subjTerm, predTerm, objTerm, ctxTerm = termCombString
-    except ValueError:
-        subject, subjTerm, predicate, predTerm, obj, objTerm, \
-            rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
+    if __version__ <= "0.2":
+        try:
+            subject, predicate, obj, rtContext, termComb, \
+                objLanguage, objDatatype = tupleRt
+            termCombString = REVERSE_TERM_COMBINATIONS[termComb]
+            subjTerm, predTerm, objTerm, ctxTerm = termCombString
+        except ValueError:
+            subject, subjTerm, predicate, predTerm, obj, objTerm, \
+                rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
+    else:
+        try:
+            id, subject, predicate, obj, rtContext, termComb, \
+                objLanguage, objDatatype = tupleRt
+            termCombString = REVERSE_TERM_COMBINATIONS[termComb]
+            subjTerm, predTerm, objTerm, ctxTerm = termCombString
+        except ValueError:
+            id, subject, subjTerm, predicate, predTerm, obj, objTerm, \
+                rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
+
     context = rtContext is not None \
         and rtContext \
         or hardCodedContext.identifier
@@ -221,7 +234,10 @@ def extractTriple(tupleRt, store, hardCodedContext=None):
     o = createTerm(obj, objTerm, store, objLanguage, objDatatype)
 
     graphKlass, idKlass = constructGraph(ctxTerm)
-    return s, p, o, (graphKlass, idKlass, context)
+    if __version__ <= "0.2":
+        return s, p, o, (graphKlass, idKlass, context)
+    else:
+        return id, s, p, o, (graphKlass, idKlass, context)
 
 
 def createTerm(
@@ -881,8 +897,12 @@ class SQLAlchemy(Store, SQLGenerator):
             result = res.fetchall()
         tripleCoverage = {}
         for rt in result:
-            s, p, o, (graphKlass, idKlass, graphId) = \
-                extractTriple(rt, self, context)
+            if __version__ <= "0.2":
+                s, p, o, (graphKlass, idKlass, graphId) = \
+                    extractTriple(rt, self, context)
+            else:
+                id, s, p, o, (graphKlass, idKlass, graphId) = \
+                    extractTriple(rt, self, context)
             contexts = tripleCoverage.get((s, p, o), [])
             contexts.append(graphKlass(self, idKlass(graphId)))
             tripleCoverage[(s, p, o)] = contexts
@@ -1214,6 +1234,7 @@ class SQLAlchemy(Store, SQLGenerator):
             'asserted_statements':
             Table(
                 '%s_asserted_statements' % self._internedId, self.metadata,
+                Column('id', types.Integer, nullable=False, primary_key=True),
                 Column('subject', TermType, nullable=False),
                 Column('predicate', TermType, nullable=False),
                 Column('object', TermType, nullable=False),
@@ -1228,6 +1249,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 Index("%s_A_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
             'type_statements':
             Table('%s_type_statements' % self._internedId, self.metadata,
+                  Column('id', types.Integer, nullable=False, primary_key=True),
                   Column('member', TermType, nullable=False),
                   Column('klass', TermType, nullable=False),
                   Column('context', TermType, nullable=False),
@@ -1241,6 +1263,7 @@ class SQLAlchemy(Store, SQLGenerator):
             'literal_statements':
             Table(
                 '%s_literal_statements' % self._internedId, self.metadata,
+                Column('id', types.Integer, nullable=False, primary_key=True),
                 Column('subject', TermType, nullable=False),
                 Column('predicate', TermType, nullable=False),
                 Column('object', TermType),
@@ -1259,6 +1282,7 @@ class SQLAlchemy(Store, SQLGenerator):
             'quoted_statements':
             Table(
                 "%s_quoted_statements" % self._internedId, self.metadata,
+                Column('id', types.Integer, nullable=False, primary_key=True),
                 Column('subject', TermType, nullable=False),
                 Column('predicate', TermType, nullable=False),
                 Column('object', TermType),
@@ -1283,7 +1307,11 @@ class SQLAlchemy(Store, SQLGenerator):
                 Column('uri', types.Text),
                 Index("%s_uri_index" % self._internedId, 'uri', mysql_length=MYSQL_MAX_INDEX_LENGTH))
         }
-
+        if __version__ > "0.2":
+            for table in ['type_statements', 'literal_statements',
+                          'quoted_statements', 'asserted_statements']:
+                self.tables[table].append_column(
+                    Column('id', types.Integer, nullable=False, primary_key=True))
 
 table_name_prefixes = [
     '%s_asserted_statements',

@@ -2,7 +2,7 @@
 """SQLAlchemy Store plugin for RDFLib."""
 import logging
 __author__ = "Graham Higgins"
-__version__ = "0.2"
+__version__ = "0.3"
 
 
 class NullHandler(logging.Handler):
