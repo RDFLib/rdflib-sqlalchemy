@@ -1,20 +1,25 @@
+import logging
 import os
 import unittest
-from nose.exc import SkipTest
-if os.environ.get('DB') != 'pgsql':
-    raise SkipTest("PgSQL not under test")
+
+from nose import SkipTest
 try:
-    import psycopg2
+    import psycopg2  # noqa
 except ImportError:
     raise SkipTest("psycopg2 not installed, skipping PgSQL tests")
-import logging
-_logger = logging.getLogger(__name__)
+
 from . import context_case
 from . import graph_case
 
+
+if os.environ.get("DB") != "pgsql":
+    raise SkipTest("PgSQL not under test")
+
 sqlalchemy_url = os.environ.get(
-    'DBURI',
-    'postgresql+psycopg2://postgres@localhost/test')
+    "DBURI",
+    "postgresql+psycopg2://postgres@localhost/test")
+
+_logger = logging.getLogger(__name__)
 
 
 class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
@@ -50,5 +55,5 @@ class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
 SQLAPgSQLGraphTestCase.storetest = True
 SQLAPgSQLContextTestCase.storetest = True
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

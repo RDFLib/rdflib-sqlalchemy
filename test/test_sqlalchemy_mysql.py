@@ -1,9 +1,14 @@
-import unittest
-from nose import SkipTest
-from rdflib.py3compat import PY3
+import logging
 import os
-if os.environ.get('DB') != 'mysql':
-    raise SkipTest("MySQL not under test")
+import unittest
+
+from nose import SkipTest
+from rdflib import Literal
+from rdflib.py3compat import PY3
+
+from . import context_case
+from . import graph_case
+
 if PY3:
     try:
         import mysql
@@ -18,15 +23,16 @@ else:
         dialect = "mysqldb"
     except ImportError:
         raise SkipTest("MySQLdb not found, skipping MySQL tests")
-import logging
+
+
+if os.environ.get("DB") != "mysql":
+    raise SkipTest("MySQL not under test")
+
 _logger = logging.getLogger(__name__)
-from . import context_case
-from . import graph_case
-from rdflib import Literal
 
 # Specific to Travis-ci continuous integration and testing ...
 sqlalchemy_url = Literal(os.environ.get(
-    'DBURI',
+    "DBURI",
     "mysql+%s://root@127.0.0.1:3306/test?charset=utf8" % dialect))
 # Generally ...
 # sqlalchemy_url = Literal(
@@ -40,7 +46,7 @@ class SQLAMySQLGraphTestCase(graph_case.GraphTestCase):
     create = True
 
     def setUp(self):
-        super(SQLAMySQLGraphTestCase,self).setUp(
+        super(SQLAMySQLGraphTestCase, self).setUp(
             uri=self.uri, storename=self.storename)
 
     def tearDown(self):
@@ -88,5 +94,5 @@ SQLAMySQLGraphTestCase.storetest = True
 SQLAMySQLContextTestCase.storetest = True
 SQLAMySQLIssueTestCase.storetest = True
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
