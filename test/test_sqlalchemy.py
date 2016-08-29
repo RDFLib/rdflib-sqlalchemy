@@ -1,28 +1,42 @@
-import unittest
 import logging
-from rdflib.store import Store
+import unittest
+
+from rdflib import (
+    BNode,
+    ConjunctiveGraph,
+    Literal,
+    URIRef,
+)
 from rdflib import plugin
-from rdflib import BNode, ConjunctiveGraph, Literal, URIRef
+from rdflib.store import Store
+
+from rdflib_sqlalchemy import registerplugins
+from rdflib_sqlalchemy.store import (
+    skolemise,
+    deskolemise,
+    _parse_rfc1738_args,
+)
+
 
 _logger = logging.getLogger(__name__)
 
-michel = URIRef(u'michel')
-tarek = URIRef(u'tarek')
-bob = URIRef(u'bob')
-likes = URIRef(u'likes')
-hates = URIRef(u'hates')
-pizza = URIRef(u'pizza')
-cheese = URIRef(u'cheese')
+michel = URIRef(u"michel")
+tarek = URIRef(u"tarek")
+bob = URIRef(u"bob")
+likes = URIRef(u"likes")
+hates = URIRef(u"hates")
+pizza = URIRef(u"pizza")
+cheese = URIRef(u"cheese")
 
 
 class mock_cursor():
     def execute(x):
-        raise Exception('Forced exception')
+        raise Exception("Forced exception")
 
 
 class SQLATestCase(unittest.TestCase):
     identifier = URIRef("rdflib_test")
-    dburi = Literal('sqlite://')
+    dburi = Literal("sqlite://")
 
     def setUp(self):
         self.store = plugin.get(
@@ -40,42 +54,35 @@ class SQLATestCase(unittest.TestCase):
     def test_registerplugins(self):
         # I doubt this is quite right for a fresh pip installation,
         # this test is mainly here to fill a coverage gap.
-        from rdflib_sqlalchemy import registerplugins
-        from rdflib import plugin
-        from rdflib.store import Store
         registerplugins()
-        self.assert_(plugin.get('SQLAlchemy', Store) is not None)
+        self.assert_(plugin.get("SQLAlchemy", Store) is not None)
         p = plugin._plugins
-        self.assert_(('SQLAlchemy', Store) in p, p)
-        del p[('SQLAlchemy', Store)]
+        self.assert_(("SQLAlchemy", Store) in p, p)
+        del p[("SQLAlchemy", Store)]
         plugin._plugins = p
         registerplugins()
-        self.assert_(('SQLAlchemy', Store) in p, p)
+        self.assert_(("SQLAlchemy", Store) in p, p)
 
     def test_skolemisation(self):
-        from rdflib_sqlalchemy.SQLAlchemy import skolemise
         testbnode = BNode()
         statemnt = (michel, likes, testbnode)
         res = skolemise(statemnt)
-        self.assert_('bnode:N' in str(res[2]), res)
+        self.assert_("bnode:N" in str(res[2]), res)
 
     def test_deskolemisation(self):
-        from rdflib_sqlalchemy.SQLAlchemy import deskolemise
         testbnode = BNode()
         statemnt = (michel, likes, testbnode)
         res = deskolemise(statemnt)
-        self.assert_(str(res[2]).startswith('N'), res)
+        self.assert_(str(res[2]).startswith("N"), res)
 
     def test_redeskolemisation(self):
-        from rdflib_sqlalchemy.SQLAlchemy import skolemise, deskolemise
         testbnode = BNode()
         statemnt = skolemise((michel, likes, testbnode))
         res = deskolemise(statemnt)
-        self.assert_(str(res[2]).startswith('N'), res)
+        self.assert_(str(res[2]).startswith("N"), res)
 
     def test__parse_rfc1738_args(self):
-        from rdflib_sqlalchemy.SQLAlchemy import _parse_rfc1738_args
-        self.assertRaises(ValueError, _parse_rfc1738_args, 'Not parseable')
+        self.assertRaises(ValueError, _parse_rfc1738_args, "Not parseable")
 
     def test_namespaces(self):
         self.assert_(list(self.graph.namespaces()) != [])
@@ -94,5 +101,5 @@ class SQLATestCase(unittest.TestCase):
         self.store._remove_context(self.identifier)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -35,12 +35,18 @@ def setup_python3():
 
     return tmp_src
 
-kwargs = {}
+kwargs = dict(
+    install_requires=[
+        "rdflib>=4.0",
+        "six>=1.10.0",
+        "SQLAlchemy",
+    ],
+    tests_require="coveralls",
+)
+
 if sys.version_info[0] >= 3:
     from setuptools import setup
     # kwargs['use_2to3'] = True  # is done in setup_python3 above already
-    kwargs['install_requires'] = ["rdflib>=4.0", "SQLAlchemy"]
-    kwargs['tests_require'] = ['coveralls']
     kwargs['requires'] = []
     kwargs['src_root'] = setup_python3()
     assert setup
@@ -49,8 +55,6 @@ else:
         from setuptools import setup
         assert setup
         kwargs['test_suite'] = "nose.collector"
-        kwargs['install_requires'] = ["rdflib>=4.0", "SQLAlchemy"]
-        kwargs['tests_require'] = ['coveralls']
 
     except ImportError:
         from distutils.core import setup
