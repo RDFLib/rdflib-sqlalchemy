@@ -1,21 +1,17 @@
 import unittest
+
 from nose.exc import SkipTest
 from rdflib import Literal
-from rdflib import plugin
-from rdflib import query
 from rdflib import RDF
 from rdflib import RDFS
 from rdflib import URIRef
-from rdflib.store import Store
-from rdflib.graph import Graph
+from rdflib import plugin
+from rdflib import query
 from rdflib.graph import ConjunctiveGraph
+from rdflib.graph import Graph
 from rdflib.graph import ReadOnlyGraphAggregate
-from rdflib.py3compat import PY3
-
-if PY3:
-    from io import StringIO
-else:
-    from cStringIO import StringIO
+from rdflib.store import Store
+from six.moves import cStringIO as StringIO
 
 
 plugin.register(
@@ -101,7 +97,7 @@ class GraphAggregates1(unittest.TestCase):
             [self.graph1, self.graph2, self.graph3])
 
     def testAggregateRaw(self):
-        #Test triples
+        # Test triples
         assert len(list(
             self.G.triples((None, RDF.type, None)))) == 4
         assert len(list(
@@ -109,15 +105,15 @@ class GraphAggregates1(unittest.TestCase):
         assert len(list(
             self.G.triples((None, URIRef("http://test/d"), None)))) == 3
 
-        #Test __len__
+        # Test __len__
         # assert len(self.G) == 8, self.G.serialize(format="nt")
         assert len(list(self.G.triples((None, None, None)))) == 8
 
-        #assert context iteration
+        # assert context iteration
         for g in self.G.contexts():
             assert isinstance(g, Graph)
 
-        #Test __contains__
+        # Test __contains__
         assert (URIRef("http://test/foo"), RDF.type, RDFS.Resource) in self.G
 
         barPredicates = [URIRef("http://test/d"), RDFS.isDefinedBy]
@@ -131,6 +127,7 @@ class GraphAggregates2(unittest.TestCase):
     def setUp(self):
         memStore = plugin.get('SQLAlchemy', Store)(
             identifier="rdflib_test", configuration=Literal("sqlite://"))
+        print("ASDF")
         self.graph1 = Graph(memStore, URIRef("http://example.com/graph1"))
         self.graph2 = Graph(memStore, URIRef("http://example.com/graph2"))
         self.graph3 = Graph(memStore, URIRef("http://example.com/graph3"))
@@ -139,9 +136,10 @@ class GraphAggregates2(unittest.TestCase):
                              (testGraph2N3, self.graph2),
                              (testGraph3N3, self.graph3)]:
             graph.parse(StringIO(n3Str), format='n3')
-
         self.graph4 = Graph(memStore, RDFS.uri)
+        print("ASDF B")
         self.graph4.parse(RDFS.uri)
+        print("ASDF C")
         self.G = ConjunctiveGraph(memStore)
 
     def testAggregateSPARQL(self):
@@ -175,11 +173,10 @@ class GraphAggregates3(unittest.TestCase):
         self.G = ConjunctiveGraph(memStore)
 
     def testDefaultGraph(self):
-        #test that CG includes triples from all 3
-        assert self.G.query(
-            sparqlQ3), "CG as default graph should *all* triples"
+        # test that CG includes triples from all 3
+        assert self.G.query(sparqlQ3), "CG as default graph should *all* triples"
         assert not self.graph2.query(sparqlQ3), "Graph as " + \
-                "default graph should *not* include triples from other graphs"
+            "default graph should *not* include triples from other graphs"
 
 if __name__ == '__main__':
     unittest.main()

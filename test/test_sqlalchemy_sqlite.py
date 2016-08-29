@@ -1,15 +1,20 @@
-from nose.exc import SkipTest
-import os
-if os.environ.get('DB') != 'sqlite':
-    raise SkipTest("SQLite not under test")
-import unittest
 import logging
-_logger = logging.getLogger(__name__)
-from . import context_case
-from . import graph_case
+import os
+import unittest
+
+from nose import SkipTest
 from rdflib import Literal
 
-sqlalchemy_url = Literal(os.environ.get('DBURI',"sqlite://"))
+from . import context_case
+from . import graph_case
+
+
+if os.environ.get("DB") != "sqlite":
+    raise SkipTest("SQLite not under test")
+
+_logger = logging.getLogger(__name__)
+
+sqlalchemy_url = Literal(os.environ.get("DBURI", "sqlite://"))
 
 
 class SQLASQLiteGraphTestCase(graph_case.GraphTestCase):
@@ -44,5 +49,5 @@ SQLASQLiteGraphTestCase.storetest = True
 SQLASQLiteContextTestCase.storetest = True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

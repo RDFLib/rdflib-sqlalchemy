@@ -1,18 +1,17 @@
 """Store performance tests."""
-import unittest
 import gc
-import os
 import itertools
-from time import time
+import os
+import unittest
 from random import random
 from tempfile import mkdtemp
+from time import time
+
+from nose import SkipTest
 from rdflib import Graph
 from rdflib import URIRef
-try:
-    from urllib.request import pathname2url
-except:
-    from urllib import pathname2url
-from nose import SkipTest
+from six.moves.urllib.request import pathname2url
+
 
 raise SkipTest("Store performance test suspended")
 
@@ -27,10 +26,10 @@ class StoreTestCase(unittest.TestCase):
     Test case for testing store performance.
 
     Probably should be something other than a unit test
-    but for now we'll add it as a unit test.
+    but for now we"ll add it as a unit test.
     """
 
-    store = 'IOMemory'
+    store = "IOMemory"
     path = None
     storetest = True
     performancetest = True
@@ -54,13 +53,13 @@ class StoreTestCase(unittest.TestCase):
         # TODO: delete a_tmp_dir
         self.graph.close()
         del self.graph
-        if hasattr(self, 'path') and self.path is not None:
+        if hasattr(self, "path") and self.path is not None:
             if os.path.exists(self.path):
                 if os.path.isdir(self.path):
                     for f in os.listdir(self.path):
-                        os.unlink(self.path + '/' + f)
+                        os.unlink(self.path + "/" + f)
                     os.rmdir(self.path)
-                elif len(self.path.split(':')) == 1:
+                elif len(self.path.split(":")) == 1:
                     os.unlink(self.path)
                 else:
                     os.remove(self.path)
@@ -68,11 +67,11 @@ class StoreTestCase(unittest.TestCase):
     def testTime(self):
         """Test timing."""
         # number = 1
-        print('"%s": [' % self.store)
-        for i in ['500triples', '1ktriples', '2ktriples',
-                  '3ktriples', '5ktriples', '10ktriples',
-                  '25ktriples']:
-            inputloc = os.getcwd() + '/test/sp2b/%s.n3' % i
+        print("'%s': [" % self.store)
+        for i in ["500triples", "1ktriples", "2ktriples",
+                  "3ktriples", "5ktriples", "10ktriples",
+                  "25ktriples"]:
+            inputloc = os.getcwd() + "/test/sp2b/%s.n3" % i
             res = self._testInput(inputloc)
             print("%s," % res.strip())
         print("],")
@@ -105,5 +104,5 @@ class SQLAlchemyStoreTestCase(StoreTestCase):
             "here": os.getcwd()}
         StoreTestCase.setUp(self)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

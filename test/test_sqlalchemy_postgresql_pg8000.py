@@ -1,22 +1,27 @@
 """pg8000 test."""
+import logging
 import os
 import unittest
-import logging
-from nose.exc import SkipTest
-from . import context_case
-from . import graph_case
-if os.environ.get('DB') != 'pgsql':
-    raise SkipTest("PgSQL not under test")
+
+from nose import SkipTest
 try:
     import pg8000
     assert pg8000 is not None
 except ImportError:
     raise SkipTest("pg8000 not installed, skipping PgSQL tests")
+
+from . import context_case
+from . import graph_case
+
+
+if os.environ.get("DB") != "pgsql":
+    raise SkipTest("PgSQL not under test")
+
 _logger = logging.getLogger(__name__)
 
 sqlalchemy_url = os.environ.get(
-    'DBURI',
-    'postgresql+pg8000://postgres@localhost/test')
+    "DBURI",
+    "postgresql+pg8000://postgres@localhost/test")
 
 
 class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
@@ -61,5 +66,5 @@ class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
 # SQLAPgSQLGraphTestCase.storetest = True
 # SQLAPgSQLContextTestCase.storetest = True
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
