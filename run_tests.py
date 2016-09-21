@@ -45,7 +45,6 @@ NOSE_ARGS = [
         '--with-doctest',
         '--doctest-extension=.doctest',
         '--doctest-tests',
-#        '--with-EARL',
     ]
 
 COVERAGE_EXTRA_ARGS = [
@@ -53,40 +52,41 @@ COVERAGE_EXTRA_ARGS = [
         '--cover-inclusive',
     ]
 
-DEFAULT_ATTRS = [] # ['!known_issue', '!sparql']
+DEFAULT_ATTRS = []  # ['!known_issue', '!sparql']
 
 DEFAULT_DIRS = ['test', 'rdflib_sqlalchemy']
 
 
 if __name__ == '__main__':
-
     from sys import argv, exit, stderr
-    try: import nose
+    from six import print_
+    try:
+        import nose
     except ImportError:
-        print >>stderr, """\
-    Requires Nose. Try:
+        print_("""\
+            Requires Nose. Try:
 
-        $ sudo easy_install nose
+                $ sudo easy_install nose
 
-    Exiting. """; exit(1)
-
+            Exiting.
+        """, file=stderr)
+        exit(1)
 
     if '--with-coverage' in argv:
-        try: import coverage
+        try:
+            import coverage  # noqa
         except ImportError:
-            print >>stderr, "No coverage module found, skipping code coverage."
+            print_("No coverage module found, skipping code coverage.", file=stderr)
             argv.remove('--with-coverage')
         else:
             NOSE_ARGS += COVERAGE_EXTRA_ARGS
-
 
     if True not in [a.startswith('-a') or a.startswith('--attr=') for a in argv]:
         argv.append('--attr=' + ','.join(DEFAULT_ATTRS))
 
     if not [a for a in argv[1:] if not a.startswith('-')]:
-        argv += DEFAULT_DIRS # since nose doesn't look here by default..
-
+        argv += DEFAULT_DIRS  # since nose doesn't look here by default..
 
     finalArgs = argv + NOSE_ARGS
-    print "Running nose with:", " ".join(finalArgs[1:])
+    print("Running nose with:", " ".join(finalArgs[1:]))
     nose.run_exit(argv=finalArgs)

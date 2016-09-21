@@ -1,34 +1,33 @@
 # -*- coding: utf-8 -*-
-
 import unittest
+
 from rdflib import Graph
-from rdflib import RDF
 from rdflib import URIRef
 from rdflib import Literal
 from rdflib import plugin
-from rdflib.store import Store
-from rdflib.py3compat import PY3
 from rdflib.parser import StringInputSource
+from rdflib.py3compat import PY3
+from rdflib.store import Store
 
 
 class GraphTestCase(unittest.TestCase):
     storetest = True
     identifier = URIRef("rdflib_test")
 
-    michel = URIRef(u'michel')
-    tarek = URIRef(u'tarek')
-    bob = URIRef(u'bob')
-    likes = URIRef(u'likes')
-    hates = URIRef(u'hates')
-    pizza = URIRef(u'pizza')
-    cheese = URIRef(u'cheese')
+    michel = URIRef(u"michel")
+    tarek = URIRef(u"tarek")
+    bob = URIRef(u"bob")
+    likes = URIRef(u"likes")
+    hates = URIRef(u"hates")
+    pizza = URIRef(u"pizza")
+    cheese = URIRef(u"cheese")
 
-    def setUp(self, uri='sqlite://', storename=None):
+    def setUp(self, uri="sqlite://", storename=None):
         store = plugin.get(storename, Store)(identifier=self.identifier)
         self.graph = Graph(store, identifier=self.identifier)
         self.graph.open(uri, create=True)
 
-    def tearDown(self, uri='sqlite://'):
+    def tearDown(self, uri="sqlite://"):
         self.graph.destroy(uri)
         try:
             self.graph.close()
@@ -246,10 +245,10 @@ class GraphTestCase(unittest.TestCase):
 
     def testStoreLiterals(self):
         bob = self.bob
-        says = URIRef(u'says')
-        hello = Literal(u'hello', lang='en')
-        konichiwa = Literal(u'こんにちは', lang='ja')
-        something = Literal(u'something')
+        says = URIRef(u"says")
+        hello = Literal(u"hello", lang="en")
+        konichiwa = Literal(u"こんにちは", lang="ja")
+        something = Literal(u"something")
 
         self.graph.add((bob, says, hello))
         self.graph.add((bob, says, konichiwa))
@@ -258,11 +257,11 @@ class GraphTestCase(unittest.TestCase):
 
         objs = list(self.graph.objects(subject=bob, predicate=says))
         for o in objs:
-            if o.value == u'hello':
-                self.assertEquals(o.language, 'en')
-            elif o.value == u'こんにちは':
-                self.assertEquals(o.language, 'ja')
-            elif o.value == u'something':
+            if o.value == u"hello":
+                self.assertEquals(o.language, "en")
+            elif o.value == u"こんにちは":
+                self.assertEquals(o.language, "ja")
+            elif o.value == u"something":
                 self.assertEquals(o.language, None)
             else:
                 self.fail()
@@ -270,15 +269,15 @@ class GraphTestCase(unittest.TestCase):
 
     def testStoreLiteralsXml(self):
         bob = self.bob
-        says = URIRef(u'http://www.rdflib.net/terms/says')
+        says = URIRef(u"http://www.rdflib.net/terms/says")
         objects = [
-            Literal(u'I\'m the one', lang='en'),
-            Literal(u'こんにちは', lang='ja'),
-            Literal(u'les garçons à Noël reçoivent des œufs', lang='fr')]
+            Literal(u"I'm the one", lang="en"),
+            Literal(u"こんにちは", lang="ja"),
+            Literal(u"les garçons à Noël reçoivent des œufs", lang="fr")]
 
         testdoc = (PY3 and bytes(xmltestdocXml, "UTF-8")) or xmltestdocXml
 
-        self.graph.parse(StringInputSource(testdoc), formal='xml')
+        self.graph.parse(StringInputSource(testdoc), formal="xml")
 
         objs = list(self.graph)
         self.assertEquals(len(objs), 3)
@@ -289,13 +288,12 @@ class GraphTestCase(unittest.TestCase):
 
     def testStoreLiteralsXmlQuote(self):
         bob = self.bob
-        says = URIRef(u'http://www.rdflib.net/terms/says')
-        imtheone = Literal(u'I\'m the one', lang='en')
+        says = URIRef(u"http://www.rdflib.net/terms/says")
+        imtheone = Literal(u"I'm the one", lang="en")
 
-        testdoc = (PY3 and bytes(xmltestdocXmlQuote, "UTF-8")
-            ) or xmltestdocXmlQuote
+        testdoc = (PY3 and bytes(xmltestdocXmlQuote, "UTF-8")) or xmltestdocXmlQuote
 
-        self.graph.parse(StringInputSource(testdoc), formal='xml')
+        self.graph.parse(StringInputSource(testdoc), formal="xml")
 
         objs = list(self.graph)
         self.assertEquals(len(objs), 1)
@@ -348,8 +346,7 @@ n3testdoc = """@prefix : <http://example.org/> .
 :a :b :c .
 """
 
-nttestdoc = \
-"<http://example.org/a> <http://example.org/b> <http://example.org/c> .\n"
+nttestdoc = "<http://example.org/a> <http://example.org/b> <http://example.org/c> .\n"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

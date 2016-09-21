@@ -1,26 +1,30 @@
 """SQLAlchemy-based RDF store."""
 from __future__ import with_statement
 
+import hashlib
+import logging
 import re
 import sys
-import logging
+
 import sqlalchemy
-import hashlib
 from rdflib import (
     BNode,
     Literal,
     RDF,
     URIRef
 )
-from rdflib.term import Node
 from rdflib.graph import Graph
 from rdflib.graph import QuotedGraph
-from rdflib.store import Store  # , NodePickler
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX
-from rdflib.py3compat import PY3
 from rdflib.plugins.stores.regexmatching import REGEXTerm
+from rdflib.store import Store
+from rdflib.term import Node
+from six import text_type
+from six.moves import reduce
+from six.moves.urllib.parse import unquote_plus
 from sqlalchemy import Column, Table, MetaData, Index, types
 from sqlalchemy.sql import select, expression
+
 from .termutils import REVERSE_TERM_COMBINATIONS
 from .termutils import TERM_INSTANTIATION_DICT
 from .termutils import constructGraph
@@ -28,12 +32,6 @@ from .termutils import type2TermCombination
 from .termutils import statement2TermCombination
 from . import __version__
 
-if PY3:
-    from functools import reduce
-    from urllib.parse import unquote_plus
-    assert unquote_plus
-else:
-    from urllib import unquote_plus
 
 _logger = logging.getLogger(__name__)
 
@@ -49,7 +47,7 @@ ASSERTED_LITERAL_PARTITION = 6
 
 FULL_TRIPLE_PARTITIONS = [QUOTED_PARTITION, ASSERTED_LITERAL_PARTITION]
 
-INTERNED_PREFIX = 'kb_'
+INTERNED_PREFIX = "kb_"
 
 MYSQL_MAX_INDEX_LENGTH = 200
 
@@ -87,7 +85,7 @@ def _parse_rfc1738_args(name):
     import cgi
     """ parse url str into options
     code orig from sqlalchemy.engine.url """
-    pattern = re.compile(r'''
+    pattern = re.compile(r"""
             (?P<name>[\w\+]+)://
             (?:
                 (?P<username>[^:/]*)
@@ -98,7 +96,7 @@ def _parse_rfc1738_args(name):
                 (?::(?P<port>[^/]*))?
             )?
             (?:/(?P<database>.*))?
-            ''', re.X)
+            """, re.X)
 
     m = pattern.match(name)
     if m is not None:
@@ -110,13 +108,13 @@ def _parse_rfc1738_args(name):
             query = (
                 len(tokens) > 1 and dict(cgi.parse_qsl(tokens[1])) or None)
             if query is not None:
-                query = dict([(k.encode('ascii'), query[k]) for k in query])
+                query = dict([(k.encode("ascii"), query[k]) for k in query])
         else:
             query = None
-        opts = {'username': username, 'password': password, 'host':
-                host, 'port': port, 'database': database, 'query': query}
-        if opts['password'] is not None:
-            opts['password'] = unquote_plus(opts['password'])
+        opts = {"username": username, "password": password, "host":
+                host, "port": port, "database": database, "query": query}
+        if opts["password"] is not None:
+            opts["password"] = unquote_plus(opts["password"])
         return (name, opts)
     else:
         raise ValueError("Could not parse rfc1738 URL from string '%s'" % name)
@@ -129,18 +127,18 @@ def queryAnalysis(query, store, connection):
     For executing EXPLAIN on all dispatched SQL statements -
     for the pupose of analyzing index usage
     """
-    res = connection.execute('explain ' + query)
+    res = connection.execute("explain " + query)
     rt = res.fetchall()[0]
     table, joinType, posKeys, _key, key_len, \
         comparedCol, rowsExamined, extra = rt
     if not _key:
-        assert joinType == 'ALL'
-        if not hasattr(store, 'queryOptMarks'):
+        assert joinType == "ALL"
+        if not hasattr(store, "queryOptMarks"):
             store.queryOptMarks = {}
-        hits = store.queryOptMarks.get(('FULL SCAN', table), 0)
-        store.queryOptMarks[('FULL SCAN', table)] = hits + 1
+        hits = store.queryOptMarks.get(("FULL SCAN", table), 0)
+        store.queryOptMarks[("FULL SCAN", table)] = hits + 1
 
-    if not hasattr(store, 'queryOptMarks'):
+    if not hasattr(store, "queryOptMarks"):
         store.queryOptMarks = {}
     hits = store.queryOptMarks.get((_key, table), 0)
     store.queryOptMarks[(_key, table)] = hits + 1
@@ -169,20 +167,20 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
             selectClause = table.select(whereClause)
         elif tableType == ASSERTED_TYPE_PARTITION:
             selectClause = expression.select(
-                [table.c.id.label('id'),
-                 table.c.member.label('subject'),
-                 expression.literal(str(RDF.type) if PY3 else unicode(RDF.type)).label('predicate'),
-                 table.c.klass.label('object'),
-                 table.c.context.label('context'),
-                 table.c.termComb.label('termcomb'),
-                 expression.literal_column("NULL").label('objlanguage'),
-                 expression.literal_column("NULL").label('objdatatype')][1 if __version__ <= '0.2' else 0:],
+                [table.c.id.label("id"),
+                 table.c.member.label("subject"),
+                 expression.literal(text_type(RDF.type)).label("predicate"),
+                 table.c.klass.label("object"),
+                 table.c.context.label("context"),
+                 table.c.termComb.label("termcomb"),
+                 expression.literal_column("NULL").label("objlanguage"),
+                 expression.literal_column("NULL").label("objdatatype")][1 if __version__ <= "0.2" else 0:],
                 whereClause)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
             selectClause = expression.select(
                 [c for c in table.columns] +
-                [expression.literal_column("NULL").label('objlanguage'),
-                 expression.literal_column("NULL").label('objdatatype')],
+                [expression.literal_column("NULL").label("objlanguage"),
+                 expression.literal_column("NULL").label("objdatatype")],
                 whereClause,
                 from_obj=[table])
 
@@ -190,13 +188,13 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
 
     orderStmt = []
     if selectType == TRIPLE_SELECT:
-        orderStmt = [expression.literal_column('subject'),
-                     expression.literal_column('predicate'),
-                     expression.literal_column('object')]
+        orderStmt = [expression.literal_column("subject"),
+                     expression.literal_column("predicate"),
+                     expression.literal_column("object")]
     if distinct:
-        return expression.union(*selects, **{'order_by': orderStmt})
+        return expression.union(*selects, **{"order_by": orderStmt})
     else:
-        return expression.union_all(*selects, **{'order_by': orderStmt})
+        return expression.union_all(*selects, **{"order_by": orderStmt})
 
 
 def extractTriple(tupleRt, store, hardCodedContext=None):
@@ -248,7 +246,7 @@ def createTerm(
 
     QuotedGraphs are instantiated differently
     """
-    if termType == 'L':
+    if termType == "L":
         cache = store.literalCache.get((termString, objLanguage, objDatatype))
         if cache is not None:
             # store.cacheHits += 1
@@ -270,7 +268,7 @@ def createTerm(
                 rt = Literal(termString, objDatatype)
                 store.literalCache[((termString, objDatatype))] = rt
             return rt
-    elif termType == 'F':
+    elif termType == "F":
         cache = store.otherCache.get((termType, termString))
         if cache is not None:
             # store.cacheHits += 1
@@ -280,7 +278,7 @@ def createTerm(
             rt = QuotedGraph(store, URIRef(termString))
             store.otherCache[(termType, termString)] = rt
             return rt
-    elif termType == 'B':
+    elif termType == "B":
         cache = store.bnodeCache.get((termString))
         if cache is not None:
             # store.cacheHits += 1
@@ -290,7 +288,7 @@ def createTerm(
             rt = TERM_INSTANTIATION_DICT[termType](termString)
             store.bnodeCache[(termString)] = rt
             return rt
-    elif termType == 'U':
+    elif termType == "U":
         cache = store.uriCache.get((termString))
         if cache is not None:
             # store.cacheHits += 1
@@ -320,9 +318,9 @@ class TermType(types.TypeDecorator):
     def process_bind_param(self, value, dialect):
         """Process bound parameters."""
         if isinstance(value, (QuotedGraph, Graph)):
-            return str(value.identifier) if PY3 else unicode(value.identifier)
+            return text_type(value.identifier)
         elif isinstance(value, Node):
-            return str(value) if PY3 else unicode(value)
+            return text_type(value)
         else:
             return value
 
@@ -333,12 +331,12 @@ class SQLGenerator(object):
     def buildTypeSQLCommand(self, member, klass, context):
         """Build an insert command for a type table."""
         # columns: member,klass,context
-        rt = self.tables['type_statements'].insert()
+        rt = self.tables["type_statements"].insert()
         return rt, {
-            'member': member,
-            'klass': klass,
-            'context': context.identifier,
-            'termComb': int(type2TermCombination(member, klass, context))}
+            "member": member,
+            "klass": klass,
+            "context": context.identifier,
+            "termComb": int(type2TermCombination(member, klass, context))}
 
     def buildLiteralTripleSQLCommand(
             self, subject, predicate, obj, context):
@@ -349,45 +347,45 @@ class SQLGenerator(object):
         """
         triplePattern = int(
             statement2TermCombination(subject, predicate, obj, context))
-        command = self.tables['literal_statements'].insert()
+        command = self.tables["literal_statements"].insert()
         values = {
-            'subject': subject,
-            'predicate': predicate,
-            'object': obj,
-            'context': context.identifier,
-            'termComb': triplePattern,
-            'objLanguage': isinstance(obj, Literal) and obj.language or None,
-            'objDatatype': isinstance(obj, Literal) and obj.datatype or None
+            "subject": subject,
+            "predicate": predicate,
+            "object": obj,
+            "context": context.identifier,
+            "termComb": triplePattern,
+            "objLanguage": isinstance(obj, Literal) and obj.language or None,
+            "objDatatype": isinstance(obj, Literal) and obj.datatype or None
         }
         return command, values
 
     def buildTripleSQLCommand(
             self, subject, predicate, obj, context, quoted):
         """Build an insert command for regular triple table."""
-        stmt_table = quoted and self.tables['quoted_statements'] \
-            or self.tables['asserted_statements']
+        stmt_table = quoted and self.tables["quoted_statements"] \
+            or self.tables["asserted_statements"]
         triplePattern = statement2TermCombination(
             subject, predicate, obj, context)
         command = stmt_table.insert()
         if quoted:
             params = {
-                'subject': subject,
-                'predicate': predicate,
-                'object': obj,
-                'context': context.identifier,
-                'termComb': triplePattern,
-                'objLanguage': isinstance(
+                "subject": subject,
+                "predicate": predicate,
+                "object": obj,
+                "context": context.identifier,
+                "termComb": triplePattern,
+                "objLanguage": isinstance(
                     obj, Literal) and obj.language or None,
-                'objDatatype': isinstance(
+                "objDatatype": isinstance(
                     obj, Literal) and obj.datatype or None
             }
         else:
             params = {
-                'subject': subject,
-                'predicate': predicate,
-                'object': obj,
-                'context': context.identifier,
-                'termComb': triplePattern
+                "subject": subject,
+                "predicate": predicate,
+                "object": obj,
+                "context": context.identifier,
+                "termComb": triplePattern
             }
         return command, params
 
@@ -517,7 +515,7 @@ class SQLGenerator(object):
         """Build Type Class clause."""
         if isinstance(obj, REGEXTerm):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
-            return table.c.klass.op('regexp')(obj)
+            return table.c.klass.op("regexp")(obj)
         elif isinstance(obj, list):
             return expression.or_(
                 *[self.buildTypeClassClause(o, table) for o in obj if o])
@@ -558,11 +556,11 @@ class SQLAlchemy(Store, SQLGenerator):
         configuration: string containing infomation open can use to
         connect to datastore.
         """
-        self.identifier = identifier and identifier or 'hardcoded'
+        self.identifier = identifier and identifier or "hardcoded"
         # Use only the first 10 bytes of the digest
         self._internedId = INTERNED_PREFIX + \
             hashlib.sha1(
-                self.identifier.encode('utf8')).hexdigest()[:10]
+                self.identifier.encode("utf8")).hexdigest()[:10]
 
         # This parameter controls how exlusively the literal table is searched
         # If true, the Literal partition is searched *exclusively* if the
@@ -590,7 +588,7 @@ class SQLAlchemy(Store, SQLGenerator):
             self.open(configuration)
 
     def __get_node_pickler(self):
-        if getattr(self, '__node_pickler', False) \
+        if getattr(self, "__node_pickler", False) \
                 or self.__node_pickler is None:
             from rdflib.term import URIRef
             from rdflib.graph import GraphValue
@@ -665,7 +663,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 trans.commit()
             except Exception:
                 e = sys.exc_info()[1]
-                msg = e.args[0] if len(e.args) > 0 else ''
+                msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug("unable to drop table: %s " % (msg))
                 trans.rollback()
         # Note, this only removes the associated tables for the closed
@@ -683,15 +681,15 @@ class SQLAlchemy(Store, SQLGenerator):
             if isinstance(obj, Literal):
                 addCmd, params = self.buildLiteralTripleSQLCommand(
                     subject, predicate, obj, context)
-                buildCommandType = 'literal'
+                buildCommandType = "literal"
             else:
                 addCmd, params = self.buildTripleSQLCommand(
                     subject, predicate, obj, context, quoted)
-                buildCommandType = 'other'
+                buildCommandType = "other"
         elif predicate == RDF.type:
             # asserted rdf:type statement
             addCmd, params = self.buildTypeSQLCommand(subject, obj, context)
-            buildCommandType = 'type'
+            buildCommandType = "type"
         return buildCommandType, addCmd, params
 
     # Triple Methods
@@ -705,7 +703,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 connection.execute(addCmd, params)
             except Exception:
                 e = sys.exc_info()[1]
-                msg = e.args[0] if len(e.args) > 0 else ''
+                msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug(
                     "Add failed %s with commands %s params %s" % (
                         msg, str(addCmd), repr(params)))
@@ -723,18 +721,18 @@ class SQLAlchemy(Store, SQLGenerator):
                     isinstance(context, QuotedGraph))
 
             cmdTriple = cmdTripleDict.setdefault(buildCommandType, {})
-            cmdTriple.setdefault('cmd', cmd)
-            cmdTriple.setdefault('params', []).append(params)
+            cmdTriple.setdefault("cmd", cmd)
+            cmdTriple.setdefault("params", []).append(params)
 
         with self.engine.connect() as connection:
             trans = connection.begin()
             try:
                 for cmdTriple in cmdTripleDict.values():
-                    connection.execute(cmdTriple['cmd'], cmdTriple['params'])
+                    connection.execute(cmdTriple["cmd"], cmdTriple["params"])
                 trans.commit()
             except Exception:
                 e = sys.exc_info()[1]
-                msg = e.args[0] if len(e.args) > 0 else ''
+                msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug("AddN failed %s" % msg)
                 trans.rollback()
                 raise
@@ -749,7 +747,7 @@ class SQLAlchemy(Store, SQLGenerator):
         quoted_table = self.tables["quoted_statements"]
         asserted_table = self.tables["asserted_statements"]
         asserted_type_table = self.tables["type_statements"]
-        literal_table = self.tables['literal_statements']
+        literal_table = self.tables["literal_statements"]
         with self.engine.connect() as connection:
             trans = connection.begin()
             try:
@@ -789,7 +787,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 trans.commit()
             except Exception:
                 e = sys.exc_info()[1]
-                msg = e.args[0] if len(e.args) > 0 else ''
+                msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug("Removal failed %s" % msg)
                 trans.rollback()
 
@@ -822,7 +820,7 @@ class SQLAlchemy(Store, SQLGenerator):
             # select from asserted rdf:type partition and quoted table
             # (if a context is specified)
             typeTable = expression.alias(
-                asserted_type_table, 'typetable')
+                asserted_type_table, "typetable")
             clause = self.buildClause(
                 typeTable, subject, RDF.type, obj, context, True)
             selects = [
@@ -841,7 +839,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     or isinstance(obj, Literal) \
                     or not obj \
                     or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm)):
-                literal = expression.alias(literal_table, 'literal')
+                literal = expression.alias(literal_table, "literal")
                 clause = self.buildClause(
                     literal, subject, predicate, obj, context)
                 selects.append((literal, clause, ASSERTED_LITERAL_PARTITION))
@@ -849,12 +847,12 @@ class SQLAlchemy(Store, SQLGenerator):
             if not isinstance(obj, Literal) \
                     and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
                     or not obj:
-                asserted = expression.alias(asserted_table, 'asserted')
+                asserted = expression.alias(asserted_table, "asserted")
                 clause = self.buildClause(
                     asserted, subject, predicate, obj, context)
                 selects.append((asserted, clause, ASSERTED_NON_TYPE_PARTITION))
 
-            typeTable = expression.alias(asserted_type_table, 'typetable')
+            typeTable = expression.alias(asserted_type_table, "typetable")
             clause = self.buildClause(
                 typeTable, subject, RDF.type, obj, context, True)
             selects.append((typeTable, clause, ASSERTED_TYPE_PARTITION))
@@ -868,7 +866,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     or isinstance(obj, Literal) \
                     or not obj \
                     or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm)):
-                literal = expression.alias(literal_table, 'literal')
+                literal = expression.alias(literal_table, "literal")
                 clause = self.buildClause(
                     literal, subject, predicate, obj, context)
                 selects.append((literal, clause, ASSERTED_LITERAL_PARTITION))
@@ -876,13 +874,13 @@ class SQLAlchemy(Store, SQLGenerator):
             if not isinstance(obj, Literal) \
                     and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
                     or not obj:
-                asserted = expression.alias(asserted_table, 'asserted')
+                asserted = expression.alias(asserted_table, "asserted")
                 clause = self.buildClause(
                     asserted, subject, predicate, obj, context)
                 selects.append((asserted, clause, ASSERTED_NON_TYPE_PARTITION))
 
         if context is not None:
-            quoted = expression.alias(quoted_table, 'quoted')
+            quoted = expression.alias(quoted_table, "quoted")
             clause = self.buildClause(quoted, subject, predicate, obj, context)
             selects.append((quoted, clause, QUOTED_PARTITION))
 
@@ -958,16 +956,16 @@ class SQLAlchemy(Store, SQLGenerator):
         literal_table = self.tables["literal_statements"]
 
         selects = [
-            (expression.alias(asserted_type_table, 'typetable'),
+            (expression.alias(asserted_type_table, "typetable"),
                 None, ASSERTED_TYPE_PARTITION),
-            (expression.alias(quoted_table, 'quoted'),
+            (expression.alias(quoted_table, "quoted"),
                 None, QUOTED_PARTITION),
-            (expression.alias(asserted_table, 'asserted'),
+            (expression.alias(asserted_table, "asserted"),
                 None, ASSERTED_NON_TYPE_PARTITION),
-            (expression.alias(literal_table, 'literal'),
+            (expression.alias(literal_table, "literal"),
                 None, ASSERTED_LITERAL_PARTITION), ]
         q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
-        if hasattr(self, 'engine'):
+        if hasattr(self, "engine"):
             with self.engine.connect() as connection:
                 res = connection.execute(q)
                 rt = res.fetchall()
@@ -992,10 +990,10 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_type_table = self.tables["type_statements"]
         literal_table = self.tables["literal_statements"]
 
-        typetable = expression.alias(asserted_type_table, 'typetable')
-        quoted = expression.alias(quoted_table, 'quoted')
-        asserted = expression.alias(asserted_table, 'asserted')
-        literal = expression.alias(literal_table, 'literal')
+        typetable = expression.alias(asserted_type_table, "typetable")
+        quoted = expression.alias(quoted_table, "quoted")
+        asserted = expression.alias(asserted_table, "asserted")
+        literal = expression.alias(literal_table, "literal")
 
         quotedContext = self.buildContextClause(context, quoted)
         assertedContext = self.buildContextClause(context, asserted)
@@ -1039,10 +1037,10 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted_type_table = self.tables["type_statements"]
         literal_table = self.tables["literal_statements"]
 
-        typetable = expression.alias(asserted_type_table, 'typetable')
-        quoted = expression.alias(quoted_table, 'quoted')
-        asserted = expression.alias(asserted_table, 'asserted')
-        literal = expression.alias(literal_table, 'literal')
+        typetable = expression.alias(asserted_type_table, "typetable")
+        quoted = expression.alias(quoted_table, "quoted")
+        asserted = expression.alias(asserted_table, "asserted")
+        literal = expression.alias(literal_table, "literal")
 
         if triple is not None:
             subject, predicate, obj = triple
@@ -1064,7 +1062,10 @@ class SQLAlchemy(Store, SQLGenerator):
                     typetable, subject, RDF.type, obj, Any, True)
                 selects = [(typetable, clause, ASSERTED_TYPE_PARTITION), ]
 
-                if not self.STRONGLY_TYPED_TERMS or isinstance(obj, Literal) or not obj or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm)):
+                if (not self.STRONGLY_TYPED_TERMS or
+                        isinstance(obj, Literal) or
+                        not obj or
+                        (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
                     clause = self.buildClause(literal, subject, predicate, obj)
                     selects.append(
                         (literal, clause, ASSERTED_LITERAL_PARTITION))
@@ -1081,7 +1082,10 @@ class SQLAlchemy(Store, SQLGenerator):
                 # quoted partition (if context is speciied), and literal
                 # partition (optionally)
                 selects = []
-                if not self.STRONGLY_TYPED_TERMS or isinstance(obj, Literal) or not obj or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm)):
+                if (not self.STRONGLY_TYPED_TERMS or
+                        isinstance(obj, Literal) or
+                        not obj
+                        or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
                     clause = self.buildClause(
                         literal, subject, predicate, obj)
                     selects.append(
@@ -1129,7 +1133,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 trans.commit()
             except Exception:
                 e = sys.exc_info()[1]
-                msg = e.args[0] if len(e.args) > 0 else ''
+                msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug("Context removal failed %s" % msg)
                 trans.rollback()
 
@@ -1158,7 +1162,7 @@ class SQLAlchemy(Store, SQLGenerator):
         raise Exception("Not implemented")
 
     def value(self, subject,
-              predicate=u'http://www.w3.org/1999/02/22-rdf-syntax-ns#value',
+              predicate=u"http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
               object=None, default=None, any=False):
         """
         Get a value.
@@ -1185,19 +1189,19 @@ class SQLAlchemy(Store, SQLGenerator):
         """Bind prefix for namespace."""
         with self.engine.connect() as connection:
             try:
-                ins = self.tables['namespace_binds'].insert().values(
+                ins = self.tables["namespace_binds"].insert().values(
                     prefix=prefix, uri=namespace)
                 connection.execute(ins)
             except Exception:
                 e = sys.exc_info()[1]
-                msg = e.args[0] if len(e.args) > 0 else ''
+                msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug("Namespace binding failed %s" % msg)
 
     def prefix(self, namespace):
         """Prefix."""
         with self.engine.connect() as connection:
-            nb_table = self.tables['namespace_binds']
-            namespace = str(namespace) if PY3 else unicode(namespace)
+            nb_table = self.tables["namespace_binds"]
+            namespace = text_type(namespace)
             s = select([nb_table.c.prefix]).where(nb_table.c.uri == namespace)
             res = connection.execute(s)
             rt = [rtTuple[0] for rtTuple in res.fetchall()]
@@ -1207,10 +1211,10 @@ class SQLAlchemy(Store, SQLGenerator):
     def namespace(self, prefix):
         """Namespace."""
         res = None
-        prefix_val = str(prefix) if PY3 else unicode(prefix)
+        prefix_val = text_type(prefix)
         try:
             with self.engine.connect() as connection:
-                nb_table = self.tables['namespace_binds']
+                nb_table = self.tables["namespace_binds"]
                 s = select([nb_table.c.uri]).where(nb_table.c.prefix == prefix_val)
                 res = connection.execute(s)
                 rt = [rtTuple[0] for rtTuple in res.fetchall()]
@@ -1224,99 +1228,99 @@ class SQLAlchemy(Store, SQLGenerator):
     def namespaces(self):
         """Namespaces."""
         with self.engine.connect() as connection:
-            res = connection.execute(self.tables['namespace_binds'].select())
+            res = connection.execute(self.tables["namespace_binds"].select())
             for prefix, uri in res.fetchall():
                 yield prefix, uri
 
     def __create_table_definitions(self):
         self.metadata = MetaData()
         self.tables = {
-            'asserted_statements':
+            "asserted_statements":
             Table(
-                '%s_asserted_statements' % self._internedId, self.metadata,
-                Column('id', types.Integer, nullable=False, primary_key=True),
-                Column('subject', TermType, nullable=False),
-                Column('predicate', TermType, nullable=False),
-                Column('object', TermType, nullable=False),
-                Column('context', TermType, nullable=False),
-                Column('termcomb', types.Integer,
+                "%s_asserted_statements" % self._internedId, self.metadata,
+                Column("id", types.Integer, nullable=False, primary_key=True),
+                Column("subject", TermType, nullable=False),
+                Column("predicate", TermType, nullable=False),
+                Column("object", TermType, nullable=False),
+                Column("context", TermType, nullable=False),
+                Column("termcomb", types.Integer,
                        nullable=False, key="termComb"),
                 Index("%s_A_termComb_index" % self._internedId,
-                      'termComb'),
-                Index("%s_A_s_index" % self._internedId, 'subject', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                Index("%s_A_p_index" % self._internedId, 'predicate', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                Index("%s_A_o_index" % self._internedId, 'object', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                Index("%s_A_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
-            'type_statements':
-            Table('%s_type_statements' % self._internedId, self.metadata,
-                  Column('id', types.Integer, nullable=False, primary_key=True),
-                  Column('member', TermType, nullable=False),
-                  Column('klass', TermType, nullable=False),
-                  Column('context', TermType, nullable=False),
-                  Column('termcomb', types.Integer, nullable=False,
+                      "termComb"),
+                Index("%s_A_s_index" % self._internedId, "subject", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_A_p_index" % self._internedId, "predicate", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_A_o_index" % self._internedId, "object", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_A_c_index" % self._internedId, "context", mysql_length=MYSQL_MAX_INDEX_LENGTH)),
+            "type_statements":
+            Table("%s_type_statements" % self._internedId, self.metadata,
+                  Column("id", types.Integer, nullable=False, primary_key=True),
+                  Column("member", TermType, nullable=False),
+                  Column("klass", TermType, nullable=False),
+                  Column("context", TermType, nullable=False),
+                  Column("termcomb", types.Integer, nullable=False,
                          key="termComb"),
                   Index("%s_T_termComb_index" % self._internedId,
-                        'termComb'),
-                  Index("%s_member_index" % self._internedId, 'member', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                  Index("%s_klass_index" % self._internedId, 'klass', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                  Index("%s_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
-            'literal_statements':
+                        "termComb"),
+                  Index("%s_member_index" % self._internedId, "member", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                  Index("%s_klass_index" % self._internedId, "klass", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                  Index("%s_c_index" % self._internedId, "context", mysql_length=MYSQL_MAX_INDEX_LENGTH)),
+            "literal_statements":
             Table(
-                '%s_literal_statements' % self._internedId, self.metadata,
-                Column('id', types.Integer, nullable=False, primary_key=True),
-                Column('subject', TermType, nullable=False),
-                Column('predicate', TermType, nullable=False),
-                Column('object', TermType),
-                Column('context', TermType, nullable=False),
-                Column('termcomb', types.Integer, nullable=False,
+                "%s_literal_statements" % self._internedId, self.metadata,
+                Column("id", types.Integer, nullable=False, primary_key=True),
+                Column("subject", TermType, nullable=False),
+                Column("predicate", TermType, nullable=False),
+                Column("object", TermType),
+                Column("context", TermType, nullable=False),
+                Column("termcomb", types.Integer, nullable=False,
                        key="termComb"),
-                Column('objlanguage', types.String(255),
+                Column("objlanguage", types.String(255),
                        key="objLanguage"),
-                Column('objdatatype', types.String(255),
+                Column("objdatatype", types.String(255),
                        key="objDatatype"),
                 Index("%s_L_termComb_index" % self._internedId,
-                      'termComb'),
-                Index("%s_L_s_index" % self._internedId, 'subject', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                Index("%s_L_p_index" % self._internedId, 'predicate', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                Index("%s_L_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
-            'quoted_statements':
+                      "termComb"),
+                Index("%s_L_s_index" % self._internedId, "subject", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_L_p_index" % self._internedId, "predicate", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_L_c_index" % self._internedId, "context", mysql_length=MYSQL_MAX_INDEX_LENGTH)),
+            "quoted_statements":
             Table(
                 "%s_quoted_statements" % self._internedId, self.metadata,
-                Column('id', types.Integer, nullable=False, primary_key=True),
-                Column('subject', TermType, nullable=False),
-                Column('predicate', TermType, nullable=False),
-                Column('object', TermType),
-                Column('context', TermType, nullable=False),
-                Column('termcomb', types.Integer, nullable=False,
+                Column("id", types.Integer, nullable=False, primary_key=True),
+                Column("subject", TermType, nullable=False),
+                Column("predicate", TermType, nullable=False),
+                Column("object", TermType),
+                Column("context", TermType, nullable=False),
+                Column("termcomb", types.Integer, nullable=False,
                        key="termComb"),
-                Column('objlanguage', types.String(255),
+                Column("objlanguage", types.String(255),
                        key="objLanguage"),
-                Column('objdatatype', types.String(255),
+                Column("objdatatype", types.String(255),
                        key="objDatatype"),
                 Index("%s_Q_termComb_index" % self._internedId,
-                      'termComb'),
-                Index("%s_Q_s_index" % self._internedId, 'subject', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                Index("%s_Q_p_index" % self._internedId, 'predicate', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                Index("%s_Q_o_index" % self._internedId, 'object', mysql_length=MYSQL_MAX_INDEX_LENGTH),
-                Index("%s_Q_c_index" % self._internedId, 'context', mysql_length=MYSQL_MAX_INDEX_LENGTH)),
-            'namespace_binds':
+                      "termComb"),
+                Index("%s_Q_s_index" % self._internedId, "subject", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_Q_p_index" % self._internedId, "predicate", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_Q_o_index" % self._internedId, "object", mysql_length=MYSQL_MAX_INDEX_LENGTH),
+                Index("%s_Q_c_index" % self._internedId, "context", mysql_length=MYSQL_MAX_INDEX_LENGTH)),
+            "namespace_binds":
             Table(
                 "%s_namespace_binds" % self._internedId, self.metadata,
-                Column('prefix', types.String(20), unique=True,
+                Column("prefix", types.String(20), unique=True,
                        nullable=False, primary_key=True),
-                Column('uri', types.Text),
-                Index("%s_uri_index" % self._internedId, 'uri', mysql_length=MYSQL_MAX_INDEX_LENGTH))
+                Column("uri", types.Text),
+                Index("%s_uri_index" % self._internedId, "uri", mysql_length=MYSQL_MAX_INDEX_LENGTH))
         }
         if __version__ > "0.2":
-            for table in ['type_statements', 'literal_statements',
-                          'quoted_statements', 'asserted_statements']:
+            for table in ["type_statements", "literal_statements",
+                          "quoted_statements", "asserted_statements"]:
                 self.tables[table].append_column(
-                    Column('id', types.Integer, nullable=False, primary_key=True))
+                    Column("id", types.Integer, nullable=False, primary_key=True))
 
 table_name_prefixes = [
-    '%s_asserted_statements',
-    '%s_type_statements',
-    '%s_quoted_statements',
-    '%s_namespace_binds',
-    '%s_literal_statements'
+    "%s_asserted_statements",
+    "%s_type_statements",
+    "%s_quoted_statements",
+    "%s_namespace_binds",
+    "%s_literal_statements"
 ]

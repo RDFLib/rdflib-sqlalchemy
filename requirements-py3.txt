@@ -3,3 +3,4 @@ pg8000
 psycopg2
 http://cdn.mysql.com/Downloads/Connector-Python/mysql-connector-python-2.0.4.zip
 -e git+https://github.com/davispuh/MySQL-for-Python-3#egg=MySQL-python
+setuptools>=18.5.0
