@@ -127,7 +127,6 @@ class GraphAggregates2(unittest.TestCase):
     def setUp(self):
         memStore = plugin.get('SQLAlchemy', Store)(
             identifier="rdflib_test", configuration=Literal("sqlite://"))
-        print("ASDF")
         self.graph1 = Graph(memStore, URIRef("http://example.com/graph1"))
         self.graph2 = Graph(memStore, URIRef("http://example.com/graph2"))
         self.graph3 = Graph(memStore, URIRef("http://example.com/graph3"))
@@ -137,9 +136,7 @@ class GraphAggregates2(unittest.TestCase):
                              (testGraph3N3, self.graph3)]:
             graph.parse(StringIO(n3Str), format='n3')
         self.graph4 = Graph(memStore, RDFS.uri)
-        print("ASDF B")
         self.graph4.parse(RDFS.uri)
-        print("ASDF C")
         self.G = ConjunctiveGraph(memStore)
 
     def testAggregateSPARQL(self):
