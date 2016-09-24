@@ -1,5 +1,0 @@
-coverage
-pg8000
-psycopg2
-MySQL-python
-setuptools>=18.5.0
