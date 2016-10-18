@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 """SQLAlchemy Store plugin for RDFLib."""
 import logging
+from email import message_from_string
+from pkg_resources import get_distribution
 
 
-__author__ = "Graham Higgins"
-__version__ = "0.3.2"
+distribution = get_distribution("rdflib_sqlalchemy_redux")
+pkg_info = message_from_string(distribution.get_metadata("PKG-INFO"))
+
+__author__ = pkg_info.get("author")
+__version__ = distribution.version
 
 
 class NullHandler(logging.Handler):
