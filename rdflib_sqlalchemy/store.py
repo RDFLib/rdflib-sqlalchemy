@@ -21,7 +21,6 @@ from rdflib.store import Store
 from rdflib.term import Node
 from six import text_type
 from six.moves import reduce
-from six.moves.urllib.parse import unquote_plus
 from sqlalchemy import Column, Table, MetaData, Index, types
 from sqlalchemy.sql import select, expression
 
@@ -79,45 +78,6 @@ def regexp(expr, item):
     """User-defined REGEXP operator."""
     r = re.compile(expr)
     return r.match(item) is not None
-
-
-def _parse_rfc1738_args(name):
-    import cgi
-    """ parse url str into options
-    code orig from sqlalchemy.engine.url """
-    pattern = re.compile(r"""
-            (?P<name>[\w\+]+)://
-            (?:
-                (?P<username>[^:/]*)
-                (?::(?P<password>[^/]*))?
-            @)?
-            (?:
-                (?P<host>[^/:]*)
-                (?::(?P<port>[^/]*))?
-            )?
-            (?:/(?P<database>.*))?
-            """, re.X)
-
-    m = pattern.match(name)
-    if m is not None:
-        (name, username, password, host, port, database) = m.group(
-            1, 2, 3, 4, 5, 6)
-        if database is not None:
-            tokens = database.split(r"?", 2)
-            database = tokens[0]
-            query = (
-                len(tokens) > 1 and dict(cgi.parse_qsl(tokens[1])) or None)
-            if query is not None:
-                query = dict([(k.encode("ascii"), query[k]) for k in query])
-        else:
-            query = None
-        opts = {"username": username, "password": password, "host":
-                host, "port": port, "database": database, "query": query}
-        if opts["password"] is not None:
-            opts["password"] = unquote_plus(opts["password"])
-        return (name, opts)
-    else:
-        raise ValueError("Could not parse rfc1738 URL from string '%s'" % name)
 
 
 def queryAnalysis(query, store, connection):
@@ -618,14 +578,12 @@ class SQLAlchemy(Store, SQLGenerator):
         exists, but there is insufficient permissions to open the
         store.
         """
-        name, opts = _parse_rfc1738_args(configuration)
-
         self.engine = sqlalchemy.create_engine(configuration)
         with self.engine.connect() as connection:
             assert connection is not None
             if create:
                 self.metadata.create_all(self.engine)
-        # self._db.create_function("regexp", 2, regexp)
+
         if configuration:
             from sqlalchemy.engine import reflection
             insp = reflection.Inspector.from_engine(self.engine)
@@ -651,7 +609,6 @@ class SQLAlchemy(Store, SQLGenerator):
 
     def destroy(self, configuration):
         """FIXME: Add documentation."""
-        name, opts = _parse_rfc1738_args(configuration)
         if self.engine is None:
             # _logger.debug("Connecting in order to destroy.")
             self.engine = sqlalchemy.create_engine(configuration)
