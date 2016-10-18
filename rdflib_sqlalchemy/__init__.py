@@ -4,7 +4,7 @@ import logging
 
 
 __author__ = "Graham Higgins"
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 
 class NullHandler(logging.Handler):

@@ -14,7 +14,6 @@ from rdflib_sqlalchemy import registerplugins
 from rdflib_sqlalchemy.store import (
     skolemise,
     deskolemise,
-    _parse_rfc1738_args,
 )
 
 
@@ -80,9 +79,6 @@ class SQLATestCase(unittest.TestCase):
         statemnt = skolemise((michel, likes, testbnode))
         res = deskolemise(statemnt)
         self.assert_(str(res[2]).startswith("N"), res)
-
-    def test__parse_rfc1738_args(self):
-        self.assertRaises(ValueError, _parse_rfc1738_args, "Not parseable")
 
     def test_namespaces(self):
         self.assert_(list(self.graph.namespaces()) != [])
