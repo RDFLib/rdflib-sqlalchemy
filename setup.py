@@ -56,6 +56,9 @@ setup(
         "six>=1.10.0",
         "SQLAlchemy",
     ],
+    setup_requires=[
+        "nose>=1.3.6",
+    ],
     tests_require="coveralls",
     test_suite="nose.collector",
 )
