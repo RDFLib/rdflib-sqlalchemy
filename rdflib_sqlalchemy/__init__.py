@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """SQLAlchemy Store plugin for RDFLib."""
 import logging
+
+
 __author__ = "Graham Higgins"
-__version__ = "0.3"
+__version__ = "0.3.0"
 
 
 class NullHandler(logging.Handler):
-    r"""
+    """
     Null handler.
 
     c.f.
@@ -41,7 +43,7 @@ def registerplugins():
     from rdflib import plugin
 
     try:
-        x = plugin.get('SQLAlchemy', Store)
+        x = plugin.get("SQLAlchemy", Store)
         del x
         return  # plugins already registered
     except:
@@ -50,5 +52,8 @@ def registerplugins():
     # Register the plugins ...
 
     plugin.register(
-        'SQLAlchemy', Store,
-        'rdflib_sqlalchemy.SQLAlchemy', 'SQLAlchemy')
+        "SQLAlchemy",
+        Store,
+        "rdflib_sqlalchemy.store",
+        "SQLAlchemy",
+    )

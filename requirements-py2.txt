@@ -1,4 +1,0 @@
-coverage
-pg8000
-psycopg2
-MySQL-python

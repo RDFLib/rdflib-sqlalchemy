@@ -1,6 +1,12 @@
 RDFLib-SQLAlchemy
 =================
 
+NOTE: This is a fork of the original [rdflib-sqlalchemy](https://github.com/rdflib/rdflib-sqlalchemy). To install this fork instead of the original version with pip, use:
+
+	pip install rdflib-sqlalchemy-redux
+
+---
+
 A SQLAlchemy-backed, formula-aware RDFLib Store. It stores its triples
 in the following partitions:
 
@@ -37,15 +43,15 @@ Github repository: https://github.com/RDFLib/rdflib-sqlalchemy
 
 Continuous integration: https://travis-ci.org/RDFLib/rdflib-sqlalchemy/
 
-![Travis CI](https://travis-ci.org/RDFLib/rdflib-sqlalchemy.png?branch=master)
-![PyPI](https://img.shields.io/pypi/v/rdflib-sqlalchemy.svg)
-![PyPI](https://img.shields.io/pypi/status/rdflib-sqlalchemy.svg)
-![PyPI](https://img.shields.io/pypi/dw/rdflib-sqlalchemy.svg)
+![Travis CI](https://travis-ci.org/globality-corp/rdflib-sqlalchemy.png?branch=develop)
+![PyPI](https://img.shields.io/pypi/v/rdflib-sqlalchemy-redux.svg)
+![PyPI](https://img.shields.io/pypi/status/rdflib-sqlalchemy-redux.svg)
+![PyPI](https://img.shields.io/pypi/dw/rdflib-sqlalchemy-redux.svg)
 
-![PyPI](https://img.shields.io/pypi/pyversions/rdflib-sqlalchemy.svg)
-![PyPI](https://img.shields.io/pypi/l/rdflib-sqlalchemy.svg)
-![PyPI](https://img.shields.io/pypi/wheel/rdflib-sqlalchemy.svg)
-![PyPI](https://img.shields.io/pypi/format/rdflib-sqlalchemy.svg)
+![PyPI](https://img.shields.io/pypi/pyversions/rdflib-sqlalchemy-redux.svg)
+![PyPI](https://img.shields.io/pypi/l/rdflib-sqlalchemy-redux.svg)
+![PyPI](https://img.shields.io/pypi/wheel/rdflib-sqlalchemy-redux.svg)
+![PyPI](https://img.shields.io/pypi/format/rdflib-sqlalchemy-redux.svg)
 
 
 An illustrative unit test:

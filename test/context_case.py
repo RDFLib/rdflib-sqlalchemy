@@ -1,35 +1,37 @@
 import unittest
+
 from rdflib import BNode
 from rdflib import ConjunctiveGraph
 from rdflib import Graph
 from rdflib import URIRef
-from rdflib.store import Store
 from rdflib import plugin
-from rdflib.py3compat import PY3
+from rdflib.store import Store
+from six import string_types
 
-# logging.getLogger('sqlalchemy.engine').setLevel(logging.WARN)
+
+# logging.getLogger("sqlalchemy.engine").setLevel(logging.WARN)
 
 
 class ContextTestCase(unittest.TestCase):
     storetest = True
     identifier = URIRef("rdflib_test")
 
-    michel = URIRef(u'michel')
-    tarek = URIRef(u'tarek')
-    bob = URIRef(u'bob')
-    likes = URIRef(u'likes')
-    hates = URIRef(u'hates')
-    pizza = URIRef(u'pizza')
-    cheese = URIRef(u'cheese')
-    c1 = URIRef(u'context-1')
-    c2 = URIRef(u'context-2')
+    michel = URIRef(u"michel")
+    tarek = URIRef(u"tarek")
+    bob = URIRef(u"bob")
+    likes = URIRef(u"likes")
+    hates = URIRef(u"hates")
+    pizza = URIRef(u"pizza")
+    cheese = URIRef(u"cheese")
+    c1 = URIRef(u"context-1")
+    c2 = URIRef(u"context-2")
 
-    def setUp(self, uri='sqlite://', storename=None):
+    def setUp(self, uri="sqlite://", storename=None):
         store = plugin.get(storename, Store)(identifier=self.identifier)
         self.graph = ConjunctiveGraph(store, identifier=self.identifier)
         self.graph.open(uri, create=True)
 
-    def tearDown(self, uri='sqlite://'):
+    def tearDown(self, uri="sqlite://"):
         self.graph.destroy(uri)
         try:
             self.graph.close()
@@ -179,7 +181,7 @@ class ContextTestCase(unittest.TestCase):
         self.addStuffInMultipleContexts()
 
         def cid(c):
-            if (PY3 and not isinstance(c,(str, bytes))) or not isinstance(c, basestring):
+            if not isinstance(c, string_types):
                 return c.identifier
             return c
         self.assert_(self.c1 in list(map(cid, self.graph.contexts())))
@@ -342,5 +344,5 @@ class ContextTestCase(unittest.TestCase):
         asserte(len(list(triples((Any, Any, Any)))), 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

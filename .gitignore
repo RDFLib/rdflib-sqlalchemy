@@ -6,5 +6,7 @@ rdflib_sqlalchemy.egg-info
 /__pycache__/
 *.project
 *.pydevproject
+*.egg-info/
 /.eggs/
 /dist/
+/venv/
