@@ -1,6 +1,12 @@
 RDFLib-SQLAlchemy
 =================
 
+NOTE: This is a fork of the original [rdflib-sqlalchemy](https://github.com/rdflib/rdflib-sqlalchemy). To install this fork instead of the original version with pip, use:
+
+	pip install rdflib-sqlalchemy-redux
+
+---
+
 A SQLAlchemy-backed, formula-aware RDFLib Store. It stores its triples
 in the following partitions:
 
