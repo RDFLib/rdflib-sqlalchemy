@@ -75,12 +75,12 @@ def find_version(filename):
 __version__ = find_version('rdflib_sqlalchemy/__init__.py')
 
 setup(
-    name='rdflib-sqlalchemy',
+    name='rdflib-sqlalchemy-redux',
     version=__version__,
     description="rdflib extension adding SQLAlchemy as an AbstractSQLStore back-end store",
     author="Graham Higgins",
     author_email="gjhiggins@gmail.com",
-    url="http://github.com/RDFLib/rdflib-sqlalchemy",
+    url="http://github.com/globality-corp/rdflib-sqlalchemy",
     packages=["rdflib_sqlalchemy"],
     download_url="https://github.com/RDFLib/rdflib-sqlalchemy/zipball/master",
     license="BSD",
