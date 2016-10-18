@@ -522,9 +522,9 @@ class SQLAlchemy(Store, SQLGenerator):
         self.engine = engine
 
         # Use only the first 10 bytes of the digest
-        self._internedId = "{}{}".format(
-            INTERNED_PREFIX,
-            hashlib.sha1(self.identifier.encode("utf8")).hexdigest()[:10],
+        self._internedId = "{prefix}{identifier_hash}".format(
+            prefix=INTERNED_PREFIX,
+            identifier_hash=hashlib.sha1(self.identifier.encode("utf8")).hexdigest()[:10],
         )
 
         # This parameter controls how exlusively the literal table is searched
