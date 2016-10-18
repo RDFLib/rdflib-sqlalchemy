@@ -22,14 +22,15 @@ from rdflib.term import Node
 from six import text_type
 from six.moves import reduce
 from sqlalchemy import Column, Table, MetaData, Index, types
+from sqlalchemy.engine import reflection
 from sqlalchemy.sql import select, expression
 
-from .termutils import REVERSE_TERM_COMBINATIONS
-from .termutils import TERM_INSTANTIATION_DICT
-from .termutils import constructGraph
-from .termutils import type2TermCombination
-from .termutils import statement2TermCombination
-from . import __version__
+from rdflib_sqlalchemy import __version__
+from rdflib_sqlalchemy.termutils import REVERSE_TERM_COMBINATIONS
+from rdflib_sqlalchemy.termutils import TERM_INSTANTIATION_DICT
+from rdflib_sqlalchemy.termutils import constructGraph
+from rdflib_sqlalchemy.termutils import type2TermCombination
+from rdflib_sqlalchemy.termutils import statement2TermCombination
 
 
 _logger = logging.getLogger(__name__)
@@ -508,19 +509,23 @@ class SQLAlchemy(Store, SQLGenerator):
     regex_matching = PYTHON_REGEX
     configuration = Literal("sqlite://")
 
-    def __init__(self, identifier=None, configuration=None):
+    def __init__(self, identifier=None, configuration=None, engine=None):
         """
         Initialisation.
 
-        identifier: URIRef of the Store. Defaults to CWD
-        configuration: string containing infomation open can use to
-        connect to datastore.
+        Args:
+            identifier (rdflib.URIRef): URIRef of the Store. Defaults to CWD.
+            engine (sqlalchemy.engine.Engine, optional): a `SQLAlchemy.engine.Engine` instance
+
         """
         self.identifier = identifier and identifier or "hardcoded"
+        self.engine = engine
+
         # Use only the first 10 bytes of the digest
-        self._internedId = INTERNED_PREFIX + \
-            hashlib.sha1(
-                self.identifier.encode("utf8")).hexdigest()[:10]
+        self._internedId = "{}{}".format(
+            INTERNED_PREFIX,
+            hashlib.sha1(self.identifier.encode("utf8")).hexdigest()[:10],
+        )
 
         # This parameter controls how exlusively the literal table is searched
         # If true, the Literal partition is searched *exclusively* if the
@@ -541,21 +546,22 @@ class SQLAlchemy(Store, SQLGenerator):
         self.otherCache = {}
         self.__node_pickler = None
 
-        self.__create_table_definitions()
+        self._create_table_definitions()
 
-        if configuration is not None:
-            self.configuration = configuration
+        # XXX For backward compatibility we still support getting the connection string in constructor
+        # TODO: deprecate this once refactoring is more mature
+        if configuration:
             self.open(configuration)
 
-    def __get_node_pickler(self):
-        if getattr(self, "__node_pickler", False) \
-                or self.__node_pickler is None:
+    def _get_node_pickler(self):
+        if getattr(self, "_node_pickler", False) \
+                or self._node_pickler is None:
             from rdflib.term import URIRef
             from rdflib.graph import GraphValue
             from rdflib.term import Variable
             from rdflib.term import Statement
             from rdflib.store import NodePickler
-            self.__node_pickler = np = NodePickler()
+            self._node_pickler = np = NodePickler()
             np.register(self, "S")
             np.register(URIRef, "U")
             np.register(BNode, "B")
@@ -565,54 +571,69 @@ class SQLAlchemy(Store, SQLGenerator):
             np.register(Variable, "V")
             np.register(Statement, "s")
             np.register(GraphValue, "v")
-        return self.__node_pickler
-    node_pickler = property(__get_node_pickler)
+        return self._node_pickler
+    node_pickler = property(_get_node_pickler)
 
     def open(self, configuration, create=True):
         """
         Open the store specified by the configuration string.
 
-        If create is True a store will be created if it does not already
-        exist. If create is False and a store does not already exist
-        an exception is raised. An exception is also raised if a store
-        exists, but there is insufficient permissions to open the
-        store.
-        """
-        self.engine = sqlalchemy.create_engine(configuration)
-        with self.engine.connect() as connection:
-            assert connection is not None
-            if create:
-                self.metadata.create_all(self.engine)
+        Args:
+            create (bool): If create is True a store will be created if it does not already
+                exist. If create is False and a store does not already exist
+                an exception is raised. An exception is also raised if a store
+                exists, but there is insufficient permissions to open the
+                store.
 
-        if configuration:
-            from sqlalchemy.engine import reflection
-            insp = reflection.Inspector.from_engine(self.engine)
-            tbls = insp.get_table_names()
-            for tn in [tbl % (self._internedId)
-                       for tbl in table_name_prefixes]:
-                if tn not in tbls:
-                    sys.stderr.write("table %s Doesn't exist\n" % (tn))
-                    # The database exists, but one of the partitions
-                    # doesn't exist
-                    return 0
-            # Everything is there (the database and the partitions)
-            return 1
-        # The database doesn't exist - nothing is there
-        return -1
+        Returns:
+            int: 0 if database exists but is empty,
+                 1 if database exists and tables are all there,
+                -1 if nothing exists
+
+        """
+        # Close any existing engine connection
+        self.close()
+
+        self.engine = sqlalchemy.create_engine(configuration)
+        with self.engine.connect():
+            if create:
+                return self.create_all()
+
+    def create_all(self):
+        """
+        Create all of the database tables.
+        Will not re-create any tables that already exist.
+
+        """
+        self.metadata.create_all(self.engine)
+
+        inspector = reflection.Inspector.from_engine(self.engine)
+        tbls = inspector.get_table_names()
+        for tn in [tbl % (self._internedId) for tbl in table_name_prefixes]:
+            if tn not in tbls:
+                sys.stderr.write("table %s Doesn't exist\n" % (tn))
+                # The database exists, but one of the partitions doesn't exist
+                return 0
+        # Everything is there (the database and the partitions)
+        return 1
 
     def close(self, commit_pending_transaction=False):
-        """FIXME:  Add documentation."""
-        try:
+        """
+        Close the current store engine connection if one is open.
+
+        """
+        if self.engine:
             self.engine.close()
-        except:
-            pass
+        self.engine = None
 
     def destroy(self, configuration):
-        """FIXME: Add documentation."""
+        """
+        Delete all tables and stored data associated with the store.
+
+        """
         if self.engine is None:
-            # _logger.debug("Connecting in order to destroy.")
-            self.engine = sqlalchemy.create_engine(configuration)
-        #     _logger.debug("Connected")
+            self.engine = self.open(configuration, create=False)
+
         with self.engine.connect() as connection:
             trans = connection.begin()
             try:
@@ -623,12 +644,8 @@ class SQLAlchemy(Store, SQLGenerator):
                 msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug("unable to drop table: %s " % (msg))
                 trans.rollback()
-        # Note, this only removes the associated tables for the closed
-        # world universe given by the identifier
-        # _logger.debug(
-        #       "Destroyed Close World Universe %s" % (self.identifier))
 
-    def __getBuildCommand(self, triple, context=None, quoted=False):
+    def _getBuildCommand(self, triple, context=None, quoted=False):
 
         subject, predicate, obj = triple
         buildCommandType = None
@@ -653,7 +670,7 @@ class SQLAlchemy(Store, SQLGenerator):
     def add(self, triple, context=None, quoted=False):
         """Add a triple to the store of triples."""
         subject, predicate, obj = triple
-        _, addCmd, params = self.__getBuildCommand(
+        _, addCmd, params = self._getBuildCommand(
             (subject, predicate, obj), context, quoted)
         with self.engine.connect() as connection:
             try:
@@ -672,7 +689,7 @@ class SQLAlchemy(Store, SQLGenerator):
 
         for subject, predicate, obj, context in quads:
             buildCommandType, cmd, params = \
-                self.__getBuildCommand(
+                self._getBuildCommand(
                     (subject, predicate, obj),
                     context,
                     isinstance(context, QuotedGraph))
@@ -1189,7 +1206,7 @@ class SQLAlchemy(Store, SQLGenerator):
             for prefix, uri in res.fetchall():
                 yield prefix, uri
 
-    def __create_table_definitions(self):
+    def _create_table_definitions(self):
         self.metadata = MetaData()
         self.tables = {
             "asserted_statements":
