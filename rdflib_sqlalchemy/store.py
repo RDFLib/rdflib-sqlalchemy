@@ -53,9 +53,8 @@ MYSQL_MAX_INDEX_LENGTH = 200
 
 Any = None
 
+
 # Stolen from Will Waites' py4s
-
-
 def skolemise(statement):
     """Skolemise."""
     def _sk(x):
@@ -81,12 +80,13 @@ def regexp(expr, item):
     return r.match(item) is not None
 
 
-def queryAnalysis(query, store, connection):
+def query_analysis(query, store, connection):
     """
     Helper function.
 
     For executing EXPLAIN on all dispatched SQL statements -
-    for the pupose of analyzing index usage
+    for the pupose of analyzing index usage.
+
     """
     res = connection.execute("explain " + query)
     rt = res.fetchall()[0]
@@ -105,7 +105,7 @@ def queryAnalysis(query, store, connection):
     store.queryOptMarks[(_key, table)] = hits + 1
 
 
-def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
+def union_select(selectComponents, distinct=False, select_type=TRIPLE_SELECT):
     """
     Helper function for building union all select statement.
 
@@ -120,13 +120,14 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
     selects = []
     for table, whereClause, tableType in selectComponents:
 
-        if selectType == COUNT_SELECT:
+        if select_type == COUNT_SELECT:
             selectClause = table.count(whereClause)
-        elif selectType == CONTEXT_SELECT:
+        elif select_type == CONTEXT_SELECT:
             selectClause = expression.select([table.c.context], whereClause)
         elif tableType in FULL_TRIPLE_PARTITIONS:
             selectClause = table.select(whereClause)
         elif tableType == ASSERTED_TYPE_PARTITION:
+            offset_idx = 1 if __version__ <= "0.2" else 0
             selectClause = expression.select(
                 [table.c.id.label("id"),
                  table.c.member.label("subject"),
@@ -135,7 +136,7 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
                  table.c.context.label("context"),
                  table.c.termComb.label("termcomb"),
                  expression.literal_column("NULL").label("objlanguage"),
-                 expression.literal_column("NULL").label("objdatatype")][1 if __version__ <= "0.2" else 0:],
+                 expression.literal_column("NULL").label("objdatatype")][offset_idx:],
                 whereClause)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
             selectClause = expression.select(
@@ -147,15 +148,17 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
 
         selects.append(selectClause)
 
-    orderStmt = []
-    if selectType == TRIPLE_SELECT:
-        orderStmt = [expression.literal_column("subject"),
-                     expression.literal_column("predicate"),
-                     expression.literal_column("object")]
+    order_statement = []
+    if select_type == TRIPLE_SELECT:
+        order_statement = [
+            expression.literal_column("subject"),
+            expression.literal_column("predicate"),
+            expression.literal_column("object"),
+        ]
     if distinct:
-        return expression.union(*selects, **{"order_by": orderStmt})
+        return expression.union(*selects, **{"order_by": order_statement})
     else:
-        return expression.union_all(*selects, **{"order_by": orderStmt})
+        return expression.union_all(*selects, **{"order_by": order_statement})
 
 
 def extractTriple(tupleRt, store, hardCodedContext=None):
@@ -289,7 +292,7 @@ class TermType(types.TypeDecorator):
 class SQLGenerator(object):
     """SQL statement generator."""
 
-    def buildTypeSQLCommand(self, member, klass, context):
+    def _build_type_sql_command(self, member, klass, context):
         """Build an insert command for a type table."""
         # columns: member,klass,context
         rt = self.tables["type_statements"].insert()
@@ -299,42 +302,47 @@ class SQLGenerator(object):
             "context": context.identifier,
             "termComb": int(type2TermCombination(member, klass, context))}
 
-    def buildLiteralTripleSQLCommand(
-            self, subject, predicate, obj, context):
+    def _build_literal_triple_sql_command(self, subject, predicate, obj, context):
         """
         Build an insert command for literal triples.
 
         (Statements where the object is a Literal).
         """
-        triplePattern = int(
-            statement2TermCombination(subject, predicate, obj, context))
+        triple_pattern = int(
+            statement2TermCombination(subject, predicate, obj, context)
+        )
         command = self.tables["literal_statements"].insert()
         values = {
             "subject": subject,
             "predicate": predicate,
             "object": obj,
             "context": context.identifier,
-            "termComb": triplePattern,
+            "termComb": triple_pattern,
             "objLanguage": isinstance(obj, Literal) and obj.language or None,
-            "objDatatype": isinstance(obj, Literal) and obj.datatype or None
+            "objDatatype": isinstance(obj, Literal) and obj.datatype or None,
         }
         return command, values
 
-    def buildTripleSQLCommand(
-            self, subject, predicate, obj, context, quoted):
-        """Build an insert command for regular triple table."""
-        stmt_table = quoted and self.tables["quoted_statements"] \
-            or self.tables["asserted_statements"]
-        triplePattern = statement2TermCombination(
+    def _build_triple_sql_command(self, subject, predicate, obj, context, quoted):
+        """
+        Build an insert command for regular triple table.
+
+        """
+        stmt_table = (quoted and
+                      self.tables["quoted_statements"] or
+                      self.tables["asserted_statements"])
+
+        triple_pattern = statement2TermCombination(
             subject, predicate, obj, context)
         command = stmt_table.insert()
+
         if quoted:
             params = {
                 "subject": subject,
                 "predicate": predicate,
                 "object": obj,
                 "context": context.identifier,
-                "termComb": triplePattern,
+                "termComb": triple_pattern,
                 "objLanguage": isinstance(
                     obj, Literal) and obj.language or None,
                 "objDatatype": isinstance(
@@ -346,7 +354,7 @@ class SQLGenerator(object):
                 "predicate": predicate,
                 "object": obj,
                 "context": context.identifier,
-                "termComb": triplePattern
+                "termComb": triple_pattern,
             }
         return command, params
 
@@ -645,64 +653,95 @@ class SQLAlchemy(Store, SQLGenerator):
                 _logger.debug("unable to drop table: %s " % (msg))
                 trans.rollback()
 
-    def _getBuildCommand(self, triple, context=None, quoted=False):
+    def _get_build_command(self, triple, context=None, quoted=False):
+        """
+        Assemble the SQL Query text for adding an RDF triple to store.
 
+        :param triple {tuple} - tuple of (subject, predicate, object) objects to add
+        :param context - a `rdflib.URIRef` identifier for the graph namespace
+        :param quoted {bool} - whether should treat as a quoted statement
+
+        :returns {tuple} of (command_type, add_command, params):
+            command_type: which kind of statement it is: literal, type, other
+            statement: the literal SQL statement to execute (with unbound variables)
+            params: the parameters for the SQL statement (e.g the variables to bind)
+
+        """
         subject, predicate, obj = triple
-        buildCommandType = None
+        command_type = None
         if quoted or predicate != RDF.type:
             # Quoted statement or non rdf:type predicate
             # check if object is a literal
             if isinstance(obj, Literal):
-                addCmd, params = self.buildLiteralTripleSQLCommand(
-                    subject, predicate, obj, context)
-                buildCommandType = "literal"
+                statement, params = self._build_literal_triple_sql_command(
+                    subject,
+                    predicate,
+                    obj,
+                    context,
+                )
+                command_type = "literal"
             else:
-                addCmd, params = self.buildTripleSQLCommand(
-                    subject, predicate, obj, context, quoted)
-                buildCommandType = "other"
+                statement, params = self._build_triple_sql_command(
+                    subject,
+                    predicate,
+                    obj,
+                    context,
+                    quoted,
+                )
+                command_type = "other"
         elif predicate == RDF.type:
             # asserted rdf:type statement
-            addCmd, params = self.buildTypeSQLCommand(subject, obj, context)
-            buildCommandType = "type"
-        return buildCommandType, addCmd, params
+            statement, params = self._build_type_sql_command(
+                subject,
+                obj,
+                context,
+            )
+            command_type = "type"
+        return command_type, statement, params
 
     # Triple Methods
+
     def add(self, triple, context=None, quoted=False):
         """Add a triple to the store of triples."""
         subject, predicate, obj = triple
-        _, addCmd, params = self._getBuildCommand(
-            (subject, predicate, obj), context, quoted)
+        _, statement, params = self._get_build_command(
+            (subject, predicate, obj),
+            context, quoted,
+        )
+
         with self.engine.connect() as connection:
             try:
-                connection.execute(addCmd, params)
+                connection.execute(statement, params)
             except Exception:
                 e = sys.exc_info()[1]
                 msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug(
                     "Add failed %s with commands %s params %s" % (
-                        msg, str(addCmd), repr(params)))
+                        msg, str(statement), repr(params)
+                    )
+                )
                 raise
 
     def addN(self, quads):
         """Add a list of triples in quads form."""
-        cmdTripleDict = {}
-
+        commands_dict = {}
         for subject, predicate, obj, context in quads:
-            buildCommandType, cmd, params = \
-                self._getBuildCommand(
+            command_type, statement, params = \
+                self._get_build_command(
                     (subject, predicate, obj),
                     context,
-                    isinstance(context, QuotedGraph))
+                    isinstance(context, QuotedGraph),
+                )
 
-            cmdTriple = cmdTripleDict.setdefault(buildCommandType, {})
-            cmdTriple.setdefault("cmd", cmd)
-            cmdTriple.setdefault("params", []).append(params)
+            command_dict = commands_dict.setdefault(command_type, {})
+            command_dict.setdefault("statement", statement)
+            command_dict.setdefault("params", []).append(params)
 
         with self.engine.connect() as connection:
             trans = connection.begin()
             try:
-                for cmdTriple in cmdTripleDict.values():
-                    connection.execute(cmdTriple["cmd"], cmdTriple["params"])
+                for command in commands_dict.values():
+                    connection.execute(command["statement"], command["params"])
                 trans.commit()
             except Exception:
                 e = sys.exc_info()[1]
@@ -858,7 +897,7 @@ class SQLAlchemy(Store, SQLGenerator):
             clause = self.buildClause(quoted, subject, predicate, obj, context)
             selects.append((quoted, clause, QUOTED_PARTITION))
 
-        q = unionSELECT(selects, selectType=TRIPLE_SELECT_NO_ORDER)
+        q = union_select(selects, select_type=TRIPLE_SELECT_NO_ORDER)
         with self.engine.connect() as connection:
             # _logger.debug("Triples query : %s" % str(q))
             res = connection.execute(q)
@@ -938,7 +977,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 None, ASSERTED_NON_TYPE_PARTITION),
             (expression.alias(literal_table, "literal"),
                 None, ASSERTED_LITERAL_PARTITION), ]
-        q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
+        q = union_select(selects, distinct=False, select_type=COUNT_SELECT)
         if hasattr(self, "engine"):
             with self.engine.connect() as connection:
                 res = connection.execute(q)
@@ -984,7 +1023,7 @@ class SQLAlchemy(Store, SQLGenerator):
                  ASSERTED_NON_TYPE_PARTITION),
                 (literal, literalContext,
                  ASSERTED_LITERAL_PARTITION), ]
-            q = unionSELECT(selects, distinct=True, selectType=COUNT_SELECT)
+            q = union_select(selects, distinct=True, select_type=COUNT_SELECT)
         else:
             selects = [
                 (typetable, typeContext,
@@ -993,7 +1032,7 @@ class SQLAlchemy(Store, SQLGenerator):
                  ASSERTED_NON_TYPE_PARTITION),
                 (literal, literalContext,
                  ASSERTED_LITERAL_PARTITION), ]
-            q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
+            q = union_select(selects, distinct=False, select_type=COUNT_SELECT)
 
         # _logger.debug("Length query : %s" % str(q))
 
@@ -1074,14 +1113,14 @@ class SQLAlchemy(Store, SQLGenerator):
 
             clause = self.buildClause(quoted, subject, predicate, obj)
             selects.append((quoted, clause, QUOTED_PARTITION))
-            q = unionSELECT(selects, distinct=True, selectType=CONTEXT_SELECT)
+            q = union_select(selects, distinct=True, select_type=CONTEXT_SELECT)
         else:
             selects = [
                 (typetable, None, ASSERTED_TYPE_PARTITION),
                 (quoted, None, QUOTED_PARTITION),
                 (asserted, None, ASSERTED_NON_TYPE_PARTITION),
                 (literal, None, ASSERTED_LITERAL_PARTITION), ]
-            q = unionSELECT(selects, distinct=True, selectType=CONTEXT_SELECT)
+            q = union_select(selects, distinct=True, select_type=CONTEXT_SELECT)
 
         with self.engine.connect() as connection:
             res = connection.execute(q)
@@ -1112,6 +1151,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 trans.rollback()
 
     # Optional Namespace methods
+
     # Placeholder optimized interfaces (those needed in order to port Versa)
     def subjects(self, predicate=None, obj=None):
         """A generator of subjects with the given predicate and object."""
@@ -1159,6 +1199,7 @@ class SQLAlchemy(Store, SQLGenerator):
         raise Exception("Not implemented")
 
     # Namespace persistence interface implementation
+
     def bind(self, prefix, namespace):
         """Bind prefix for namespace."""
         with self.engine.connect() as connection:
@@ -1290,6 +1331,7 @@ class SQLAlchemy(Store, SQLGenerator):
                           "quoted_statements", "asserted_statements"]:
                 self.tables[table].append_column(
                     Column("id", types.Integer, nullable=False, primary_key=True))
+
 
 table_name_prefixes = [
     "%s_asserted_statements",
