@@ -45,6 +45,7 @@ class SQLASQLiteContextTestCase(context_case.ContextTestCase):
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
 
+
 SQLASQLiteGraphTestCase.storetest = True
 SQLASQLiteContextTestCase.storetest = True
 

@@ -175,5 +175,6 @@ class GraphAggregates3(unittest.TestCase):
         assert not self.graph2.query(sparqlQ3), "Graph as " + \
             "default graph should *not* include triples from other graphs"
 
+
 if __name__ == '__main__':
     unittest.main()

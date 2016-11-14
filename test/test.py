@@ -71,5 +71,6 @@ def investigate_len_issue():
     g1.close()
     os.unlink("%(here)s/development.sqlite" % {"here": os.getcwd()})
 
+
 if __name__ == "__main__":
     investigate_len_issue()
