@@ -52,6 +52,7 @@ class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
     def testLenInMultipleContexts(self):
         raise SkipTest("Known issue.")
 
+
 SQLAPgSQLGraphTestCase.storetest = True
 SQLAPgSQLContextTestCase.storetest = True
 

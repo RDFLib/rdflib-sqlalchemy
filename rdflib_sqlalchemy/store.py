@@ -21,16 +21,16 @@ from rdflib.store import Store
 from rdflib.term import Node
 from six import text_type
 from six.moves import reduce
-from six.moves.urllib.parse import unquote_plus
 from sqlalchemy import Column, Table, MetaData, Index, types
+from sqlalchemy.engine import reflection
 from sqlalchemy.sql import select, expression
 
-from .termutils import REVERSE_TERM_COMBINATIONS
-from .termutils import TERM_INSTANTIATION_DICT
-from .termutils import constructGraph
-from .termutils import type2TermCombination
-from .termutils import statement2TermCombination
-from . import __version__
+from rdflib_sqlalchemy import __version__
+from rdflib_sqlalchemy.termutils import REVERSE_TERM_COMBINATIONS
+from rdflib_sqlalchemy.termutils import TERM_INSTANTIATION_DICT
+from rdflib_sqlalchemy.termutils import constructGraph
+from rdflib_sqlalchemy.termutils import type2TermCombination
+from rdflib_sqlalchemy.termutils import statement2TermCombination
 
 
 _logger = logging.getLogger(__name__)
@@ -53,9 +53,8 @@ MYSQL_MAX_INDEX_LENGTH = 200
 
 Any = None
 
+
 # Stolen from Will Waites' py4s
-
-
 def skolemise(statement):
     """Skolemise."""
     def _sk(x):
@@ -81,51 +80,13 @@ def regexp(expr, item):
     return r.match(item) is not None
 
 
-def _parse_rfc1738_args(name):
-    import cgi
-    """ parse url str into options
-    code orig from sqlalchemy.engine.url """
-    pattern = re.compile(r"""
-            (?P<name>[\w\+]+)://
-            (?:
-                (?P<username>[^:/]*)
-                (?::(?P<password>[^/]*))?
-            @)?
-            (?:
-                (?P<host>[^/:]*)
-                (?::(?P<port>[^/]*))?
-            )?
-            (?:/(?P<database>.*))?
-            """, re.X)
-
-    m = pattern.match(name)
-    if m is not None:
-        (name, username, password, host, port, database) = m.group(
-            1, 2, 3, 4, 5, 6)
-        if database is not None:
-            tokens = database.split(r"?", 2)
-            database = tokens[0]
-            query = (
-                len(tokens) > 1 and dict(cgi.parse_qsl(tokens[1])) or None)
-            if query is not None:
-                query = dict([(k.encode("ascii"), query[k]) for k in query])
-        else:
-            query = None
-        opts = {"username": username, "password": password, "host":
-                host, "port": port, "database": database, "query": query}
-        if opts["password"] is not None:
-            opts["password"] = unquote_plus(opts["password"])
-        return (name, opts)
-    else:
-        raise ValueError("Could not parse rfc1738 URL from string '%s'" % name)
-
-
-def queryAnalysis(query, store, connection):
+def query_analysis(query, store, connection):
     """
     Helper function.
 
     For executing EXPLAIN on all dispatched SQL statements -
-    for the pupose of analyzing index usage
+    for the pupose of analyzing index usage.
+
     """
     res = connection.execute("explain " + query)
     rt = res.fetchall()[0]
@@ -144,7 +105,7 @@ def queryAnalysis(query, store, connection):
     store.queryOptMarks[(_key, table)] = hits + 1
 
 
-def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
+def union_select(selectComponents, distinct=False, select_type=TRIPLE_SELECT):
     """
     Helper function for building union all select statement.
 
@@ -159,13 +120,14 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
     selects = []
     for table, whereClause, tableType in selectComponents:
 
-        if selectType == COUNT_SELECT:
+        if select_type == COUNT_SELECT:
             selectClause = table.count(whereClause)
-        elif selectType == CONTEXT_SELECT:
+        elif select_type == CONTEXT_SELECT:
             selectClause = expression.select([table.c.context], whereClause)
         elif tableType in FULL_TRIPLE_PARTITIONS:
             selectClause = table.select(whereClause)
         elif tableType == ASSERTED_TYPE_PARTITION:
+            offset_idx = 1 if __version__ <= "0.2" else 0
             selectClause = expression.select(
                 [table.c.id.label("id"),
                  table.c.member.label("subject"),
@@ -174,7 +136,7 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
                  table.c.context.label("context"),
                  table.c.termComb.label("termcomb"),
                  expression.literal_column("NULL").label("objlanguage"),
-                 expression.literal_column("NULL").label("objdatatype")][1 if __version__ <= "0.2" else 0:],
+                 expression.literal_column("NULL").label("objdatatype")][offset_idx:],
                 whereClause)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
             selectClause = expression.select(
@@ -186,15 +148,17 @@ def unionSELECT(selectComponents, distinct=False, selectType=TRIPLE_SELECT):
 
         selects.append(selectClause)
 
-    orderStmt = []
-    if selectType == TRIPLE_SELECT:
-        orderStmt = [expression.literal_column("subject"),
-                     expression.literal_column("predicate"),
-                     expression.literal_column("object")]
+    order_statement = []
+    if select_type == TRIPLE_SELECT:
+        order_statement = [
+            expression.literal_column("subject"),
+            expression.literal_column("predicate"),
+            expression.literal_column("object"),
+        ]
     if distinct:
-        return expression.union(*selects, **{"order_by": orderStmt})
+        return expression.union(*selects, **{"order_by": order_statement})
     else:
-        return expression.union_all(*selects, **{"order_by": orderStmt})
+        return expression.union_all(*selects, **{"order_by": order_statement})
 
 
 def extractTriple(tupleRt, store, hardCodedContext=None):
@@ -328,7 +292,7 @@ class TermType(types.TypeDecorator):
 class SQLGenerator(object):
     """SQL statement generator."""
 
-    def buildTypeSQLCommand(self, member, klass, context):
+    def _build_type_sql_command(self, member, klass, context):
         """Build an insert command for a type table."""
         # columns: member,klass,context
         rt = self.tables["type_statements"].insert()
@@ -338,42 +302,47 @@ class SQLGenerator(object):
             "context": context.identifier,
             "termComb": int(type2TermCombination(member, klass, context))}
 
-    def buildLiteralTripleSQLCommand(
-            self, subject, predicate, obj, context):
+    def _build_literal_triple_sql_command(self, subject, predicate, obj, context):
         """
         Build an insert command for literal triples.
 
         (Statements where the object is a Literal).
         """
-        triplePattern = int(
-            statement2TermCombination(subject, predicate, obj, context))
+        triple_pattern = int(
+            statement2TermCombination(subject, predicate, obj, context)
+        )
         command = self.tables["literal_statements"].insert()
         values = {
             "subject": subject,
             "predicate": predicate,
             "object": obj,
             "context": context.identifier,
-            "termComb": triplePattern,
+            "termComb": triple_pattern,
             "objLanguage": isinstance(obj, Literal) and obj.language or None,
-            "objDatatype": isinstance(obj, Literal) and obj.datatype or None
+            "objDatatype": isinstance(obj, Literal) and obj.datatype or None,
         }
         return command, values
 
-    def buildTripleSQLCommand(
-            self, subject, predicate, obj, context, quoted):
-        """Build an insert command for regular triple table."""
-        stmt_table = quoted and self.tables["quoted_statements"] \
-            or self.tables["asserted_statements"]
-        triplePattern = statement2TermCombination(
+    def _build_triple_sql_command(self, subject, predicate, obj, context, quoted):
+        """
+        Build an insert command for regular triple table.
+
+        """
+        stmt_table = (quoted and
+                      self.tables["quoted_statements"] or
+                      self.tables["asserted_statements"])
+
+        triple_pattern = statement2TermCombination(
             subject, predicate, obj, context)
         command = stmt_table.insert()
+
         if quoted:
             params = {
                 "subject": subject,
                 "predicate": predicate,
                 "object": obj,
                 "context": context.identifier,
-                "termComb": triplePattern,
+                "termComb": triple_pattern,
                 "objLanguage": isinstance(
                     obj, Literal) and obj.language or None,
                 "objDatatype": isinstance(
@@ -385,7 +354,7 @@ class SQLGenerator(object):
                 "predicate": predicate,
                 "object": obj,
                 "context": context.identifier,
-                "termComb": triplePattern
+                "termComb": triple_pattern,
             }
         return command, params
 
@@ -548,19 +517,23 @@ class SQLAlchemy(Store, SQLGenerator):
     regex_matching = PYTHON_REGEX
     configuration = Literal("sqlite://")
 
-    def __init__(self, identifier=None, configuration=None):
+    def __init__(self, identifier=None, configuration=None, engine=None):
         """
         Initialisation.
 
-        identifier: URIRef of the Store. Defaults to CWD
-        configuration: string containing infomation open can use to
-        connect to datastore.
+        Args:
+            identifier (rdflib.URIRef): URIRef of the Store. Defaults to CWD.
+            engine (sqlalchemy.engine.Engine, optional): a `SQLAlchemy.engine.Engine` instance
+
         """
         self.identifier = identifier and identifier or "hardcoded"
+        self.engine = engine
+
         # Use only the first 10 bytes of the digest
-        self._internedId = INTERNED_PREFIX + \
-            hashlib.sha1(
-                self.identifier.encode("utf8")).hexdigest()[:10]
+        self._internedId = "{prefix}{identifier_hash}".format(
+            prefix=INTERNED_PREFIX,
+            identifier_hash=hashlib.sha1(self.identifier.encode("utf8")).hexdigest()[:10],
+        )
 
         # This parameter controls how exlusively the literal table is searched
         # If true, the Literal partition is searched *exclusively* if the
@@ -581,21 +554,22 @@ class SQLAlchemy(Store, SQLGenerator):
         self.otherCache = {}
         self.__node_pickler = None
 
-        self.__create_table_definitions()
+        self._create_table_definitions()
 
-        if configuration is not None:
-            self.configuration = configuration
+        # XXX For backward compatibility we still support getting the connection string in constructor
+        # TODO: deprecate this once refactoring is more mature
+        if configuration:
             self.open(configuration)
 
-    def __get_node_pickler(self):
-        if getattr(self, "__node_pickler", False) \
-                or self.__node_pickler is None:
+    def _get_node_pickler(self):
+        if getattr(self, "_node_pickler", False) \
+                or self._node_pickler is None:
             from rdflib.term import URIRef
             from rdflib.graph import GraphValue
             from rdflib.term import Variable
             from rdflib.term import Statement
             from rdflib.store import NodePickler
-            self.__node_pickler = np = NodePickler()
+            self._node_pickler = np = NodePickler()
             np.register(self, "S")
             np.register(URIRef, "U")
             np.register(BNode, "B")
@@ -605,57 +579,69 @@ class SQLAlchemy(Store, SQLGenerator):
             np.register(Variable, "V")
             np.register(Statement, "s")
             np.register(GraphValue, "v")
-        return self.__node_pickler
-    node_pickler = property(__get_node_pickler)
+        return self._node_pickler
+    node_pickler = property(_get_node_pickler)
 
     def open(self, configuration, create=True):
         """
         Open the store specified by the configuration string.
 
-        If create is True a store will be created if it does not already
-        exist. If create is False and a store does not already exist
-        an exception is raised. An exception is also raised if a store
-        exists, but there is insufficient permissions to open the
-        store.
+        Args:
+            create (bool): If create is True a store will be created if it does not already
+                exist. If create is False and a store does not already exist
+                an exception is raised. An exception is also raised if a store
+                exists, but there is insufficient permissions to open the
+                store.
+
+        Returns:
+            int: 0 if database exists but is empty,
+                 1 if database exists and tables are all there,
+                -1 if nothing exists
+
         """
-        name, opts = _parse_rfc1738_args(configuration)
+        # Close any existing engine connection
+        self.close()
 
         self.engine = sqlalchemy.create_engine(configuration)
-        with self.engine.connect() as connection:
-            assert connection is not None
+        with self.engine.connect():
             if create:
-                self.metadata.create_all(self.engine)
-        # self._db.create_function("regexp", 2, regexp)
-        if configuration:
-            from sqlalchemy.engine import reflection
-            insp = reflection.Inspector.from_engine(self.engine)
-            tbls = insp.get_table_names()
-            for tn in [tbl % (self._internedId)
-                       for tbl in table_name_prefixes]:
-                if tn not in tbls:
-                    sys.stderr.write("table %s Doesn't exist\n" % (tn))
-                    # The database exists, but one of the partitions
-                    # doesn't exist
-                    return 0
-            # Everything is there (the database and the partitions)
-            return 1
-        # The database doesn't exist - nothing is there
-        return -1
+                return self.create_all()
+
+    def create_all(self):
+        """
+        Create all of the database tables.
+        Will not re-create any tables that already exist.
+
+        """
+        self.metadata.create_all(self.engine)
+
+        inspector = reflection.Inspector.from_engine(self.engine)
+        tbls = inspector.get_table_names()
+        for tn in [tbl % (self._internedId) for tbl in table_name_prefixes]:
+            if tn not in tbls:
+                sys.stderr.write("table %s Doesn't exist\n" % (tn))
+                # The database exists, but one of the partitions doesn't exist
+                return 0
+        # Everything is there (the database and the partitions)
+        return 1
 
     def close(self, commit_pending_transaction=False):
-        """FIXME:  Add documentation."""
-        try:
+        """
+        Close the current store engine connection if one is open.
+
+        """
+        if self.engine:
             self.engine.close()
-        except:
-            pass
+        self.engine = None
 
     def destroy(self, configuration):
-        """FIXME: Add documentation."""
-        name, opts = _parse_rfc1738_args(configuration)
+        """
+        Delete all tables and stored data associated with the store.
+
+        """
         if self.engine is None:
-            # _logger.debug("Connecting in order to destroy.")
-            self.engine = sqlalchemy.create_engine(configuration)
-        #     _logger.debug("Connected")
+            self.engine = self.open(configuration, create=False)
+
         with self.engine.connect() as connection:
             trans = connection.begin()
             try:
@@ -666,69 +652,96 @@ class SQLAlchemy(Store, SQLGenerator):
                 msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug("unable to drop table: %s " % (msg))
                 trans.rollback()
-        # Note, this only removes the associated tables for the closed
-        # world universe given by the identifier
-        # _logger.debug(
-        #       "Destroyed Close World Universe %s" % (self.identifier))
 
-    def __getBuildCommand(self, triple, context=None, quoted=False):
+    def _get_build_command(self, triple, context=None, quoted=False):
+        """
+        Assemble the SQL Query text for adding an RDF triple to store.
 
+        :param triple {tuple} - tuple of (subject, predicate, object) objects to add
+        :param context - a `rdflib.URIRef` identifier for the graph namespace
+        :param quoted {bool} - whether should treat as a quoted statement
+
+        :returns {tuple} of (command_type, add_command, params):
+            command_type: which kind of statement it is: literal, type, other
+            statement: the literal SQL statement to execute (with unbound variables)
+            params: the parameters for the SQL statement (e.g the variables to bind)
+
+        """
         subject, predicate, obj = triple
-        buildCommandType = None
+        command_type = None
         if quoted or predicate != RDF.type:
             # Quoted statement or non rdf:type predicate
             # check if object is a literal
             if isinstance(obj, Literal):
-                addCmd, params = self.buildLiteralTripleSQLCommand(
-                    subject, predicate, obj, context)
-                buildCommandType = "literal"
+                statement, params = self._build_literal_triple_sql_command(
+                    subject,
+                    predicate,
+                    obj,
+                    context,
+                )
+                command_type = "literal"
             else:
-                addCmd, params = self.buildTripleSQLCommand(
-                    subject, predicate, obj, context, quoted)
-                buildCommandType = "other"
+                statement, params = self._build_triple_sql_command(
+                    subject,
+                    predicate,
+                    obj,
+                    context,
+                    quoted,
+                )
+                command_type = "other"
         elif predicate == RDF.type:
             # asserted rdf:type statement
-            addCmd, params = self.buildTypeSQLCommand(subject, obj, context)
-            buildCommandType = "type"
-        return buildCommandType, addCmd, params
+            statement, params = self._build_type_sql_command(
+                subject,
+                obj,
+                context,
+            )
+            command_type = "type"
+        return command_type, statement, params
 
     # Triple Methods
+
     def add(self, triple, context=None, quoted=False):
         """Add a triple to the store of triples."""
         subject, predicate, obj = triple
-        _, addCmd, params = self.__getBuildCommand(
-            (subject, predicate, obj), context, quoted)
+        _, statement, params = self._get_build_command(
+            (subject, predicate, obj),
+            context, quoted,
+        )
+
         with self.engine.connect() as connection:
             try:
-                connection.execute(addCmd, params)
+                connection.execute(statement, params)
             except Exception:
                 e = sys.exc_info()[1]
                 msg = e.args[0] if len(e.args) > 0 else ""
                 _logger.debug(
                     "Add failed %s with commands %s params %s" % (
-                        msg, str(addCmd), repr(params)))
+                        msg, str(statement), repr(params)
+                    )
+                )
                 raise
 
     def addN(self, quads):
         """Add a list of triples in quads form."""
-        cmdTripleDict = {}
-
+        commands_dict = {}
         for subject, predicate, obj, context in quads:
-            buildCommandType, cmd, params = \
-                self.__getBuildCommand(
+            command_type, statement, params = \
+                self._get_build_command(
                     (subject, predicate, obj),
                     context,
-                    isinstance(context, QuotedGraph))
+                    isinstance(context, QuotedGraph),
+                )
 
-            cmdTriple = cmdTripleDict.setdefault(buildCommandType, {})
-            cmdTriple.setdefault("cmd", cmd)
-            cmdTriple.setdefault("params", []).append(params)
+            command_dict = commands_dict.setdefault(command_type, {})
+            command_dict.setdefault("statement", statement)
+            command_dict.setdefault("params", []).append(params)
 
         with self.engine.connect() as connection:
             trans = connection.begin()
             try:
-                for cmdTriple in cmdTripleDict.values():
-                    connection.execute(cmdTriple["cmd"], cmdTriple["params"])
+                for command in commands_dict.values():
+                    connection.execute(command["statement"], command["params"])
                 trans.commit()
             except Exception:
                 e = sys.exc_info()[1]
@@ -884,7 +897,7 @@ class SQLAlchemy(Store, SQLGenerator):
             clause = self.buildClause(quoted, subject, predicate, obj, context)
             selects.append((quoted, clause, QUOTED_PARTITION))
 
-        q = unionSELECT(selects, selectType=TRIPLE_SELECT_NO_ORDER)
+        q = union_select(selects, select_type=TRIPLE_SELECT_NO_ORDER)
         with self.engine.connect() as connection:
             # _logger.debug("Triples query : %s" % str(q))
             res = connection.execute(q)
@@ -964,7 +977,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 None, ASSERTED_NON_TYPE_PARTITION),
             (expression.alias(literal_table, "literal"),
                 None, ASSERTED_LITERAL_PARTITION), ]
-        q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
+        q = union_select(selects, distinct=False, select_type=COUNT_SELECT)
         if hasattr(self, "engine"):
             with self.engine.connect() as connection:
                 res = connection.execute(q)
@@ -1010,7 +1023,7 @@ class SQLAlchemy(Store, SQLGenerator):
                  ASSERTED_NON_TYPE_PARTITION),
                 (literal, literalContext,
                  ASSERTED_LITERAL_PARTITION), ]
-            q = unionSELECT(selects, distinct=True, selectType=COUNT_SELECT)
+            q = union_select(selects, distinct=True, select_type=COUNT_SELECT)
         else:
             selects = [
                 (typetable, typeContext,
@@ -1019,7 +1032,7 @@ class SQLAlchemy(Store, SQLGenerator):
                  ASSERTED_NON_TYPE_PARTITION),
                 (literal, literalContext,
                  ASSERTED_LITERAL_PARTITION), ]
-            q = unionSELECT(selects, distinct=False, selectType=COUNT_SELECT)
+            q = union_select(selects, distinct=False, select_type=COUNT_SELECT)
 
         # _logger.debug("Length query : %s" % str(q))
 
@@ -1100,14 +1113,14 @@ class SQLAlchemy(Store, SQLGenerator):
 
             clause = self.buildClause(quoted, subject, predicate, obj)
             selects.append((quoted, clause, QUOTED_PARTITION))
-            q = unionSELECT(selects, distinct=True, selectType=CONTEXT_SELECT)
+            q = union_select(selects, distinct=True, select_type=CONTEXT_SELECT)
         else:
             selects = [
                 (typetable, None, ASSERTED_TYPE_PARTITION),
                 (quoted, None, QUOTED_PARTITION),
                 (asserted, None, ASSERTED_NON_TYPE_PARTITION),
                 (literal, None, ASSERTED_LITERAL_PARTITION), ]
-            q = unionSELECT(selects, distinct=True, selectType=CONTEXT_SELECT)
+            q = union_select(selects, distinct=True, select_type=CONTEXT_SELECT)
 
         with self.engine.connect() as connection:
             res = connection.execute(q)
@@ -1138,6 +1151,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 trans.rollback()
 
     # Optional Namespace methods
+
     # Placeholder optimized interfaces (those needed in order to port Versa)
     def subjects(self, predicate=None, obj=None):
         """A generator of subjects with the given predicate and object."""
@@ -1185,6 +1199,7 @@ class SQLAlchemy(Store, SQLGenerator):
         raise Exception("Not implemented")
 
     # Namespace persistence interface implementation
+
     def bind(self, prefix, namespace):
         """Bind prefix for namespace."""
         with self.engine.connect() as connection:
@@ -1232,7 +1247,7 @@ class SQLAlchemy(Store, SQLGenerator):
             for prefix, uri in res.fetchall():
                 yield prefix, uri
 
-    def __create_table_definitions(self):
+    def _create_table_definitions(self):
         self.metadata = MetaData()
         self.tables = {
             "asserted_statements":
@@ -1316,6 +1331,7 @@ class SQLAlchemy(Store, SQLGenerator):
                           "quoted_statements", "asserted_statements"]:
                 self.tables[table].append_column(
                     Column("id", types.Integer, nullable=False, primary_key=True))
+
 
 table_name_prefixes = [
     "%s_asserted_statements",

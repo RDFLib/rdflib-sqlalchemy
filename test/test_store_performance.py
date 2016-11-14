@@ -104,5 +104,6 @@ class SQLAlchemyStoreTestCase(StoreTestCase):
             "here": os.getcwd()}
         StoreTestCase.setUp(self)
 
+
 if __name__ == "__main__":
     unittest.main()

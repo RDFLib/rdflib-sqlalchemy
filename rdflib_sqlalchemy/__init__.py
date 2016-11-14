@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """SQLAlchemy Store plugin for RDFLib."""
 import logging
+from pkg_resources import get_distribution
 
 
-__author__ = "Graham Higgins"
-__version__ = "0.3"
+__version__ = get_distribution("rdflib_sqlalchemy").version
 
 
 class NullHandler(logging.Handler):
@@ -21,6 +21,7 @@ class NullHandler(logging.Handler):
     def emit(self, record):
         """Emit."""
         pass
+
 
 hndlr = NullHandler()
 logging.getLogger("rdflib").addHandler(hndlr)

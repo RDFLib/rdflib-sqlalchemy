@@ -37,7 +37,7 @@ Github repository: https://github.com/RDFLib/rdflib-sqlalchemy
 
 Continuous integration: https://travis-ci.org/RDFLib/rdflib-sqlalchemy/
 
-![Travis CI](https://travis-ci.org/RDFLib/rdflib-sqlalchemy.png?branch=master)
+![Travis CI](https://travis-ci.org/RDFLib/rdflib-sqlalchemy.png?branch=develop)
 ![PyPI](https://img.shields.io/pypi/v/rdflib-sqlalchemy.svg)
 ![PyPI](https://img.shields.io/pypi/status/rdflib-sqlalchemy.svg)
 ![PyPI](https://img.shields.io/pypi/dw/rdflib-sqlalchemy.svg)
