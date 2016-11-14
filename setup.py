@@ -2,7 +2,7 @@
 from setuptools import setup
 
 
-project = "rdflib-sqlalchemy-redux"
+project = "rdflib-sqlalchemy"
 version = "0.3.4"
 
 
@@ -12,9 +12,9 @@ setup(
     description="rdflib extension adding SQLAlchemy as an AbstractSQLStore back-end store",
     author="Graham Higgins, Adam Ever-Hadani",
     author_email="gjhiggins@gmail.com, adamhadani@globality.com",
-    url="http://github.com/globality-corp/rdflib-sqlalchemy",
+    url="http://github.com/RDFLib/rdflib-sqlalchemy",
     packages=["rdflib_sqlalchemy"],
-    download_url="https://github.com/globality-corp/rdflib-sqlalchemy/zipball/master",
+    download_url="https://github.com/RDFLib/rdflib-sqlalchemy/zipball/master",
     license="BSD",
     platforms=["any"],
     long_description="""

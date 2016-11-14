@@ -4,7 +4,7 @@ import logging
 from pkg_resources import get_distribution
 
 
-__version__ = get_distribution("rdflib_sqlalchemy_redux").version
+__version__ = get_distribution("rdflib_sqlalchemy").version
 
 
 class NullHandler(logging.Handler):
