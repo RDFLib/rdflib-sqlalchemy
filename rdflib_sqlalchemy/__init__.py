@@ -22,6 +22,7 @@ class NullHandler(logging.Handler):
         """Emit."""
         pass
 
+
 hndlr = NullHandler()
 logging.getLogger("rdflib").addHandler(hndlr)
 
