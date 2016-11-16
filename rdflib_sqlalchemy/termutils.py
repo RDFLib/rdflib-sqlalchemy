@@ -13,7 +13,8 @@ SUBJECT = 0
 PREDICATE = 1
 OBJECT = 2
 CONTEXT = 3
-TERM_COMBINATIONS = dict([(term, index) for index, term, in enumerate([
+
+TERM_COMBINATIONS = dict([(term, index) for index, term in enumerate([
      "UUUU", "UUUB", "UUUF", "UUVU", "UUVB", "UUVF", "UUBU", "UUBB", "UUBF",
      "UULU", "UULB", "UULF", "UUFU", "UUFB", "UUFF",
      #
@@ -183,7 +184,7 @@ def triple_pattern_to_term_combinations(triple):
 
 
 def type_to_term_combination(member, klass, context):
-    """Map a type to a TermCombo."""
+    """Map a type to a term combination."""
     try:
         rt = TERM_COMBINATIONS["%sU%s%s" %
                                (term_to_letter(member),

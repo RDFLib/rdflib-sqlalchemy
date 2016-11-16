@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Table, Index, types
+from sqlalchemy import Column, Table, Index, UniqueConstraint, types
 
 from rdflib_sqlalchemy.types import TermType
 
@@ -7,7 +7,7 @@ MYSQL_MAX_INDEX_LENGTH = 200
 
 TABLE_NAME_TEMPLATES = [
     "{interned_id}_asserted_statements",
-    "{interned_id}_literal_statements"
+    "{interned_id}_literal_statements",
     "{interned_id}_namespace_binds",
     "{interned_id}_quoted_statements",
     "{interned_id}_type_statements",
@@ -24,10 +24,6 @@ def create_asserted_statements_table(interned_id, metadata):
         Column("object", TermType, nullable=False),
         Column("context", TermType, nullable=False),
         Column("termcomb", types.Integer, nullable=False, key="termComb"),
-        Index(
-            "{interned_id}_A_termComb_index".format(interned_id=interned_id),
-            "termComb",
-        ),
         Index(
             "{interned_id}_A_s_index".format(interned_id=interned_id),
             "subject",
@@ -47,7 +43,11 @@ def create_asserted_statements_table(interned_id, metadata):
             "{interned_id}_A_c_index".format(interned_id=interned_id),
             "context",
             mysql_length=MYSQL_MAX_INDEX_LENGTH,
-        )
+        ),
+        Index(
+            "{interned_id}_A_termComb_index".format(interned_id=interned_id),
+            "termComb",
+        ),
     )
 
 
@@ -60,10 +60,6 @@ def create_type_statements_table(interned_id, metadata):
         Column("klass", TermType, nullable=False),
         Column("context", TermType, nullable=False),
         Column("termcomb", types.Integer, nullable=False, key="termComb"),
-        Index(
-            "{interned_id}_T_termComb_index".format(interned_id=interned_id),
-            "termComb",
-        ),
         Index(
             "{interned_id}_member_index".format(interned_id=interned_id),
             "member",
@@ -78,7 +74,14 @@ def create_type_statements_table(interned_id, metadata):
             "{interned_id}_c_index".format(interned_id=interned_id),
             "context",
             mysql_length=MYSQL_MAX_INDEX_LENGTH,
-        )
+        ),
+        Index(
+            "{interned_id}_T_termComb_index".format(interned_id=interned_id),
+            "termComb",
+        ),
+        UniqueConstraint(
+            "member", "klass", name="{interned_id}_type_member_klass_key",
+        ),
     )
 
 
@@ -95,10 +98,6 @@ def create_literal_statements_table(interned_id, metadata):
         Column("objlanguage", types.String(255), key="objLanguage"),
         Column("objdatatype", types.String(255), key="objDatatype"),
         Index(
-            "{interned_id}_L_termComb_index".format(interned_id=interned_id),
-            "termComb",
-        ),
-        Index(
             "{interned_id}_L_s_index".format(interned_id=interned_id),
             "subject",
             mysql_length=MYSQL_MAX_INDEX_LENGTH,
@@ -112,7 +111,11 @@ def create_literal_statements_table(interned_id, metadata):
             "{interned_id}_L_c_index".format(interned_id=interned_id),
             "context",
             mysql_length=MYSQL_MAX_INDEX_LENGTH,
-        )
+        ),
+        Index(
+            "{interned_id}_L_termComb_index".format(interned_id=interned_id),
+            "termComb",
+        ),
     )
 
 
@@ -128,10 +131,6 @@ def create_quoted_statements_table(interned_id, metadata):
         Column("termcomb", types.Integer, nullable=False, key="termComb"),
         Column("objlanguage", types.String(255), key="objLanguage"),
         Column("objdatatype", types.String(255), key="objDatatype"),
-        Index(
-            "{interned_id}_Q_termComb_index".format(interned_id=interned_id),
-            "termComb",
-        ),
         Index(
             "{interned_id}_Q_s_index".format(interned_id=interned_id),
             "subject",
@@ -151,7 +150,11 @@ def create_quoted_statements_table(interned_id, metadata):
             "{interned_id}_Q_c_index".format(interned_id=interned_id),
             "context",
             mysql_length=MYSQL_MAX_INDEX_LENGTH,
-        )
+        ),
+        Index(
+            "{interned_id}_Q_termComb_index".format(interned_id=interned_id),
+            "termComb",
+        ),
     )
 
 

@@ -796,9 +796,10 @@ class SQLAlchemy(Store, SQLGenerator):
         asserted rdf:type table:     <id>_type_statements
         asserted non rdf:type table: <id>_asserted_statements
 
-        triple columns: subject,predicate,object,context,termComb,
-                        objLanguage,objDatatype
-        class membership columns: member,klass,context termComb
+        triple columns:
+            subject, predicate, object, context, termComb, objLanguage, objDatatype
+        class membership columns:
+            member, klass, context, termComb
 
         FIXME:  These union all selects *may* be further optimized by joins
 
