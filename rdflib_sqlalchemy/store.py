@@ -543,7 +543,7 @@ class SQLAlchemy(Store, SQLGenerator):
     @property
     def table_names(self):
         return [
-            table_name_template.format(self._interned_id)
+            table_name_template.format(interned_id=self._interned_id)
             for table_name_template in TABLE_NAME_TEMPLATES
         ]
 
