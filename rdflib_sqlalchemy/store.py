@@ -21,7 +21,6 @@ from sqlalchemy import MetaData
 from sqlalchemy.engine import reflection
 from sqlalchemy.sql import select, expression
 
-from rdflib_sqlalchemy import __version__
 from rdflib_sqlalchemy.tables import (
     TABLE_NAME_TEMPLATES,
     create_asserted_statements_table,
@@ -131,7 +130,6 @@ def union_select(selectComponents, distinct=False, select_type=TRIPLE_SELECT):
         elif tableType in FULL_TRIPLE_PARTITIONS:
             selectClause = table.select(whereClause)
         elif tableType == ASSERTED_TYPE_PARTITION:
-            offset_idx = 1 if __version__ <= "0.2" else 0
             selectClause = expression.select(
                 [table.c.id.label("id"),
                  table.c.member.label("subject"),
@@ -140,7 +138,7 @@ def union_select(selectComponents, distinct=False, select_type=TRIPLE_SELECT):
                  table.c.context.label("context"),
                  table.c.termComb.label("termcomb"),
                  expression.literal_column("NULL").label("objlanguage"),
-                 expression.literal_column("NULL").label("objdatatype")][offset_idx:],
+                 expression.literal_column("NULL").label("objdatatype")],
                 whereClause)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
             selectClause = expression.select(
@@ -173,24 +171,14 @@ def extractTriple(tupleRt, store, hardCodedContext=None):
     converts it to a tuple of terms using the termComb integer
     to interpret how to instantiate each term
     """
-    if __version__ <= "0.2":
-        try:
-            subject, predicate, obj, rtContext, termComb, \
-                objLanguage, objDatatype = tupleRt
-            termCombString = REVERSE_TERM_COMBINATIONS[termComb]
-            subjTerm, predTerm, objTerm, ctxTerm = termCombString
-        except ValueError:
-            subject, subjTerm, predicate, predTerm, obj, objTerm, \
-                rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
-    else:
-        try:
-            id, subject, predicate, obj, rtContext, termComb, \
-                objLanguage, objDatatype = tupleRt
-            termCombString = REVERSE_TERM_COMBINATIONS[termComb]
-            subjTerm, predTerm, objTerm, ctxTerm = termCombString
-        except ValueError:
-            id, subject, subjTerm, predicate, predTerm, obj, objTerm, \
-                rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
+    try:
+        id, subject, predicate, obj, rtContext, termComb, \
+            objLanguage, objDatatype = tupleRt
+        termCombString = REVERSE_TERM_COMBINATIONS[termComb]
+        subjTerm, predTerm, objTerm, ctxTerm = termCombString
+    except ValueError:
+        id, subject, subjTerm, predicate, predTerm, obj, objTerm, \
+            rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
 
     context = rtContext is not None \
         and rtContext \
@@ -200,10 +188,8 @@ def extractTriple(tupleRt, store, hardCodedContext=None):
     o = createTerm(obj, objTerm, store, objLanguage, objDatatype)
 
     graphKlass, idKlass = construct_graph(ctxTerm)
-    if __version__ <= "0.2":
-        return s, p, o, (graphKlass, idKlass, context)
-    else:
-        return id, s, p, o, (graphKlass, idKlass, context)
+
+    return id, s, p, o, (graphKlass, idKlass, context)
 
 
 def createTerm(
@@ -902,12 +888,7 @@ class SQLAlchemy(Store, SQLGenerator):
             result = res.fetchall()
         tripleCoverage = {}
         for rt in result:
-            if __version__ <= "0.2":
-                s, p, o, (graphKlass, idKlass, graphId) = \
-                    extractTriple(rt, self, context)
-            else:
-                id, s, p, o, (graphKlass, idKlass, graphId) = \
-                    extractTriple(rt, self, context)
+            id, s, p, o, (graphKlass, idKlass, graphId) = extractTriple(rt, self, context)
             contexts = tripleCoverage.get((s, p, o), [])
             contexts.append(graphKlass(self, idKlass(graphId)))
             tripleCoverage[(s, p, o)] = contexts
