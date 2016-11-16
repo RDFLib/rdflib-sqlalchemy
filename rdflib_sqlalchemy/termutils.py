@@ -9,13 +9,6 @@ from rdflib.py3compat import format_doctest_out
 from rdflib.term import Statement
 
 
-__all__ = ["SUBJECT", "PREDICATE", "OBJECT", "CONTEXT", "TERM_COMBINATIONS",
-           "REVERSE_TERM_COMBINATIONS", "TERM_INSTANTIATION_DICT",
-           "GRAPH_TERM_DICT", "normalizeGraph", "term_to_letter",
-           "construct_graph", "triplePattern2termCombinations",
-           "type_to_term_combination", "statement_to_term_combination",
-           "escape_quotes"]
-
 SUBJECT = 0
 PREDICATE = 1
 OBJECT = 2
@@ -70,7 +63,7 @@ GRAPH_TERM_DICT = {
 
 
 @format_doctest_out
-def normalizeGraph(graph):
+def normalize_graph(graph):
     """
     Take an instance of a ``Graph`` and return the instance's identifier and  ``type``.
 
@@ -82,16 +75,16 @@ def normalizeGraph(graph):
     >>> from rdflib.graph import Graph, ConjunctiveGraph, QuotedGraph
     >>> from rdflib.store import Store
     >>> from rdflib import URIRef, Namespace
-    >>> from rdflib_sqlalchemy.termutils import normalizeGraph
+    >>> from rdflib_sqlalchemy.termutils import normalize_graph
     >>> memstore = plugin.get('IOMemory', Store)()
     >>> g = Graph(memstore, URIRef("http://purl.org/net/bel-epa/gjh"))
-    >>> normalizeGraph(g)
+    >>> normalize_graph(g)
     (rdflib.term.URIRef(%(u)s'http://purl.org/net/bel-epa/gjh'), 'U')
     >>> g = ConjunctiveGraph(memstore, Namespace("http://rdflib.net/ns"))
-    >>> normalizeGraph(g)  #doctest: +ELLIPSIS
+    >>> normalize_graph(g)  #doctest: +ELLIPSIS
     (rdflib.term.URIRef(%(u)s'http://rdflib.net/ns'), 'U')
     >>> g = QuotedGraph(memstore, Namespace("http://rdflib.net/ns"))
-    >>> normalizeGraph(g)
+    >>> normalize_graph(g)
     (rdflib.term.URIRef(%(u)s'http://rdflib.net/ns'), 'F')
 
     """
@@ -178,11 +171,10 @@ def construct_graph(key):
     return GRAPH_TERM_DICT[key]
 
 
-def triplePattern2termCombinations(triple):
+def triple_pattern_to_term_combinations(triple):
     """Map a triple pattern to term combinations (non-functioning)."""
     s, p, o = triple
     combinations = []
-    # combinations.update(TERM_COMBINATIONS)
     if isinstance(o, Literal):
         for key, val in TERM_COMBINATIONS.items():
             if key[OBJECT] == 'O':
@@ -196,7 +188,7 @@ def type_to_term_combination(member, klass, context):
         rt = TERM_COMBINATIONS["%sU%s%s" %
                                (term_to_letter(member),
                                 term_to_letter(klass),
-                                normalizeGraph(context)[-1])]
+                                normalize_graph(context)[-1])]
         return rt
     except:
         raise Exception("Unable to persist" +
@@ -208,7 +200,7 @@ def statement_to_term_combination(subject, predicate, obj, context):
     """Map a statement to a Term Combo."""
     return TERM_COMBINATIONS["%s%s%s%s" %
                              (term_to_letter(subject), term_to_letter(predicate),
-                              term_to_letter(obj), normalizeGraph(context)[-1])]
+                              term_to_letter(obj), normalize_graph(context)[-1])]
 
 
 def escape_quotes(qstr):
