@@ -11,9 +11,9 @@ from rdflib.term import Statement
 
 __all__ = ["SUBJECT", "PREDICATE", "OBJECT", "CONTEXT", "TERM_COMBINATIONS",
            "REVERSE_TERM_COMBINATIONS", "TERM_INSTANTIATION_DICT",
-           "GRAPH_TERM_DICT", "normalizeGraph", "term2Letter",
-           "constructGraph", "triplePattern2termCombinations",
-           "type2TermCombination", "statement2TermCombination",
+           "GRAPH_TERM_DICT", "normalizeGraph", "term_to_letter",
+           "construct_graph", "triplePattern2termCombinations",
+           "type_to_term_combination", "statement_to_term_combination",
            "escape_quotes"]
 
 SUBJECT = 0
@@ -98,11 +98,11 @@ def normalizeGraph(graph):
     if isinstance(graph, QuotedGraph):
         return graph.identifier, "F"
     else:
-        return graph.identifier, term2Letter(graph.identifier)
+        return graph.identifier, term_to_letter(graph.identifier)
 
 
 @format_doctest_out
-def term2Letter(term):
+def term_to_letter(term):
     """
     Relate a given term to one of several key types.
 
@@ -118,22 +118,22 @@ def term2Letter(term):
     >>> from rdflib.term import BNode
     >>> # from rdflib.term import Statement
     >>> from rdflib.graph import Graph, QuotedGraph
-    >>> from rdflib_sqlalchemy.termutils import term2Letter
-    >>> term2Letter(URIRef('http://purl.org/net/bel-epa.com/'))
+    >>> from rdflib_sqlalchemy.termutils import term_to_letter
+    >>> term_to_letter(URIRef('http://purl.org/net/bel-epa.com/'))
     'U'
-    >>> term2Letter(BNode())
+    >>> term_to_letter(BNode())
     'B'
-    >>> term2Letter(Literal(%(u)s''))  # noqa
+    >>> term_to_letter(Literal(%(u)s''))  # noqa
     'L'
-    >>> term2Letter(Variable(%(u)s'x'))  # noqa
+    >>> term_to_letter(Variable(%(u)s'x'))  # noqa
     'V'
-    >>> term2Letter(Graph())
+    >>> term_to_letter(Graph())
     'B'
-    >>> term2Letter(QuotedGraph("IOMemory", None))
+    >>> term_to_letter(QuotedGraph("IOMemory", None))
     'F'
-    >>> term2Letter(None)
+    >>> term_to_letter(None)
     'L'
-    >>> # term2Letter(Statement((None, None, None), None)) # Deprecated
+    >>> # term_to_letter(Statement((None, None, None), None)) # Deprecated
 
     """
     if isinstance(term, URIRef):
@@ -149,7 +149,7 @@ def term2Letter(term):
     elif isinstance(term, Statement):
         return "s"
     elif isinstance(term, Graph):
-        return term2Letter(term.identifier)
+        return term_to_letter(term.identifier)
     elif term is None:
         return "L"
     else:
@@ -160,18 +160,18 @@ def term2Letter(term):
             % (term, type(term)))
 
 
-def constructGraph(key):
+def construct_graph(key):
     """
     Return a tuple containing a ``Graph`` and an appropriate referent.
 
     Takes a key (one of 'F', 'U' or 'B')
 
-    >>> from rdflib_sqlalchemy.termutils import constructGraph
-    >>> constructGraph('F')
+    >>> from rdflib_sqlalchemy.termutils import construct_graph
+    >>> construct_graph('F')
     (<class 'rdflib.graph.QuotedGraph'>, <class 'rdflib.term.URIRef'>)
-    >>> constructGraph('U')
+    >>> construct_graph('U')
     (<class 'rdflib.graph.Graph'>, <class 'rdflib.term.URIRef'>)
-    >>> constructGraph('B')
+    >>> construct_graph('B')
     (<class 'rdflib.graph.Graph'>, <class 'rdflib.term.BNode'>)
 
     """
@@ -190,12 +190,12 @@ def triplePattern2termCombinations(triple):
     return combinations
 
 
-def type2TermCombination(member, klass, context):
+def type_to_term_combination(member, klass, context):
     """Map a type to a TermCombo."""
     try:
         rt = TERM_COMBINATIONS["%sU%s%s" %
-                               (term2Letter(member),
-                                term2Letter(klass),
+                               (term_to_letter(member),
+                                term_to_letter(klass),
                                 normalizeGraph(context)[-1])]
         return rt
     except:
@@ -204,11 +204,11 @@ def type2TermCombination(member, klass, context):
                         (member, "rdf:type", klass, context))
 
 
-def statement2TermCombination(subject, predicate, obj, context):
+def statement_to_term_combination(subject, predicate, obj, context):
     """Map a statement to a Term Combo."""
     return TERM_COMBINATIONS["%s%s%s%s" %
-                             (term2Letter(subject), term2Letter(predicate),
-                              term2Letter(obj), normalizeGraph(context)[-1])]
+                             (term_to_letter(subject), term_to_letter(predicate),
+                              term_to_letter(obj), normalizeGraph(context)[-1])]
 
 
 def escape_quotes(qstr):

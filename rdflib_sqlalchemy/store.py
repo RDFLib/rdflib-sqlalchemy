@@ -9,10 +9,10 @@ import sqlalchemy
 from rdflib import (
     BNode,
     Literal,
-    RDF,
     URIRef
 )
 from rdflib.graph import Graph, QuotedGraph
+from rdflib.namespace import RDF
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX, REGEXTerm
 from rdflib.store import Store
 from six import text_type
@@ -23,19 +23,19 @@ from sqlalchemy.sql import select, expression
 
 from rdflib_sqlalchemy import __version__
 from rdflib_sqlalchemy.tables import (
+    TABLE_NAME_TEMPLATES,
     create_asserted_statements_table,
     create_literal_statements_table,
     create_namespace_binds_table,
     create_quoted_statements_table,
     create_type_statements_table,
-    TABLE_NAME_TEMPLATES,
 )
 from rdflib_sqlalchemy.termutils import (
     REVERSE_TERM_COMBINATIONS,
     TERM_INSTANTIATION_DICT,
-    constructGraph,
-    type2TermCombination,
-    statement2TermCombination,
+    construct_graph,
+    type_to_term_combination,
+    statement_to_term_combination,
 )
 
 
@@ -199,7 +199,7 @@ def extractTriple(tupleRt, store, hardCodedContext=None):
     p = createTerm(predicate, predTerm, store)
     o = createTerm(obj, objTerm, store, objLanguage, objDatatype)
 
-    graphKlass, idKlass = constructGraph(ctxTerm)
+    graphKlass, idKlass = construct_graph(ctxTerm)
     if __version__ <= "0.2":
         return s, p, o, (graphKlass, idKlass, context)
     else:
@@ -289,7 +289,7 @@ class SQLGenerator(object):
             "member": member,
             "klass": klass,
             "context": context.identifier,
-            "termComb": int(type2TermCombination(member, klass, context))}
+            "termComb": int(type_to_term_combination(member, klass, context))}
 
     def _build_literal_triple_sql_command(self, subject, predicate, obj, context):
         """
@@ -298,7 +298,7 @@ class SQLGenerator(object):
         (Statements where the object is a Literal).
         """
         triple_pattern = int(
-            statement2TermCombination(subject, predicate, obj, context)
+            statement_to_term_combination(subject, predicate, obj, context)
         )
         command = self.tables["literal_statements"].insert()
         values = {
@@ -321,8 +321,12 @@ class SQLGenerator(object):
                       self.tables["quoted_statements"] or
                       self.tables["asserted_statements"])
 
-        triple_pattern = statement2TermCombination(
-            subject, predicate, obj, context)
+        triple_pattern = statement_to_term_combination(
+            subject,
+            predicate,
+            obj,
+            context,
+        )
         command = stmt_table.insert()
 
         if quoted:
