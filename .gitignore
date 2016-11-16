@@ -1,4 +1,3 @@
-alembic.ini
 .tox
 .noseids
 rdflib_sqlalchemy.egg-info
