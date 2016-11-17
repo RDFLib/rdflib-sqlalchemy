@@ -281,7 +281,9 @@ class SQLGenerator(object):
         """
         Build an insert command for literal triples.
 
-        (Statements where the object is a Literal).
+        These triples correspond to RDF statements where the object is a Literal,
+        e.g. `rdflib.Literal` or primitive Python type, such as string.
+
         """
         triple_pattern = int(
             statement_to_term_combination(subject, predicate, obj, context)
