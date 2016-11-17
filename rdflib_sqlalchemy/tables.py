@@ -49,7 +49,11 @@ def create_asserted_statements_table(interned_id, metadata):
             "termComb",
         ),
         UniqueConstraint(
-            "subject", "predicate", "object", "context", name="{interned_id}_asserted_spoc_key",
+            "subject",
+            "predicate",
+            "object",
+            "context",
+            name="{interned_id}_asserted_spoc_key",
         ),
     )
 
@@ -83,7 +87,10 @@ def create_type_statements_table(interned_id, metadata):
             "termComb",
         ),
         UniqueConstraint(
-            "member", "klass", "context", name="{interned_id}_type_mkc_key",
+            "member",
+            "klass",
+            "context",
+            name="{interned_id}_type_mkc_key",
         ),
     )
 
@@ -120,7 +127,11 @@ def create_literal_statements_table(interned_id, metadata):
             "termComb",
         ),
         UniqueConstraint(
-            "subject", "predicate", "object", "context", name="{interned_id}_literal_spoc_key",
+            "subject",
+            "predicate",
+            "object",
+            "context",
+            name="{interned_id}_literal_spoc_key",
         ),
     )
 
@@ -162,7 +173,11 @@ def create_quoted_statements_table(interned_id, metadata):
             "termComb",
         ),
         UniqueConstraint(
-            "subject", "predicate", "object", "context", name="{interned_id}_quoted_spoc_key",
+            "subject",
+            "predicate",
+            "object",
+            "context",
+            name="{interned_id}_quoted_spoc_key",
         ),
     )
 
