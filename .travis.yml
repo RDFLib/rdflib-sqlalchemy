@@ -4,7 +4,6 @@ env:
 - DB=mysql
 - DB=sqlite
 python:
-- 2.6
 - 2.7
 - 3.3
 - 3.4
@@ -25,8 +24,9 @@ deploy:
   provider: pypi
   user: adamhadani
   password:
-    secure: Lylx+2lisa4KPZBqXDcA6Kxf2WN7t1QjK/XBhbQdNM29Dt7CZysLD4cnZQnIiECRP6CP/34OP8KrzjUbB9a1AIgI4k20yXtRY/7l9WvQrHuFG0xNsAWhboM5ZFieJi9u1o+fr6MlqZcnNVV8ouwfJTwIlpLMOkEXxDgp8z3BBCjC3ykB35VyQs1crMDezloyTVcY6XaZxs9mMDBbykL1GScwl4a1pOVgqrvlnfwuhM663NbrkySSjLqzE/seBu/a058SO4nB7kE1UCPx6NQ4WwUGLkcu7bTWNJFOlIQzh5Va3NBmnq6WdGrLgxCQ3OSkW5cvX+qZAklUFsLS23tzT8yc0MsS9LOeTbPuVsa7eEsgNzwwkZT2Wwg56qEcM+lGtV8f5TKvBmPsEdTzGSQTPHjRRNBko8HhLSGFSWkpPDXlvygXsX7sorPWhOstN/fYmj1beTAQWfpwjIWtqaS3qgTDrZvdTmACj6iCD1e/SjY8RpwIbM1fXS+qYcB+YzNQzCliIgv2Qh6xDbgqXBJiBudCmgGgYtngW2Df/NjWQrBYAkEHFHjl1twJu7m+ra8xT+MMULyIlaoF7G0550C0oZxsYh8kmYDvOW7NMyVnKWeAYzU1uEBjBtq24zmx/6iB45RAQdbYFSEArRi58kQf6feEeqohWhHCjg6054YCAQQ=
+    secure: jSAo1pMtzpNSBJHOtn15WiT2XBL6JBTB/1u22CeRhW6tmRh4ngaK1+WAfuoRpgP5seTBnb1DIxiNzvCL5sRjq9ckbHgc7pW9EcpKCeDFjU1MQPH2GqQ37jicc4NY4TXu9pAUIbxIVwGxHWNCY0QPxIgCSVvTTKoiZn3QddL8hzg=
   on:
     tags: true
-    condition: $TRAVIS_PYTHON_VERSION = "3.5"
+    repo: RDFLib/rdflib-sqlalchemy
     branch: develop
+    condition: $TRAVIS_PYTHON_VERSION = "3.5"

@@ -30,7 +30,9 @@ class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
 
     def setUp(self):
         super(SQLAPgSQLGraphTestCase, self).setUp(
-            uri=self.uri, storename=self.storename)
+            uri=self.uri,
+            storename=self.storename,
+        )
 
     def tearDown(self):
         super(SQLAPgSQLGraphTestCase, self).tearDown(uri=self.uri)
@@ -44,7 +46,9 @@ class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
 
     def setUp(self):
         super(SQLAPgSQLContextTestCase, self).setUp(
-            uri=self.uri, storename=self.storename)
+            uri=self.uri,
+            storename=self.storename,
+        )
 
     def tearDown(self):
         super(SQLAPgSQLContextTestCase, self).tearDown(uri=self.uri)
