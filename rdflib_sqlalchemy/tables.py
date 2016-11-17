@@ -48,6 +48,9 @@ def create_asserted_statements_table(interned_id, metadata):
             "{interned_id}_A_termComb_index".format(interned_id=interned_id),
             "termComb",
         ),
+        UniqueConstraint(
+            "subject", "predicate", "object", name="{interned_id}_asserted_spo_key",
+        ),
     )
 
 
@@ -116,6 +119,9 @@ def create_literal_statements_table(interned_id, metadata):
             "{interned_id}_L_termComb_index".format(interned_id=interned_id),
             "termComb",
         ),
+        UniqueConstraint(
+            "subject", "predicate", "object", name="{interned_id}_literal_spo_key",
+        ),
     )
 
 
@@ -154,6 +160,9 @@ def create_quoted_statements_table(interned_id, metadata):
         Index(
             "{interned_id}_Q_termComb_index".format(interned_id=interned_id),
             "termComb",
+        ),
+        UniqueConstraint(
+            "subject", "predicate", "object", name="{interned_id}_quoted_spo_key",
         ),
     )
 
