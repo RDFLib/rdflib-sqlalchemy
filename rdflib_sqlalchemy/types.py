@@ -1,14 +1,13 @@
 from rdflib.graph import Graph, QuotedGraph
 from rdflib.term import Node
 from six import text_type
-from sqlalchemy.dialects import mysql
 from sqlalchemy import types
 
 
 class TermType(types.TypeDecorator):
     """Term typology."""
 
-    impl = types.Text().with_variant(mysql.TEXT(255), "mysql")
+    impl = types.Text()
 
     def process_bind_param(self, value, dialect):
         """Process bound parameters."""

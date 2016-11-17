@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Table, Index, UniqueConstraint, types
+from sqlalchemy import Column, Table, Index, types
 
 from rdflib_sqlalchemy.types import TermType
 
@@ -48,12 +48,14 @@ def create_asserted_statements_table(interned_id, metadata):
             "{interned_id}_A_termComb_index".format(interned_id=interned_id),
             "termComb",
         ),
-        UniqueConstraint(
+        Index(
+            "{interned_id}_asserted_spoc_key".format(interned_id=interned_id),
             "subject",
             "predicate",
             "object",
             "context",
-            name="{interned_id}_asserted_spoc_key",
+            unique=True,
+            mysql_length=MYSQL_MAX_INDEX_LENGTH,
         ),
     )
 
@@ -86,11 +88,13 @@ def create_type_statements_table(interned_id, metadata):
             "{interned_id}_T_termComb_index".format(interned_id=interned_id),
             "termComb",
         ),
-        UniqueConstraint(
+        Index(
+            "{interned_id}_type_mkc_key".format(interned_id=interned_id),
             "member",
             "klass",
             "context",
-            name="{interned_id}_type_mkc_key",
+            unique=True,
+            mysql_length=MYSQL_MAX_INDEX_LENGTH,
         ),
     )
 
@@ -126,12 +130,14 @@ def create_literal_statements_table(interned_id, metadata):
             "{interned_id}_L_termComb_index".format(interned_id=interned_id),
             "termComb",
         ),
-        UniqueConstraint(
+        Index(
+            "{interned_id}_literal_spoc_key".format(interned_id=interned_id),
             "subject",
             "predicate",
             "object",
             "context",
-            name="{interned_id}_literal_spoc_key",
+            unique=True,
+            mysql_length=MYSQL_MAX_INDEX_LENGTH,
         ),
     )
 
@@ -172,12 +178,14 @@ def create_quoted_statements_table(interned_id, metadata):
             "{interned_id}_Q_termComb_index".format(interned_id=interned_id),
             "termComb",
         ),
-        UniqueConstraint(
+        Index(
+            "{interned_id}_quoted_spoc_key".format(interned_id=interned_id),
             "subject",
             "predicate",
             "object",
             "context",
-            name="{interned_id}_quoted_spoc_key",
+            unique=True,
+            mysql_length=MYSQL_MAX_INDEX_LENGTH,
         ),
     )
 
