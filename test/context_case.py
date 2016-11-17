@@ -9,9 +9,6 @@ from rdflib.store import Store
 from six import string_types
 
 
-# logging.getLogger("sqlalchemy.engine").setLevel(logging.WARN)
-
-
 class ContextTestCase(unittest.TestCase):
     storetest = True
     identifier = URIRef("rdflib_test")

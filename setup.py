@@ -18,8 +18,8 @@ setup(
     license="BSD",
     platforms=["any"],
     long_description="""
-    SQLAlchemy store formula-aware implementation.  It stores its triples in
-    the following partitions:
+    SQLAlchemy store formula-aware implementation.
+    It stores its triples in the following partitions:
 
     * Asserted non rdf:type statements
     * Asserted rdf:type statements (in a table which models Class membership).
@@ -35,7 +35,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
@@ -45,16 +44,11 @@ setup(
         "Operating System :: OS Independent",
         "Natural Language :: English",
     ],
-    entry_points={
-        'rdf.plugins.store': [
-            # 'SQLAlchemy = rdflib_sqlalchemy.SQLAlchemy:SQLAlchemy',
-            # 'SQLAlchemyBase = rdflib_sqlalchemy.SQLAlchemyBase:SQLAlchemy',
-        ],
-    },
     install_requires=[
+        "alembic>=0.8.8",
         "rdflib>=4.0",
         "six>=1.10.0",
-        "SQLAlchemy",
+        "SQLAlchemy>=1.1.4",
     ],
     setup_requires=[
         "nose>=1.3.6",
