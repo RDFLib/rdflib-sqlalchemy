@@ -14,7 +14,7 @@ from rdflib import (
 from rdflib.graph import Graph, QuotedGraph
 from rdflib.namespace import RDF
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX, REGEXTerm
-from rdflib.store import Store
+from rdflib.store import CORRUPTED_STORE, VALID_STORE, Store
 from six import text_type
 from six.moves import reduce
 from sqlalchemy import MetaData
@@ -582,9 +582,9 @@ class SQLAlchemy(Store, SQLGenerator):
                 store.
 
         Returns:
-            int: 0 if database exists but is empty,
-                 1 if database exists and tables are all there,
-                -1 if nothing exists
+            int: CORRUPTED_STORE (0) if database exists but is empty,
+                 VALID_STORE (1) if database exists and tables are all there,
+                 NO_STORE (-1) if nothing exists
 
         """
         # Close any existing engine connection
@@ -593,15 +593,21 @@ class SQLAlchemy(Store, SQLGenerator):
         self.engine = sqlalchemy.create_engine(configuration)
         with self.engine.connect():
             if create:
-                return self.create_all()
+                # Create all of the database tables (idempotent)
+                self.metadata.create_all(self.engine)
 
-    def create_all(self):
+            ret_value = self.verify_store_exists()
+
+        if ret_value != VALID_STORE and not create:
+            raise RuntimeError("open() - create flag was set to False, but store was not created previously.")
+
+        return ret_value
+
+    def verify_store_exists(self):
         """
-        Create all of the database tables.
-        Will not re-create any tables that already exist.
+        Verify store (e.g. all tables) exist.
 
         """
-        self.metadata.create_all(self.engine)
 
         inspector = reflection.Inspector.from_engine(self.engine)
         existing_table_names = inspector.get_table_names()
@@ -609,10 +615,9 @@ class SQLAlchemy(Store, SQLGenerator):
             if table_name not in existing_table_names:
                 _logger.critical("create_all() - table %s Doesn't exist!", table_name)
                 # The database exists, but one of the tables doesn't exist
-                return 0
+                return CORRUPTED_STORE
 
-        # Everything is there (the database and all of the tables)
-        return 1
+        return VALID_STORE
 
     def close(self, commit_pending_transaction=False):
         """
