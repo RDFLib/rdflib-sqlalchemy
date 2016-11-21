@@ -4,10 +4,15 @@ import unittest
 
 from nose import SkipTest
 from rdflib import Literal
+from rdflib.graph import ConjunctiveGraph as Graph
 from rdflib.py3compat import PY3
+from rdflib.store import NO_STORE, VALID_STORE
+from rdflib.term import URIRef
+
 
 from . import context_case
 from . import graph_case
+
 
 if PY3:
     try:
@@ -30,13 +35,10 @@ if os.environ.get("DB") != "mysql":
 
 _logger = logging.getLogger(__name__)
 
-# Specific to Travis-ci continuous integration and testing ...
+
 sqlalchemy_url = Literal(os.environ.get(
     "DBURI",
     "mysql+%s://root@127.0.0.1:3306/test?charset=utf8" % dialect))
-# Generally ...
-# sqlalchemy_url = Literal(
-#    "mysql+mysqldb://user:password@hostname:port/database?charset=utf8")
 
 
 class SQLAMySQLGraphTestCase(graph_case.GraphTestCase):
@@ -76,10 +78,6 @@ class SQLAMySQLIssueTestCase(unittest.TestCase):
     uri = sqlalchemy_url
 
     def test_issue_4(self):
-        from rdflib.graph import ConjunctiveGraph as Graph
-        from rdflib.store import NO_STORE, VALID_STORE
-        from rdflib.term import URIRef
-
         ident = URIRef("rdflib_test")
         g = Graph(store="SQLAlchemy", identifier=ident)
         rt = g.open(self.uri, create=True)

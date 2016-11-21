@@ -14,7 +14,7 @@ from rdflib import (
 from rdflib.graph import Graph, QuotedGraph
 from rdflib.namespace import RDF
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX, REGEXTerm
-from rdflib.store import Store
+from rdflib.store import CORRUPTED_STORE, VALID_STORE, Store
 from six import text_type
 from six.moves import reduce
 from sqlalchemy import MetaData
@@ -582,9 +582,9 @@ class SQLAlchemy(Store, SQLGenerator):
                 store.
 
         Returns:
-            int: 0 if database exists but is empty,
-                 1 if database exists and tables are all there,
-                -1 if nothing exists
+            int: CORRUPTED_STORE (0) if database exists but is empty,
+                 VALID_STORE (1) if database exists and tables are all there,
+                 NO_STORE (-1) if nothing exists
 
         """
         # Close any existing engine connection
@@ -596,12 +596,16 @@ class SQLAlchemy(Store, SQLGenerator):
                 # Create all of the database tables (idempotent)
                 self.metadata.create_all(self.engine)
 
-            self.verify_store_exists()
+            ret_value = self.verify_store_exists()
+
+        if ret_value != VALID_STORE and not create:
+            raise RuntimeError("open() - create flag was set to False, but store was not created previously.")
+
+        return ret_value
 
     def verify_store_exists(self):
         """
-        Verify all tables exist.
-        If an expected table does not exist, raise an exception.
+        Verify store (e.g. all tables) exist.
 
         """
 
@@ -611,7 +615,9 @@ class SQLAlchemy(Store, SQLGenerator):
             if table_name not in existing_table_names:
                 _logger.critical("create_all() - table %s Doesn't exist!", table_name)
                 # The database exists, but one of the tables doesn't exist
-                raise RuntimeError("Missing table: {}".format(table_name))
+                return CORRUPTED_STORE
+
+        return VALID_STORE
 
     def close(self, commit_pending_transaction=False):
         """
