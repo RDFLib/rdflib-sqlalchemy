@@ -593,15 +593,17 @@ class SQLAlchemy(Store, SQLGenerator):
         self.engine = sqlalchemy.create_engine(configuration)
         with self.engine.connect():
             if create:
-                return self.create_all()
+                # Create all of the database tables (idempotent)
+                self.metadata.create_all(self.engine)
 
-    def create_all(self):
+            self.verify_store_exists()
+
+    def verify_store_exists(self):
         """
-        Create all of the database tables.
-        Will not re-create any tables that already exist.
+        Verify all tables exist.
+        If an expected table does not exist, raise an exception.
 
         """
-        self.metadata.create_all(self.engine)
 
         inspector = reflection.Inspector.from_engine(self.engine)
         existing_table_names = inspector.get_table_names()
@@ -609,10 +611,7 @@ class SQLAlchemy(Store, SQLGenerator):
             if table_name not in existing_table_names:
                 _logger.critical("create_all() - table %s Doesn't exist!", table_name)
                 # The database exists, but one of the tables doesn't exist
-                return 0
-
-        # Everything is there (the database and all of the tables)
-        return 1
+                raise RuntimeError("Missing table: {}".format(table_name))
 
     def close(self, commit_pending_transaction=False):
         """
