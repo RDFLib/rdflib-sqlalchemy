@@ -24,9 +24,9 @@ class StatisticsMixin(object):
 
     def statistics(self, asserted_statements=True, literals=True, types=True):
         """Store statistics."""
-        statistics = dict(
-            total_num_statements=len(self),
-        )
+        statistics = {
+            "store": dict(total_num_statements=len(self)),
+        }
 
         with self.engine.connect() as connection:
             session = Session(bind=connection)
