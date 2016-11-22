@@ -99,9 +99,6 @@ class ContextTestCase(unittest.TestCase):
         # add to context 1
         graph = Graph(self.graph.store, self.c1)
         graph.add(triple)
-        # print("Graph", graph.identifier, graph.serialize(format="nt"))
-        # print("Selfgraph", self.graph.identifier,
-        #                    self.graph.serialize(format="nt"))
         self.assertEquals(len(self.graph.store), len(graph.store))
 
     def testAdd(self):
@@ -130,17 +127,9 @@ class ContextTestCase(unittest.TestCase):
 
     def testLenInMultipleContexts(self):
         oldLen = len(self.graph.store)
-        print("Original", oldLen, self.graph.store)
         self.addStuffInMultipleContexts()
-        newLen = len(self.graph.store)
-        print("MultipleContexts", newLen, self.graph.store)
         # addStuffInMultipleContexts is adding the same triple to
         # three different contexts. So it's only + 1
-        print("No context", len(list(self.graph.triples((None, None, None)))))
-        print("Context context-1", len(
-            list(self.graph.triples((None, None, None), context=self.c1))))
-        print("Context context-2", len(
-            list(self.graph.triples((None, None, None), context=self.c2))))
         self.assertEquals(len(self.graph.store), oldLen + 1,
                           [self.graph.store, oldLen + 1])
 

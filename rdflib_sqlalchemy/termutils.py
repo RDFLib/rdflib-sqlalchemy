@@ -1,60 +1,23 @@
 """Convenience functions for working with Terms and Graphs."""
-from rdflib import BNode
-from rdflib import Graph
-from rdflib import Literal
-from rdflib import URIRef
-from rdflib import Variable
+from rdflib import BNode, Graph, Literal, URIRef, Variable
 from rdflib.graph import QuotedGraph
 from rdflib.py3compat import format_doctest_out
 from rdflib.term import Statement
+
+from rdflib_sqlalchemy.constants import (
+    TERM_COMBINATIONS,
+    TERM_INSTANTIATION_DICT,
+    REVERSE_TERM_COMBINATIONS,
+)
+
+
+__all__ = ["extract_triple"]
 
 
 SUBJECT = 0
 PREDICATE = 1
 OBJECT = 2
 CONTEXT = 3
-
-TERM_COMBINATIONS = dict([(term, index) for index, term in enumerate([
-     "UUUU", "UUUB", "UUUF", "UUVU", "UUVB", "UUVF", "UUBU", "UUBB", "UUBF",
-     "UULU", "UULB", "UULF", "UUFU", "UUFB", "UUFF",
-     #
-     "UVUU", "UVUB", "UVUF", "UVVU", "UVVB", "UVVF", "UVBU", "UVBB", "UVBF",
-     "UVLU", "UVLB", "UVLF", "UVFU", "UVFB", "UVFF",
-     #
-     "VUUU", "VUUB", "VUUF", "VUVU", "VUVB", "VUVF", "VUBU", "VUBB", "VUBF",
-     "VULU", "VULB", "VULF", "VUFU", "VUFB", "VUFF",
-     #
-     "VVUU", "VVUB", "VVUF", "VVVU", "VVVB", "VVVF", "VVBU", "VVBB", "VVBF",
-     "VVLU", "VVLB", "VVLF", "VVFU", "VVFB", "VVFF",
-     #
-     "BUUU", "BUUB", "BUUF", "BUVU", "BUVB", "BUVF", "BUBU", "BUBB", "BUBF",
-     "BULU", "BULB", "BULF", "BUFU", "BUFB", "BUFF",
-     #
-     "BVUU", "BVUB", "BVUF", "BVVU", "BVVB", "BVVF", "BVBU", "BVBB", "BVBF",
-     "BVLU", "BVLB", "BVLF", "BVFU", "BVFB", "BVFF",
-     #
-     "FUUU", "FUUB", "FUUF", "FUVU", "FUVB", "FUVF", "FUBU", "FUBB", "FUBF",
-     "FULU", "FULB", "FULF", "FUFU", "FUFB", "FUFF",
-     #
-     "FVUU", "FVUB", "FVUF", "FVVU", "FVVB", "FVVF", "FVBU", "FVBB", "FVBF",
-     "FVLU", "FVLB", "FVLF", "FVFU", "FVFB", "FVFF",
-     #
-     # "sUUU", "sUUB", "sUUF", "sUVU", "sUVB", "sUVF", "sUBU", "sUBB", "sUBF",
-     # "sULU", "sULB", "sULF", "sUFU", "sUFB", "sUFF",
-     #
-     # "sVUU", "sVUB", "sVUF", "sVVU", "sVVB", "sVVF", "sVBU", "sVBB", "sVBF",
-     # "sVLU", "sVLB", "sVLF", "sVFU", "sVFB", "sVFF"
-])])
-
-REVERSE_TERM_COMBINATIONS = dict(
-    [(value, key) for key, value in TERM_COMBINATIONS.items()])
-
-TERM_INSTANTIATION_DICT = {
-    "U": URIRef,
-    "B": BNode,
-    "V": Variable,
-    "L": Literal
-}
 
 GRAPH_TERM_DICT = {
     "F": (QuotedGraph, URIRef),
@@ -218,3 +181,102 @@ def escape_quotes(qstr):
     tmp = qstr.replace("\\", "\\\\")
     tmp = tmp.replace("'", "\\'")
     return tmp
+
+
+def extract_triple(tupleRt, store, hardCodedContext=None):
+    """
+    Extract a triple.
+
+    Take a tuple which represents an entry in a result set and
+    converts it to a tuple of terms using the termComb integer
+    to interpret how to instantiate each term
+    """
+    try:
+        id, subject, predicate, obj, rtContext, termComb, \
+            objLanguage, objDatatype = tupleRt
+        termCombString = REVERSE_TERM_COMBINATIONS[termComb]
+        subjTerm, predTerm, objTerm, ctxTerm = termCombString
+    except ValueError:
+        id, subject, subjTerm, predicate, predTerm, obj, objTerm, \
+            rtContext, ctxTerm, objLanguage, objDatatype = tupleRt
+
+    context = rtContext is not None \
+        and rtContext \
+        or hardCodedContext.identifier
+    s = create_term(subject, subjTerm, store)
+    p = create_term(predicate, predTerm, store)
+    o = create_term(obj, objTerm, store, objLanguage, objDatatype)
+
+    graphKlass, idKlass = construct_graph(ctxTerm)
+
+    return id, s, p, o, (graphKlass, idKlass, context)
+
+
+def create_term(termString, termType, store, objLanguage=None, objDatatype=None):
+    """
+    Take a term value, term type, and store instance and creates a term object.
+
+    QuotedGraphs are instantiated differently
+    """
+    if termType == "L":
+        cache = store.literalCache.get((termString, objLanguage, objDatatype))
+        if cache is not None:
+            # store.cacheHits += 1
+            return cache
+        else:
+            # store.cacheMisses += 1
+            # rt = Literal(termString, objLanguage, objDatatype)
+            # store.literalCache[((termString, objLanguage, objDatatype))] = rt
+            if objLanguage and not objDatatype:
+                rt = Literal(termString, objLanguage)
+                store.literalCache[((termString, objLanguage))] = rt
+            elif objDatatype and not objLanguage:
+                rt = Literal(termString, datatype=objDatatype)
+                store.literalCache[((termString, objDatatype))] = rt
+            elif not objLanguage and not objDatatype:
+                rt = Literal(termString)
+                store.literalCache[((termString))] = rt
+            else:
+                rt = Literal(termString, objDatatype)
+                store.literalCache[((termString, objDatatype))] = rt
+            return rt
+    elif termType == "F":
+        cache = store.otherCache.get((termType, termString))
+        if cache is not None:
+            # store.cacheHits += 1
+            return cache
+        else:
+            # store.cacheMisses += 1
+            rt = QuotedGraph(store, URIRef(termString))
+            store.otherCache[(termType, termString)] = rt
+            return rt
+    elif termType == "B":
+        cache = store.bnodeCache.get((termString))
+        if cache is not None:
+            # store.cacheHits += 1
+            return cache
+        else:
+            # store.cacheMisses += 1
+            rt = TERM_INSTANTIATION_DICT[termType](termString)
+            store.bnodeCache[(termString)] = rt
+            return rt
+    elif termType == "U":
+        cache = store.uriCache.get((termString))
+        if cache is not None:
+            # store.cacheHits += 1
+            return cache
+        else:
+            # store.cacheMisses += 1
+            rt = URIRef(termString)
+            store.uriCache[(termString)] = rt
+            return rt
+    else:
+        cache = store.otherCache.get((termType, termString))
+        if cache is not None:
+            # store.cacheHits += 1
+            return cache
+        else:
+            # store.cacheMisses += 1
+            rt = TERM_INSTANTIATION_DICT[termType](termString)
+            store.otherCache[(termType, termString)] = rt
+            return rt
