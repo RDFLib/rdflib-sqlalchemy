@@ -14,6 +14,13 @@ TABLE_NAME_TEMPLATES = [
 ]
 
 
+def get_table_names(interned_id):
+    return [
+        table_name_template.format(interned_id=interned_id)
+        for table_name_template in TABLE_NAME_TEMPLATES
+    ]
+
+
 def create_asserted_statements_table(interned_id, metadata):
     return Table(
         "{interned_id}_asserted_statements".format(interned_id=interned_id),
