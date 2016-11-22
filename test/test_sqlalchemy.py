@@ -2,7 +2,6 @@ import logging
 import unittest
 
 from rdflib import (
-    BNode,
     ConjunctiveGraph,
     Literal,
     URIRef,
@@ -11,10 +10,6 @@ from rdflib import plugin
 from rdflib.store import Store
 
 from rdflib_sqlalchemy import registerplugins
-from rdflib_sqlalchemy.store import (
-    skolemise,
-    deskolemise,
-)
 
 
 _logger = logging.getLogger(__name__)
@@ -61,24 +56,6 @@ class SQLATestCase(unittest.TestCase):
         plugin._plugins = p
         registerplugins()
         self.assert_(("SQLAlchemy", Store) in p, p)
-
-    def test_skolemisation(self):
-        testbnode = BNode()
-        statemnt = (michel, likes, testbnode)
-        res = skolemise(statemnt)
-        self.assert_("bnode:N" in str(res[2]), res)
-
-    def test_deskolemisation(self):
-        testbnode = BNode()
-        statemnt = (michel, likes, testbnode)
-        res = deskolemise(statemnt)
-        self.assert_(str(res[2]).startswith("N"), res)
-
-    def test_redeskolemisation(self):
-        testbnode = BNode()
-        statemnt = skolemise((michel, likes, testbnode))
-        res = deskolemise(statemnt)
-        self.assert_(str(res[2]).startswith("N"), res)
 
     def test_namespaces(self):
         self.assert_(list(self.graph.namespaces()) != [])

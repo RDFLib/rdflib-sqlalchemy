@@ -67,14 +67,11 @@ class StoreTestCase(unittest.TestCase):
     def testTime(self):
         """Test timing."""
         # number = 1
-        print("'%s': [" % self.store)
         for i in ["500triples", "1ktriples", "2ktriples",
                   "3ktriples", "5ktriples", "10ktriples",
                   "25ktriples"]:
             inputloc = os.getcwd() + "/test/sp2b/%s.n3" % i
-            res = self._testInput(inputloc)
-            print("%s," % res.strip())
-        print("],")
+            self._testInput(inputloc)
 
     def _testInput(self, inputloc):
         number = 1
