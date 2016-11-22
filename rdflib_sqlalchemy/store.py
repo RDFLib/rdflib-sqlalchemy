@@ -1,6 +1,4 @@
 """SQLAlchemy-based RDF store."""
-from __future__ import with_statement
-
 import hashlib
 import logging
 
@@ -19,29 +17,30 @@ from six import text_type
 from six.moves import reduce
 from sqlalchemy import MetaData
 from sqlalchemy.engine import reflection
-from sqlalchemy.sql import select, expression
+from sqlalchemy.sql import expression, select
 
 from rdflib_sqlalchemy.constants import (
-    CONTEXT_SELECT,
-    COUNT_SELECT,
-    INTERNED_PREFIX,
     ASSERTED_LITERAL_PARTITION,
     ASSERTED_NON_TYPE_PARTITION,
     ASSERTED_TYPE_PARTITION,
+    CONTEXT_SELECT,
+    COUNT_SELECT,
+    INTERNED_PREFIX,
     QUOTED_PARTITION,
     TRIPLE_SELECT_NO_ORDER,
 )
 from rdflib_sqlalchemy.tables import (
-    get_table_names,
     create_asserted_statements_table,
     create_literal_statements_table,
     create_namespace_binds_table,
     create_quoted_statements_table,
     create_type_statements_table,
+    get_table_names,
 )
-from rdflib_sqlalchemy.base import SQLGenerator
-from rdflib_sqlalchemy.termutils import extract_triple
+from rdflib_sqlalchemy.base import SQLGeneratorMixin
 from rdflib_sqlalchemy.sql import union_select
+from rdflib_sqlalchemy.statistics import StatisticsMixin
+from rdflib_sqlalchemy.termutils import extract_triple
 
 
 _logger = logging.getLogger(__name__)
@@ -49,7 +48,7 @@ _logger = logging.getLogger(__name__)
 Any = None
 
 
-class SQLAlchemy(Store, SQLGenerator):
+class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     """
     SQL-92 formula-aware implementation of an rdflib Store.
 
@@ -124,14 +123,11 @@ class SQLAlchemy(Store, SQLGenerator):
         literal_table = self.tables["literal_statements"]
 
         selects = [
-            (expression.alias(asserted_type_table, "typetable"),
-                None, ASSERTED_TYPE_PARTITION),
-            (expression.alias(quoted_table, "quoted"),
-                None, QUOTED_PARTITION),
-            (expression.alias(asserted_table, "asserted"),
-                None, ASSERTED_NON_TYPE_PARTITION),
-            (expression.alias(literal_table, "literal"),
-                None, ASSERTED_LITERAL_PARTITION), ]
+            (expression.alias(asserted_type_table, "typetable"), None, ASSERTED_TYPE_PARTITION),
+            (expression.alias(quoted_table, "quoted"), None, QUOTED_PARTITION),
+            (expression.alias(asserted_table, "asserted"), None, ASSERTED_NON_TYPE_PARTITION),
+            (expression.alias(literal_table, "literal"), None, ASSERTED_LITERAL_PARTITION),
+        ]
         q = union_select(selects, distinct=False, select_type=COUNT_SELECT)
         if hasattr(self, "engine"):
             with self.engine.connect() as connection:
@@ -677,6 +673,8 @@ class SQLAlchemy(Store, SQLGenerator):
             res = connection.execute(self.tables["namespace_binds"].select())
             for prefix, uri in res.fetchall():
                 yield prefix, uri
+
+    # Private methods
 
     def _create_table_definitions(self):
         self.metadata = MetaData()

@@ -10,8 +10,8 @@ from rdflib_sqlalchemy.termutils import (
 )
 
 
-class SQLGenerator(object):
-    """SQL statement generator."""
+class SQLGeneratorMixin(object):
+    """SQL statement generator mixin for the SQLAlchemy store."""
 
     def _build_type_sql_command(self, member, klass, context):
         """Build an insert command for a type table."""
