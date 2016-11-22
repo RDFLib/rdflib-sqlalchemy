@@ -3,7 +3,6 @@ from __future__ import with_statement
 
 import hashlib
 import logging
-import re
 
 import sqlalchemy
 from rdflib import (
@@ -29,12 +28,11 @@ from rdflib_sqlalchemy.tables import (
     create_quoted_statements_table,
     create_type_statements_table,
 )
+from rdflib_sqlalchemy.base import SQLGenerator
 from rdflib_sqlalchemy.termutils import (
     REVERSE_TERM_COMBINATIONS,
     TERM_INSTANTIATION_DICT,
     construct_graph,
-    type_to_term_combination,
-    statement_to_term_combination,
 )
 
 
@@ -75,12 +73,6 @@ def deskolemise(statement):
             return BNode(bnid)
         return x
     return tuple(map(_dst, statement))
-
-
-def regexp(expr, item):
-    """User-defined REGEXP operator."""
-    r = re.compile(expr)
-    return r.match(item) is not None
 
 
 def query_analysis(query, store, connection):
@@ -192,9 +184,7 @@ def extractTriple(tupleRt, store, hardCodedContext=None):
     return id, s, p, o, (graphKlass, idKlass, context)
 
 
-def createTerm(
-        termString, termType, store, objLanguage=None, objDatatype=None):
-    # TODO: Stuff
+def createTerm(termString, termType, store, objLanguage=None, objDatatype=None):
     """
     Take a term value, term type, and store instance and creates a term object.
 
@@ -262,217 +252,6 @@ def createTerm(
             rt = TERM_INSTANTIATION_DICT[termType](termString)
             store.otherCache[(termType, termString)] = rt
             return rt
-
-
-class SQLGenerator(object):
-    """SQL statement generator."""
-
-    def _build_type_sql_command(self, member, klass, context):
-        """Build an insert command for a type table."""
-        # columns: member,klass,context
-        rt = self.tables["type_statements"].insert()
-        return rt, {
-            "member": member,
-            "klass": klass,
-            "context": context.identifier,
-            "termComb": int(type_to_term_combination(member, klass, context))}
-
-    def _build_literal_triple_sql_command(self, subject, predicate, obj, context):
-        """
-        Build an insert command for literal triples.
-
-        These triples correspond to RDF statements where the object is a Literal,
-        e.g. `rdflib.Literal`.
-
-        """
-        triple_pattern = int(
-            statement_to_term_combination(subject, predicate, obj, context)
-        )
-        command = self.tables["literal_statements"].insert()
-        values = {
-            "subject": subject,
-            "predicate": predicate,
-            "object": obj,
-            "context": context.identifier,
-            "termComb": triple_pattern,
-            "objLanguage": isinstance(obj, Literal) and obj.language or None,
-            "objDatatype": isinstance(obj, Literal) and obj.datatype or None,
-        }
-        return command, values
-
-    def _build_triple_sql_command(self, subject, predicate, obj, context, quoted):
-        """
-        Build an insert command for regular triple table.
-
-        """
-        stmt_table = (quoted and
-                      self.tables["quoted_statements"] or
-                      self.tables["asserted_statements"])
-
-        triple_pattern = statement_to_term_combination(
-            subject,
-            predicate,
-            obj,
-            context,
-        )
-        command = stmt_table.insert()
-
-        if quoted:
-            params = {
-                "subject": subject,
-                "predicate": predicate,
-                "object": obj,
-                "context": context.identifier,
-                "termComb": triple_pattern,
-                "objLanguage": isinstance(
-                    obj, Literal) and obj.language or None,
-                "objDatatype": isinstance(
-                    obj, Literal) and obj.datatype or None
-            }
-        else:
-            params = {
-                "subject": subject,
-                "predicate": predicate,
-                "object": obj,
-                "context": context.identifier,
-                "termComb": triple_pattern,
-            }
-        return command, params
-
-    def buildClause(
-            self, table, subject, predicate, obj, context=None,
-            typeTable=False):
-        """Build WHERE clauses for the supplied terms and, context."""
-        if typeTable:
-            clauseList = [
-                self.buildTypeMemberClause(subject, table),
-                self.buildTypeClassClause(obj, table),
-                self.buildContextClause(context, table)
-            ]
-        else:
-            clauseList = [
-                self.buildSubjClause(subject, table),
-                self.buildPredClause(predicate, table),
-                self.buildObjClause(obj, table),
-                self.buildContextClause(context, table),
-                self.buildLitDTypeClause(obj, table),
-                self.buildLitLanguageClause(obj, table)
-            ]
-
-        clauseList = [clause for clause in clauseList if clause is not None]
-        if clauseList:
-            return expression.and_(*clauseList)
-        else:
-            return None
-
-    def buildLitDTypeClause(self, obj, table):
-        """Build Literal and datatype clause."""
-        if isinstance(obj, Literal) and obj.datatype is not None:
-            return table.c.objDatatype == obj.datatype
-        else:
-            return None
-
-    def buildLitLanguageClause(self, obj, table):
-        """Build Literal and language clause."""
-        if isinstance(obj, Literal) and obj.language is not None:
-            return table.c.objLanguage == obj.language
-        else:
-            return None
-
-    # Where Clause  utility Functions
-    # The predicate and object clause builders are modified in order
-    # to optimize subjects and objects utility functions which can
-    # take lists as their last argument (object, predicate -
-    # respectively)
-    def buildSubjClause(self, subject, table):
-        """Build Subject clause."""
-        if isinstance(subject, REGEXTerm):
-            # TODO: this work only in mysql. Must adapt for postgres and sqlite
-            return table.c.subject.op("REGEXP")(subject)
-        elif isinstance(subject, list):
-            # clauseStrings = [] --- unused
-            return expression.or_(
-                *[self.buildSubjClause(s, table) for s in subject if s])
-        elif isinstance(subject, (QuotedGraph, Graph)):
-            return table.c.subject == subject.identifier
-        elif subject is not None:
-            return table.c.subject == subject
-        else:
-            return None
-
-    def buildPredClause(self, predicate, table):
-        """
-        Build Predicate clause.
-
-        Capable of taking a list of predicates as well (in which case
-        subclauses are joined with 'OR')
-        """
-        if isinstance(predicate, REGEXTerm):
-            # TODO: this work only in mysql. Must adapt for postgres and sqlite
-            return table.c.predicate.op("REGEXP")(predicate)
-        elif isinstance(predicate, list):
-            return expression.or_(
-                *[self.buildPredClause(p, table) for p in predicate if p])
-        elif predicate is not None:
-            return table.c.predicate == predicate
-        else:
-            return None
-
-    def buildObjClause(self, obj, table):
-        """
-        Build Object clause.
-
-        Capable of taking a list of objects as well (in which case subclauses
-        are joined with 'OR')
-        """
-        if isinstance(obj, REGEXTerm):
-            # TODO: this work only in mysql. Must adapt for postgres and sqlite
-            return table.c.object.op("REGEXP")(obj)
-        elif isinstance(obj, list):
-            return expression.or_(
-                *[self.buildObjClause(o, table) for o in obj if o])
-        elif isinstance(obj, (QuotedGraph, Graph)):
-            return table.c.object == obj.identifier
-        elif obj is not None:
-            return table.c.object == obj
-        else:
-            return None
-
-    def buildContextClause(self, context, table):
-        """Build Context clause."""
-        if isinstance(context, REGEXTerm):
-            # TODO: this work only in mysql. Must adapt for postgres and sqlite
-            return table.c.context.op("regexp")(context.identifier)
-        elif context is not None and context.identifier is not None:
-            return table.c.context == context.identifier
-        else:
-            return None
-
-    def buildTypeMemberClause(self, subject, table):
-        """Build Type Member clause."""
-        if isinstance(subject, REGEXTerm):
-            # TODO: this work only in mysql. Must adapt for postgres and sqlite
-            return table.c.member.op("regexp")(subject)
-        elif isinstance(subject, list):
-            return expression.or_(
-                *[self.buildTypeMemberClause(s, table) for s in subject if s])
-        elif subject is not None:
-            return table.c.member == subject
-        else:
-            return None
-
-    def buildTypeClassClause(self, obj, table):
-        """Build Type Class clause."""
-        if isinstance(obj, REGEXTerm):
-            # TODO: this work only in mysql. Must adapt for postgres and sqlite
-            return table.c.klass.op("regexp")(obj)
-        elif isinstance(obj, list):
-            return expression.or_(
-                *[self.buildTypeClassClause(o, table) for o in obj if o])
-        elif obj is not None:
-            return obj and table.c.klass == obj
-        else:
-            return None
 
 
 class SQLAlchemy(Store, SQLGenerator):
@@ -758,7 +537,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     if not self.STRONGLY_TYPED_TERMS \
                             or isinstance(obj, Literal):
                         # remove literal triple
-                        clause = self.buildClause(
+                        clause = self.build_clause(
                             literal_table, subject, predicate, obj, context)
                         connection.execute(literal_table.delete(clause))
 
@@ -769,19 +548,19 @@ class SQLAlchemy(Store, SQLGenerator):
                                 and isinstance(obj, Literal):
                             continue
                         else:
-                            clause = self.buildClause(
+                            clause = self.build_clause(
                                 table, subject, predicate, obj, context)
                             connection.execute(table.delete(clause))
 
                 if predicate == RDF.type or not predicate:
                     # Need to check rdf:type and quoted partitions (in addition
                     # perhaps)
-                    clause = self.buildClause(
+                    clause = self.build_clause(
                         asserted_type_table, subject,
                         RDF.type, obj, context, True)
                     connection.execute(asserted_type_table.delete(clause))
 
-                    clause = self.buildClause(
+                    clause = self.build_clause(
                         quoted_table, subject, predicate, obj, context)
                     connection.execute(quoted_table.delete(clause))
 
@@ -821,7 +600,7 @@ class SQLAlchemy(Store, SQLGenerator):
             # (if a context is specified)
             typeTable = expression.alias(
                 asserted_type_table, "typetable")
-            clause = self.buildClause(
+            clause = self.build_clause(
                 typeTable, subject, RDF.type, obj, context, True)
             selects = [
                 (typeTable,
@@ -840,7 +619,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     or not obj \
                     or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm)):
                 literal = expression.alias(literal_table, "literal")
-                clause = self.buildClause(
+                clause = self.build_clause(
                     literal, subject, predicate, obj, context)
                 selects.append((literal, clause, ASSERTED_LITERAL_PARTITION))
 
@@ -848,12 +627,12 @@ class SQLAlchemy(Store, SQLGenerator):
                     and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
                     or not obj:
                 asserted = expression.alias(asserted_table, "asserted")
-                clause = self.buildClause(
+                clause = self.build_clause(
                     asserted, subject, predicate, obj, context)
                 selects.append((asserted, clause, ASSERTED_NON_TYPE_PARTITION))
 
             typeTable = expression.alias(asserted_type_table, "typetable")
-            clause = self.buildClause(
+            clause = self.build_clause(
                 typeTable, subject, RDF.type, obj, context, True)
             selects.append((typeTable, clause, ASSERTED_TYPE_PARTITION))
 
@@ -867,7 +646,7 @@ class SQLAlchemy(Store, SQLGenerator):
                     or not obj \
                     or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm)):
                 literal = expression.alias(literal_table, "literal")
-                clause = self.buildClause(
+                clause = self.build_clause(
                     literal, subject, predicate, obj, context)
                 selects.append((literal, clause, ASSERTED_LITERAL_PARTITION))
 
@@ -875,13 +654,13 @@ class SQLAlchemy(Store, SQLGenerator):
                     and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
                     or not obj:
                 asserted = expression.alias(asserted_table, "asserted")
-                clause = self.buildClause(
+                clause = self.build_clause(
                     asserted, subject, predicate, obj, context)
                 selects.append((asserted, clause, ASSERTED_NON_TYPE_PARTITION))
 
         if context is not None:
             quoted = expression.alias(quoted_table, "quoted")
-            clause = self.buildClause(quoted, subject, predicate, obj, context)
+            clause = self.build_clause(quoted, subject, predicate, obj, context)
             selects.append((quoted, clause, QUOTED_PARTITION))
 
         q = union_select(selects, select_type=TRIPLE_SELECT_NO_ORDER)
@@ -1037,7 +816,7 @@ class SQLAlchemy(Store, SQLGenerator):
             if predicate == RDF.type:
                 # Select from asserted rdf:type partition and quoted table
                 # (if a context is specified)
-                clause = self.buildClause(
+                clause = self.build_clause(
                     typetable, subject, RDF.type, obj, Any, True)
                 selects = [(typetable, clause, ASSERTED_TYPE_PARTITION), ]
 
@@ -1048,7 +827,7 @@ class SQLAlchemy(Store, SQLGenerator):
                 # literal partition if (obj is Literal or None) and
                 # asserted non rdf:type partition (if obj is URIRef
                 # or None)
-                clause = self.buildClause(
+                clause = self.build_clause(
                     typetable, subject, RDF.type, obj, Any, True)
                 selects = [(typetable, clause, ASSERTED_TYPE_PARTITION), ]
 
@@ -1056,13 +835,13 @@ class SQLAlchemy(Store, SQLGenerator):
                         isinstance(obj, Literal) or
                         not obj or
                         (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
-                    clause = self.buildClause(literal, subject, predicate, obj)
+                    clause = self.build_clause(literal, subject, predicate, obj)
                     selects.append(
                         (literal, clause, ASSERTED_LITERAL_PARTITION))
                 if not isinstance(obj, Literal) \
                         and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
                         or not obj:
-                    clause = self.buildClause(
+                    clause = self.build_clause(
                         asserted, subject, predicate, obj)
                     selects.append(
                         (asserted, clause, ASSERTED_NON_TYPE_PARTITION))
@@ -1076,19 +855,19 @@ class SQLAlchemy(Store, SQLGenerator):
                         isinstance(obj, Literal) or
                         not obj
                         or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
-                    clause = self.buildClause(
+                    clause = self.build_clause(
                         literal, subject, predicate, obj)
                     selects.append(
                         (literal, clause, ASSERTED_LITERAL_PARTITION))
                 if not isinstance(obj, Literal) \
                         and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
                         or not obj:
-                    clause = self.buildClause(
+                    clause = self.build_clause(
                         asserted, subject, predicate, obj)
                     selects.append(
                         (asserted, clause, ASSERTED_NON_TYPE_PARTITION))
 
-            clause = self.buildClause(quoted, subject, predicate, obj)
+            clause = self.build_clause(quoted, subject, predicate, obj)
             selects.append((quoted, clause, QUOTED_PARTITION))
             q = union_select(selects, distinct=True, select_type=CONTEXT_SELECT)
         else:
