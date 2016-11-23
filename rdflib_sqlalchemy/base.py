@@ -21,7 +21,8 @@ class SQLGeneratorMixin(object):
             "member": member,
             "klass": klass,
             "context": context.identifier,
-            "termComb": int(type_to_term_combination(member, klass, context))}
+            "termComb": int(type_to_term_combination(member, klass, context))
+        }
 
     def _build_literal_triple_sql_command(self, subject, predicate, obj, context):
         """
@@ -70,10 +71,8 @@ class SQLGeneratorMixin(object):
                 "object": obj,
                 "context": context.identifier,
                 "termComb": triple_pattern,
-                "objLanguage": isinstance(
-                    obj, Literal) and obj.language or None,
-                "objDatatype": isinstance(
-                    obj, Literal) and obj.datatype or None
+                "objLanguage": isinstance(obj, Literal) and obj.language or None,
+                "objDatatype": isinstance(obj, Literal) and obj.datatype or None
             }
         else:
             params = {
@@ -89,18 +88,18 @@ class SQLGeneratorMixin(object):
         """Build WHERE clauses for the supplied terms and, context."""
         if typeTable:
             clauseList = [
-                self.buildTypeMemberClause(subject, table),
-                self.buildTypeClassClause(obj, table),
-                self.buildContextClause(context, table)
+                self.build_type_member_clause(subject, table),
+                self.build_type_class_clause(obj, table),
+                self.build_context_clause(context, table)
             ]
         else:
             clauseList = [
-                self.buildSubjClause(subject, table),
-                self.buildPredClause(predicate, table),
-                self.buildObjClause(obj, table),
-                self.buildContextClause(context, table),
-                self.buildLitDTypeClause(obj, table),
-                self.buildLitLanguageClause(obj, table)
+                self.build_subject_clause(subject, table),
+                self.build_predicate_clause(predicate, table),
+                self.build_object_clause(obj, table),
+                self.build_context_clause(context, table),
+                self.build_literal_datatype_clause(obj, table),
+                self.build_literal_language_clause(obj, table)
             ]
 
         clauseList = [clause for clause in clauseList if clause is not None]
@@ -109,14 +108,14 @@ class SQLGeneratorMixin(object):
         else:
             return None
 
-    def buildLitDTypeClause(self, obj, table):
+    def build_literal_datatype_clause(self, obj, table):
         """Build Literal and datatype clause."""
         if isinstance(obj, Literal) and obj.datatype is not None:
             return table.c.objDatatype == obj.datatype
         else:
             return None
 
-    def buildLitLanguageClause(self, obj, table):
+    def build_literal_language_clause(self, obj, table):
         """Build Literal and language clause."""
         if isinstance(obj, Literal) and obj.language is not None:
             return table.c.objLanguage == obj.language
@@ -126,9 +125,9 @@ class SQLGeneratorMixin(object):
     # Where Clause  utility Functions
     # The predicate and object clause builders are modified in order
     # to optimize subjects and objects utility functions which can
-    # take lists as their last argument (object, predicate -
-    # respectively)
-    def buildSubjClause(self, subject, table):
+    # take lists as their last argument (object, predicate - respectively)
+
+    def build_subject_clause(self, subject, table):
         """Build Subject clause."""
         if isinstance(subject, REGEXTerm):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
@@ -136,7 +135,7 @@ class SQLGeneratorMixin(object):
         elif isinstance(subject, list):
             # clauseStrings = [] --- unused
             return expression.or_(
-                *[self.buildSubjClause(s, table) for s in subject if s])
+                *[self.build_subject_clause(s, table) for s in subject if s])
         elif isinstance(subject, (QuotedGraph, Graph)):
             return table.c.subject == subject.identifier
         elif subject is not None:
@@ -144,7 +143,7 @@ class SQLGeneratorMixin(object):
         else:
             return None
 
-    def buildPredClause(self, predicate, table):
+    def build_predicate_clause(self, predicate, table):
         """
         Build Predicate clause.
 
@@ -157,13 +156,13 @@ class SQLGeneratorMixin(object):
             return table.c.predicate.op("REGEXP")(predicate)
         elif isinstance(predicate, list):
             return expression.or_(
-                *[self.buildPredClause(p, table) for p in predicate if p])
+                *[self.build_predicate_clause(p, table) for p in predicate if p])
         elif predicate is not None:
             return table.c.predicate == predicate
         else:
             return None
 
-    def buildObjClause(self, obj, table):
+    def build_object_clause(self, obj, table):
         """
         Build Object clause.
 
@@ -176,7 +175,7 @@ class SQLGeneratorMixin(object):
             return table.c.object.op("REGEXP")(obj)
         elif isinstance(obj, list):
             return expression.or_(
-                *[self.buildObjClause(o, table) for o in obj if o])
+                *[self.build_object_clause(o, table) for o in obj if o])
         elif isinstance(obj, (QuotedGraph, Graph)):
             return table.c.object == obj.identifier
         elif obj is not None:
@@ -184,7 +183,7 @@ class SQLGeneratorMixin(object):
         else:
             return None
 
-    def buildContextClause(self, context, table):
+    def build_context_clause(self, context, table):
         """Build Context clause."""
         if isinstance(context, REGEXTerm):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
@@ -194,27 +193,27 @@ class SQLGeneratorMixin(object):
         else:
             return None
 
-    def buildTypeMemberClause(self, subject, table):
+    def build_type_member_clause(self, subject, table):
         """Build Type Member clause."""
         if isinstance(subject, REGEXTerm):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
             return table.c.member.op("regexp")(subject)
         elif isinstance(subject, list):
             return expression.or_(
-                *[self.buildTypeMemberClause(s, table) for s in subject if s])
+                *[self.build_type_member_clause(s, table) for s in subject if s])
         elif subject is not None:
             return table.c.member == subject
         else:
             return None
 
-    def buildTypeClassClause(self, obj, table):
+    def build_type_class_clause(self, obj, table):
         """Build Type Class clause."""
         if isinstance(obj, REGEXTerm):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
             return table.c.klass.op("regexp")(obj)
         elif isinstance(obj, list):
             return expression.or_(
-                *[self.buildTypeClassClause(o, table) for o in obj if o])
+                *[self.build_type_class_clause(o, table) for o in obj if o])
         elif obj is not None:
             return obj and table.c.klass == obj
         else:

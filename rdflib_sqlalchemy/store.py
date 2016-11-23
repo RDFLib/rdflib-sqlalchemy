@@ -48,6 +48,13 @@ _logger = logging.getLogger(__name__)
 Any = None
 
 
+def generate_interned_id(identifier):
+    return "{prefix}{identifier_hash}".format(
+        prefix=INTERNED_PREFIX,
+        identifier_hash=hashlib.sha1(identifier.encode("utf8")).hexdigest()[:10],
+    )
+
+
 class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     """
     SQL-92 formula-aware implementation of an rdflib Store.
@@ -84,10 +91,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         self.engine = engine
 
         # Use only the first 10 bytes of the digest
-        self._interned_id = "{prefix}{identifier_hash}".format(
-            prefix=INTERNED_PREFIX,
-            identifier_hash=hashlib.sha1(self.identifier.encode("utf8")).hexdigest()[:10],
-        )
+        self._interned_id = generate_interned_id(self.identifier)
 
         # This parameter controls how exlusively the literal table is searched
         # If true, the Literal partition is searched *exclusively* if the
@@ -159,10 +163,10 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         asserted = expression.alias(asserted_table, "asserted")
         literal = expression.alias(literal_table, "literal")
 
-        quotedContext = self.buildContextClause(context, quoted)
-        assertedContext = self.buildContextClause(context, asserted)
-        typeContext = self.buildContextClause(context, typetable)
-        literalContext = self.buildContextClause(context, literal)
+        quotedContext = self.build_context_clause(context, quoted)
+        assertedContext = self.build_context_clause(context, asserted)
+        typeContext = self.build_context_clause(context, typetable)
+        literalContext = self.build_context_clause(context, literal)
 
         if context is not None:
             selects = [
@@ -231,8 +235,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         self.engine = sqlalchemy.create_engine(configuration)
         with self.engine.connect():
             if create:
-                # Create all of the database tables (idempotent)
-                self.metadata.create_all(self.engine)
+                self.create_all()
 
             ret_value = self._verify_store_exists()
 
@@ -240,6 +243,10 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             raise RuntimeError("open() - create flag was set to False, but store was not created previously.")
 
         return ret_value
+
+    def create_all(self):
+        """Create all of the database tables (idempotent)."""
+        self.metadata.create_all(self.engine)
 
     def close(self, commit_pending_transaction=False):
         """
@@ -745,7 +752,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             try:
                 for table in [quoted_table, asserted_table,
                               asserted_type_table, literal_table]:
-                    clause = self.buildContextClause(identifier, table)
+                    clause = self.build_context_clause(identifier, table)
                     connection.execute(table.delete(clause))
                 trans.commit()
             except Exception:

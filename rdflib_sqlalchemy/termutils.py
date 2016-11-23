@@ -189,7 +189,8 @@ def extract_triple(tupleRt, store, hardCodedContext=None):
 
     Take a tuple which represents an entry in a result set and
     converts it to a tuple of terms using the termComb integer
-    to interpret how to instantiate each term
+    to interpret how to instantiate each term.
+
     """
     try:
         id, subject, predicate, obj, rtContext, termComb, \
