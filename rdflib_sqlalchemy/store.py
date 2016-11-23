@@ -48,6 +48,13 @@ _logger = logging.getLogger(__name__)
 Any = None
 
 
+def generate_interned_id(identifier):
+    return "{prefix}{identifier_hash}".format(
+        prefix=INTERNED_PREFIX,
+        identifier_hash=hashlib.sha1(identifier.encode("utf8")).hexdigest()[:10],
+    )
+
+
 class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     """
     SQL-92 formula-aware implementation of an rdflib Store.
@@ -84,10 +91,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         self.engine = engine
 
         # Use only the first 10 bytes of the digest
-        self._interned_id = "{prefix}{identifier_hash}".format(
-            prefix=INTERNED_PREFIX,
-            identifier_hash=hashlib.sha1(self.identifier.encode("utf8")).hexdigest()[:10],
-        )
+        self._interned_id = generate_interned_id(self.identifier)
 
         # This parameter controls how exlusively the literal table is searched
         # If true, the Literal partition is searched *exclusively* if the
