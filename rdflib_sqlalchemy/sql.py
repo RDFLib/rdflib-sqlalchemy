@@ -37,29 +37,31 @@ def query_analysis(query, store, connection):
     store.queryOptMarks[(_key, table)] = hits + 1
 
 
-def union_select(selectComponents, distinct=False, select_type=TRIPLE_SELECT):
+def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
     """
     Helper function for building union all select statement.
 
-    Terms: u - uri refs  v - variables  b - bnodes l - literal f - formula
+    Terms:
+        u - uri refs
+        v - variables
+        b - bnodes
+        l - literal
+        f - formula
 
-    Takes a list of:
-     - table name
-     - table alias
-     - table type (literal, type, asserted, quoted)
-     - where clause string
+    :param select_components - iterable of (table_name, where_clause_string, table_type) tuples
+
     """
     selects = []
-    for table, whereClause, tableType in selectComponents:
+    for table, whereClause, tableType in select_components:
 
         if select_type == COUNT_SELECT:
-            selectClause = table.count(whereClause)
+            select_clause = table.count(whereClause)
         elif select_type == CONTEXT_SELECT:
-            selectClause = expression.select([table.c.context], whereClause)
+            select_clause = expression.select([table.c.context], whereClause)
         elif tableType in FULL_TRIPLE_PARTITIONS:
-            selectClause = table.select(whereClause)
+            select_clause = table.select(whereClause)
         elif tableType == ASSERTED_TYPE_PARTITION:
-            selectClause = expression.select(
+            select_clause = expression.select(
                 [table.c.id.label("id"),
                  table.c.member.label("subject"),
                  expression.literal(text_type(RDF.type)).label("predicate"),
@@ -70,14 +72,14 @@ def union_select(selectComponents, distinct=False, select_type=TRIPLE_SELECT):
                  expression.literal_column("NULL").label("objdatatype")],
                 whereClause)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
-            selectClause = expression.select(
+            select_clause = expression.select(
                 [c for c in table.columns] +
                 [expression.literal_column("NULL").label("objlanguage"),
                  expression.literal_column("NULL").label("objdatatype")],
                 whereClause,
                 from_obj=[table])
 
-        selects.append(selectClause)
+        selects.append(select_clause)
 
     order_statement = []
     if select_type == TRIPLE_SELECT:
