@@ -235,8 +235,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         self.engine = sqlalchemy.create_engine(configuration)
         with self.engine.connect():
             if create:
-                # Create all of the database tables (idempotent)
-                self.metadata.create_all(self.engine)
+                self.create_all()
 
             ret_value = self._verify_store_exists()
 
@@ -244,6 +243,10 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             raise RuntimeError("open() - create flag was set to False, but store was not created previously.")
 
         return ret_value
+
+    def create_all(self):
+        """Create all of the database tables (idempotent)."""
+        self.metadata.create_all(self.engine)
 
     def close(self, commit_pending_transaction=False):
         """
