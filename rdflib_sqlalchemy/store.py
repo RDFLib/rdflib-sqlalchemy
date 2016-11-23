@@ -159,10 +159,10 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         asserted = expression.alias(asserted_table, "asserted")
         literal = expression.alias(literal_table, "literal")
 
-        quotedContext = self.buildContextClause(context, quoted)
-        assertedContext = self.buildContextClause(context, asserted)
-        typeContext = self.buildContextClause(context, typetable)
-        literalContext = self.buildContextClause(context, literal)
+        quotedContext = self.build_context_clause(context, quoted)
+        assertedContext = self.build_context_clause(context, asserted)
+        typeContext = self.build_context_clause(context, typetable)
+        literalContext = self.build_context_clause(context, literal)
 
         if context is not None:
             selects = [
@@ -745,7 +745,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             try:
                 for table in [quoted_table, asserted_table,
                               asserted_type_table, literal_table]:
-                    clause = self.buildContextClause(identifier, table)
+                    clause = self.build_context_clause(identifier, table)
                     connection.execute(table.delete(clause))
                 trans.commit()
             except Exception:
