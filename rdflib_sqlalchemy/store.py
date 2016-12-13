@@ -84,7 +84,11 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
         Args:
             identifier (rdflib.URIRef): URIRef of the Store. Defaults to CWD.
-            engine (sqlalchemy.engine.Engine, optional): a `SQLAlchemy.engine.Engine` instance
+            configuration: the database connection URL string or a configuration dictionary
+                corresponding to the connection options accepted by sqlalchemy.create_engine,
+                with the additional "url" key pointing to the connection URL. See `open` documentation
+                for more details.
+            engine (sqlalchemy.engine.Engine, optional): a pre-existing `SQLAlchemy.engine.Engine` instance.
 
         """
         self.identifier = identifier and identifier or "hardcoded"
@@ -214,9 +218,14 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     def open(self, configuration, create=True):
         """
-        Open the store specified by the configuration string.
+        Open the store specified by the configuration parameter.
 
         Args:
+            configuration: if a string, use as the DBAPI URL. If a dictionary, will use as the **kwargs
+                for the sqlalchemy.create_engine() call, and will attempt to extract the connection URL
+                from a 'url' key in that dictionary.
+                A valid connection string will be of the format:
+                    dialect[+driver]://user:password@host/dbname[?key=value..]
             create (bool): If create is True a store will be created if it does not already
                 exist. If create is False and a store does not already exist
                 an exception is raised. An exception is also raised if a store
@@ -232,7 +241,14 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         # Close any existing engine connection
         self.close()
 
-        self.engine = sqlalchemy.create_engine(configuration)
+        url, kwargs = configuration, {}
+        if isinstance(configuration, dict):
+            url = configuration.pop("url", None)
+            if not url:
+                raise Exception('Configuration dict is missing the required "url" key')
+            kwargs = configuration
+
+        self.engine = sqlalchemy.create_engine(url, **kwargs)
         with self.engine.connect():
             if create:
                 self.create_all()

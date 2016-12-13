@@ -1,31 +1,48 @@
-import logging
 import unittest
+from unittest.mock import patch
 
 from rdflib import (
     ConjunctiveGraph,
     Literal,
     URIRef,
+    plugin
 )
-from rdflib import plugin
 from rdflib.store import Store
 
 from rdflib_sqlalchemy import registerplugins
 
 
-_logger = logging.getLogger(__name__)
-
 michel = URIRef(u"michel")
-tarek = URIRef(u"tarek")
-bob = URIRef(u"bob")
 likes = URIRef(u"likes")
-hates = URIRef(u"hates")
 pizza = URIRef(u"pizza")
-cheese = URIRef(u"cheese")
 
 
 class mock_cursor():
     def execute(x):
         raise Exception("Forced exception")
+
+
+class ConfigTest(unittest.TestCase):
+    '''
+    Test configuration with a dict
+    '''
+
+    def setUp(self):
+        self.store = plugin.get("SQLAlchemy", Store)()
+        self.graph = ConjunctiveGraph(self.store)
+
+    def tearDown(self):
+        self.graph.close()
+
+    def test_success(self):
+        with patch('rdflib_sqlalchemy.store.sqlalchemy') as p:
+            self.graph.open({'url': 'sqlite://', 'random_key': 'something'}, create=True)
+            p.create_engine.assert_called_with('sqlite://', random_key='something')
+
+    def test_no_url(self):
+        with patch('rdflib_sqlalchemy.store.sqlalchemy') as p:
+            with self.assertRaisesRegex(Exception, '.*url.*'):
+                self.graph.open({'random_key': 'something'}, create=True)
 
 
 class SQLATestCase(unittest.TestCase):
@@ -46,26 +63,26 @@ class SQLATestCase(unittest.TestCase):
         # I doubt this is quite right for a fresh pip installation,
         # this test is mainly here to fill a coverage gap.
         registerplugins()
-        self.assert_(plugin.get("SQLAlchemy", Store) is not None)
+        self.assertIsNotNone(plugin.get("SQLAlchemy", Store))
         p = plugin._plugins
-        self.assert_(("SQLAlchemy", Store) in p, p)
+        self.assertIn(("SQLAlchemy", Store), p)
         del p[("SQLAlchemy", Store)]
         plugin._plugins = p
         registerplugins()
-        self.assert_(("SQLAlchemy", Store) in p, p)
+        self.assertIn(("SQLAlchemy", Store), p)
 
     def test_namespaces(self):
-        self.assert_(list(self.graph.namespaces()) != [])
+        self.assertNotEqual(list(self.graph.namespaces()), [])
 
     def test_contexts_without_triple(self):
-        self.assert_(list(self.graph.contexts()) == [])
+        self.assertEqual(list(self.graph.contexts()), [])
 
     def test_contexts_with_triple(self):
         statemnt = (michel, likes, pizza)
-        self.assert_(self.graph.contexts(triple=statemnt) != [])
+        self.assertEqual(list(self.graph.contexts(triple=statemnt)), [])
 
     def test__len(self):
-        self.assert_(self.store.__len__() == 0)
+        self.assertEqual(self.store.__len__(), 0)
 
     def test__remove_context(self):
         self.store._remove_context(self.identifier)
