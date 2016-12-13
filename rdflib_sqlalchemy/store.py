@@ -253,7 +253,8 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         Close the current store engine connection if one is open.
 
         """
-        self.engine.dispose()
+        if self.engine:
+            self.engine.dispose()
         self.engine = None
 
     def destroy(self, configuration):
