@@ -19,7 +19,7 @@ sqlalchemy_url = Literal(os.environ.get("DBURI", "sqlite://"))
 
 class SQLASQLiteGraphTestCase(graph_case.GraphTestCase):
     storetest = True
-    storename = "SQLAlchemy"
+    storename = "SQLAlchemy2"
     uri = sqlalchemy_url
 
     def setUp(self):
@@ -32,7 +32,7 @@ class SQLASQLiteGraphTestCase(graph_case.GraphTestCase):
 
 class SQLASQLiteContextTestCase(context_case.ContextTestCase):
     storetest = True
-    storename = "SQLAlchemy"
+    storename = "SQLAlchemy2"
     uri = sqlalchemy_url
 
     def setUp(self):

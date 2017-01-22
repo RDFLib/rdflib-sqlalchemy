@@ -34,7 +34,7 @@ class SQLATestCase(unittest.TestCase):
 
     def setUp(self):
         self.store = plugin.get(
-            "SQLAlchemy", Store)(identifier=self.identifier)
+            "SQLAlchemy2", Store)(identifier=self.identifier)
         self.graph = ConjunctiveGraph(self.store, identifier=self.identifier)
         self.graph.open(self.dburi, create=True)
 
@@ -49,13 +49,13 @@ class SQLATestCase(unittest.TestCase):
         # I doubt this is quite right for a fresh pip installation,
         # this test is mainly here to fill a coverage gap.
         registerplugins()
-        self.assert_(plugin.get("SQLAlchemy", Store) is not None)
+        self.assert_(plugin.get("SQLAlchemy2", Store) is not None)
         p = plugin._plugins
-        self.assert_(("SQLAlchemy", Store) in p, p)
-        del p[("SQLAlchemy", Store)]
+        self.assert_(("SQLAlchemy2", Store) in p, p)
+        del p[("SQLAlchemy2", Store)]
         plugin._plugins = p
         registerplugins()
-        self.assert_(("SQLAlchemy", Store) in p, p)
+        self.assert_(("SQLAlchemy2", Store) in p, p)
 
     def test_namespaces(self):
         self.assert_(list(self.graph.namespaces()) != [])

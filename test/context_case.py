@@ -8,6 +8,7 @@ from rdflib import plugin
 from rdflib.store import Store
 from six import string_types
 
+import rdflib_sqlalchemy2
 
 class ContextTestCase(unittest.TestCase):
     storetest = True
@@ -24,6 +25,8 @@ class ContextTestCase(unittest.TestCase):
     c2 = URIRef(u"context-2")
 
     def setUp(self, uri="sqlite://", storename=None):
+        rdflib_sqlalchemy2.registerplugins()
+        
         store = plugin.get(storename, Store)(identifier=self.identifier)
         self.graph = ConjunctiveGraph(store, identifier=self.identifier)
         self.graph.open(uri, create=True)

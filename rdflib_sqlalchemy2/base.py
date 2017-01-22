@@ -4,14 +4,14 @@ from rdflib.graph import Graph, QuotedGraph
 from rdflib.plugins.stores.regexmatching import REGEXTerm
 from sqlalchemy.sql import expression, select, exists, literal, bindparam
 
-from rdflib_sqlalchemy.termutils import (
+from rdflib_sqlalchemy2.termutils import (
     type_to_term_combination,
     statement_to_term_combination,
 )
 
 
 class SQLGeneratorMixin(object):
-    """SQL statement generator mixin for the SQLAlchemy store."""
+    """SQL statement generator mixin for the SQLAlchemy2 store."""
 
     def _build_type_sql_command(self, member, klass, context):
         """Build an insert command for a type table."""

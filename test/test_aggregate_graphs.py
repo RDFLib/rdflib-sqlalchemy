@@ -14,6 +14,8 @@ from rdflib.store import Store
 from six.moves import cStringIO as StringIO
 
 
+import rdflib_sqlalchemy2
+
 plugin.register(
     'xml', query.ResultParser,
     'rdflib.plugins.sparql.results.xmlresults', 'XMLResultParser')
@@ -82,7 +84,9 @@ class GraphAggregates1(unittest.TestCase):
     dburi = Literal('sqlite://')
 
     def setUp(self):
-        memStore = plugin.get('SQLAlchemy', Store)(
+        rdflib_sqlalchemy2.registerplugins()
+        
+        memStore = plugin.get('SQLAlchemy2', Store)(
             identifier="rdflib_test", configuration=self.dburi)
         self.graph1 = Graph(memStore)
         self.graph2 = Graph(memStore)
@@ -125,7 +129,9 @@ class GraphAggregates2(unittest.TestCase):
     # known_issue = True
 
     def setUp(self):
-        memStore = plugin.get('SQLAlchemy', Store)(
+        rdflib_sqlalchemy2.registerplugins()
+        
+        memStore = plugin.get('SQLAlchemy2', Store)(
             identifier="rdflib_test", configuration=Literal("sqlite://"))
         self.graph1 = Graph(memStore, URIRef("http://example.com/graph1"))
         self.graph2 = Graph(memStore, URIRef("http://example.com/graph2"))
@@ -157,7 +163,9 @@ class GraphAggregates2(unittest.TestCase):
 
 class GraphAggregates3(unittest.TestCase):
     def setUp(self):
-        memStore = plugin.get('SQLAlchemy', Store)(
+        rdflib_sqlalchemy2.registerplugins()
+        
+        memStore = plugin.get('SQLAlchemy2', Store)(
             identifier="rdflib_test", configuration=Literal("sqlite://"))
         self.graph1 = Graph(memStore, URIRef("graph1"))
         self.graph2 = Graph(memStore, URIRef("graph2"))

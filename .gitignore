@@ -1,4 +1,5 @@
 .tox
+.swp
 .noseids
 rdflib_sqlalchemy.egg-info
 /build/
@@ -10,3 +11,4 @@ rdflib_sqlalchemy.egg-info
 /.eggs/
 /dist/
 /venv/
+run_tests.sh

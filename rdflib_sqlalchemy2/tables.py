@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Table, Index, types
 
-from rdflib_sqlalchemy.types import TermType
+from rdflib_sqlalchemy2.types import TermType
 
 
 MYSQL_MAX_INDEX_LENGTH = 200
