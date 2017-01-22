@@ -1,14 +1,7 @@
-.tox
-.swp
-.noseids
-rdflib_sqlalchemy.egg-info
-/build/
+# use glob syntax.
+syntax: glob
+*.swp
+*.swo
 *.pyc
-/__pycache__/
-*.project
-*.pydevproject
-*.egg-info/
-/.eggs/
-/dist/
-/venv/
+.noseids
 run_tests.sh
