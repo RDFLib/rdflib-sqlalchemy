@@ -3,8 +3,11 @@
 import logging
 from pkg_resources import get_distribution
 
-
-__version__ = get_distribution("rdflib_sqlalchemy").version
+try:
+    __version__ = get_distribution("rdflib_sqlalchemy2").version
+except:
+    # probably not installed using setuptools
+    pass
 
 
 class NullHandler(logging.Handler):
@@ -31,20 +34,20 @@ def registerplugins():
     """
     Register plugins.
 
-    If setuptools is used to install rdflib-sqlalchemy, all the provided
+    If setuptools is used to install rdflib-sqlalchemy2, all the provided
     plugins are registered through entry_points. This is strongly recommended.
 
     However, if only distutils is available, then the plugins must be
     registed manually.
 
-    This method will register all of the rdflib-sqlalchemy Store plugins.
+    This method will register all of the rdflib-sqlalchemy2 Store plugins.
 
     """
     from rdflib.store import Store
     from rdflib import plugin
 
     try:
-        x = plugin.get("SQLAlchemy", Store)
+        x = plugin.get("SQLAlchemy2", Store)
         del x
         return  # plugins already registered
     except:
@@ -53,8 +56,8 @@ def registerplugins():
     # Register the plugins ...
 
     plugin.register(
-        "SQLAlchemy",
+        "SQLAlchemy2",
         Store,
-        "rdflib_sqlalchemy.store",
-        "SQLAlchemy",
+        "rdflib_sqlalchemy2.store",
+        "SQLAlchemy2",
     )
