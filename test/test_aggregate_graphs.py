@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from nose.exc import SkipTest
@@ -79,9 +80,12 @@ PREFIX log: <http://www.w3.org/2000/10/swap/log#>
 SELECT ?n3Doc
 WHERE {?n3Doc a log:N3Document }"""
 
+sqlalchemy_url = os.environ.get(
+    "DBURI",
+    "postgresql+psycopg2://postgres@localhost/test")
 
 class GraphAggregates1(unittest.TestCase):
-    dburi = Literal('sqlite://')
+    dburi = Literal(sqlalchemy_url)
 
     def setUp(self):
         rdflib_sqlalchemy2.registerplugins()
@@ -132,7 +136,7 @@ class GraphAggregates2(unittest.TestCase):
         rdflib_sqlalchemy2.registerplugins()
         
         memStore = plugin.get('SQLAlchemy2', Store)(
-            identifier="rdflib_test", configuration=Literal("sqlite://"))
+            identifier="rdflib_test", configuration=Literal(sqlalchemy_url))
         self.graph1 = Graph(memStore, URIRef("http://example.com/graph1"))
         self.graph2 = Graph(memStore, URIRef("http://example.com/graph2"))
         self.graph3 = Graph(memStore, URIRef("http://example.com/graph3"))
@@ -166,7 +170,7 @@ class GraphAggregates3(unittest.TestCase):
         rdflib_sqlalchemy2.registerplugins()
         
         memStore = plugin.get('SQLAlchemy2', Store)(
-            identifier="rdflib_test", configuration=Literal("sqlite://"))
+            identifier="rdflib_test", configuration=Literal(sqlalchemy_url))
         self.graph1 = Graph(memStore, URIRef("graph1"))
         self.graph2 = Graph(memStore, URIRef("graph2"))
         self.graph3 = Graph(memStore, URIRef("graph3"))
