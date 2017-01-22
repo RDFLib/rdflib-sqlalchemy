@@ -24,7 +24,7 @@ _logger = logging.getLogger(__name__)
 
 class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
     storetest = True
-    storename = "SQLAlchemy"
+    storename = "SQLAlchemy2"
     uri = sqlalchemy_url
     create = True
 
@@ -40,7 +40,7 @@ class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
 
 class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
     storetest = True
-    storename = "SQLAlchemy"
+    storename = "SQLAlchemy2"
     uri = sqlalchemy_url
     create = True
 

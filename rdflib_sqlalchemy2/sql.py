@@ -2,7 +2,7 @@ from rdflib.namespace import RDF
 from six import text_type
 from sqlalchemy.sql import expression
 
-from rdflib_sqlalchemy.constants import (
+from rdflib_sqlalchemy2.constants import (
     ASSERTED_TYPE_PARTITION,
     ASSERTED_NON_TYPE_PARTITION,
     CONTEXT_SELECT,

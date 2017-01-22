@@ -9,6 +9,7 @@ from rdflib.parser import StringInputSource
 from rdflib.py3compat import PY3
 from rdflib.store import Store
 
+import rdflib_sqlalchemy2
 
 class GraphTestCase(unittest.TestCase):
     storetest = True
@@ -23,6 +24,8 @@ class GraphTestCase(unittest.TestCase):
     cheese = URIRef(u"cheese")
 
     def setUp(self, uri="sqlite://", storename=None):
+        rdflib_sqlalchemy2.registerplugins()
+        
         store = plugin.get(storename, Store)(identifier=self.identifier)
         self.graph = Graph(store, identifier=self.identifier)
         self.graph.open(uri, create=True)

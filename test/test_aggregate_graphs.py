@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from nose.exc import SkipTest
@@ -13,6 +14,8 @@ from rdflib.graph import ReadOnlyGraphAggregate
 from rdflib.store import Store
 from six.moves import cStringIO as StringIO
 
+
+import rdflib_sqlalchemy2
 
 plugin.register(
     'xml', query.ResultParser,
@@ -77,12 +80,17 @@ PREFIX log: <http://www.w3.org/2000/10/swap/log#>
 SELECT ?n3Doc
 WHERE {?n3Doc a log:N3Document }"""
 
+sqlalchemy_url = os.environ.get(
+    "DBURI",
+    "postgresql+psycopg2://postgres@localhost/test")
 
 class GraphAggregates1(unittest.TestCase):
-    dburi = Literal('sqlite://')
+    dburi = Literal(sqlalchemy_url)
 
     def setUp(self):
-        memStore = plugin.get('SQLAlchemy', Store)(
+        rdflib_sqlalchemy2.registerplugins()
+        
+        memStore = plugin.get('SQLAlchemy2', Store)(
             identifier="rdflib_test", configuration=self.dburi)
         self.graph1 = Graph(memStore)
         self.graph2 = Graph(memStore)
@@ -125,8 +133,10 @@ class GraphAggregates2(unittest.TestCase):
     # known_issue = True
 
     def setUp(self):
-        memStore = plugin.get('SQLAlchemy', Store)(
-            identifier="rdflib_test", configuration=Literal("sqlite://"))
+        rdflib_sqlalchemy2.registerplugins()
+        
+        memStore = plugin.get('SQLAlchemy2', Store)(
+            identifier="rdflib_test", configuration=Literal(sqlalchemy_url))
         self.graph1 = Graph(memStore, URIRef("http://example.com/graph1"))
         self.graph2 = Graph(memStore, URIRef("http://example.com/graph2"))
         self.graph3 = Graph(memStore, URIRef("http://example.com/graph3"))
@@ -157,8 +167,10 @@ class GraphAggregates2(unittest.TestCase):
 
 class GraphAggregates3(unittest.TestCase):
     def setUp(self):
-        memStore = plugin.get('SQLAlchemy', Store)(
-            identifier="rdflib_test", configuration=Literal("sqlite://"))
+        rdflib_sqlalchemy2.registerplugins()
+        
+        memStore = plugin.get('SQLAlchemy2', Store)(
+            identifier="rdflib_test", configuration=Literal(sqlalchemy_url))
         self.graph1 = Graph(memStore, URIRef("graph1"))
         self.graph2 = Graph(memStore, URIRef("graph2"))
         self.graph3 = Graph(memStore, URIRef("graph3"))

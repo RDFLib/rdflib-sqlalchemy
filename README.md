@@ -1,3 +1,19 @@
+RDFLib-SQLAlchemy2
+==================
+
+This RDFLib SQLAlchemy backend has been forked from
+
+https://github.com/RDFLib/rdflib-sqlalchemy
+
+by G. Bartsch in 2017. The major difference (so far) is the use if "upsert" database commands when asserting graph
+edges, allowing edges to be re-asserted without running into DB primary key issues. 
+
+Please note that this implementation relies on features (such as RETURNING SQL Statement support) that may not be available
+for all DB engines in SQLAlchemy. Testing is currently done on PostgreSQL only.
+
+original README follows below:
+
+
 RDFLib-SQLAlchemy
 =================
 

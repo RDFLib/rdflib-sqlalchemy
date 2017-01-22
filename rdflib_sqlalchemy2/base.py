@@ -2,16 +2,16 @@
 from rdflib import Literal
 from rdflib.graph import Graph, QuotedGraph
 from rdflib.plugins.stores.regexmatching import REGEXTerm
-from sqlalchemy.sql import expression
+from sqlalchemy.sql import expression, select, exists, literal, bindparam
 
-from rdflib_sqlalchemy.termutils import (
+from rdflib_sqlalchemy2.termutils import (
     type_to_term_combination,
     statement_to_term_combination,
 )
 
 
 class SQLGeneratorMixin(object):
-    """SQL statement generator mixin for the SQLAlchemy store."""
+    """SQL statement generator mixin for the SQLAlchemy2 store."""
 
     def _build_type_sql_command(self, member, klass, context):
         """Build an insert command for a type table."""
@@ -62,9 +62,9 @@ class SQLGeneratorMixin(object):
             obj,
             context,
         )
-        command = stmt_table.insert()
 
         if quoted:
+            command = stmt_table.insert()
             params = {
                 "subject": subject,
                 "predicate": predicate,
@@ -75,13 +75,43 @@ class SQLGeneratorMixin(object):
                 "objDatatype": isinstance(obj, Literal) and obj.datatype or None
             }
         else:
+            # command = stmt_table.insert()
+
+            # "upsert"
+
+            update_cte = (
+                stmt_table.update()
+                .where(stmt_table.c.subject   == bindparam('b_subject'))
+                .where(stmt_table.c.predicate == bindparam('b_predicate'))
+                .where(stmt_table.c.object    == bindparam('b_obj'))
+                .where(stmt_table.c.context   == bindparam('b_context'))
+                .values(termComb = bindparam('b_termComb'))
+                .returning(literal(1))
+                .cte('update_cte')
+            )
+
+            command = stmt_table.insert() \
+                                .from_select([ stmt_table.c.subject, 
+                                               stmt_table.c.predicate, 
+                                               stmt_table.c.object, 
+                                               stmt_table.c.context, 
+                                               stmt_table.c.termComb ], 
+                                             select([bindparam('b_subject'), 
+                                                     bindparam('b_predicate'), 
+                                                     bindparam('b_obj'), 
+                                                     bindparam('b_context'), 
+                                                     bindparam('b_termComb')])
+                                             .where(~exists(update_cte.select()))
+                                            )
+
             params = {
-                "subject": subject,
-                "predicate": predicate,
-                "object": obj,
-                "context": context.identifier,
-                "termComb": triple_pattern,
+                "b_subject": subject,
+                "b_predicate": predicate,
+                "b_obj": obj,
+                "b_context": context.identifier,
+                "b_termComb": triple_pattern,
             }
+
         return command, params
 
     def build_clause(self, table, subject, predicate, obj, context=None, typeTable=False):

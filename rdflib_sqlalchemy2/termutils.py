@@ -4,7 +4,7 @@ from rdflib.graph import QuotedGraph
 from rdflib.py3compat import format_doctest_out
 from rdflib.term import Statement
 
-from rdflib_sqlalchemy.constants import (
+from rdflib_sqlalchemy2.constants import (
     TERM_COMBINATIONS,
     TERM_INSTANTIATION_DICT,
     REVERSE_TERM_COMBINATIONS,
@@ -39,7 +39,7 @@ def normalize_graph(graph):
     >>> from rdflib.graph import Graph, ConjunctiveGraph, QuotedGraph
     >>> from rdflib.store import Store
     >>> from rdflib import URIRef, Namespace
-    >>> from rdflib_sqlalchemy.termutils import normalize_graph
+    >>> from rdflib_sqlalchemy2.termutils import normalize_graph
     >>> memstore = plugin.get('IOMemory', Store)()
     >>> g = Graph(memstore, URIRef("http://purl.org/net/bel-epa/gjh"))
     >>> normalize_graph(g)
@@ -75,7 +75,7 @@ def term_to_letter(term):
     >>> from rdflib.term import BNode
     >>> # from rdflib.term import Statement
     >>> from rdflib.graph import Graph, QuotedGraph
-    >>> from rdflib_sqlalchemy.termutils import term_to_letter
+    >>> from rdflib_sqlalchemy2.termutils import term_to_letter
     >>> term_to_letter(URIRef('http://purl.org/net/bel-epa.com/'))
     'U'
     >>> term_to_letter(BNode())
@@ -123,7 +123,7 @@ def construct_graph(key):
 
     Takes a key (one of 'F', 'U' or 'B')
 
-    >>> from rdflib_sqlalchemy.termutils import construct_graph
+    >>> from rdflib_sqlalchemy2.termutils import construct_graph
     >>> construct_graph('F')
     (<class 'rdflib.graph.QuotedGraph'>, <class 'rdflib.term.URIRef'>)
     >>> construct_graph('U')

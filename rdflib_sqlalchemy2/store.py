@@ -19,7 +19,7 @@ from sqlalchemy import MetaData
 from sqlalchemy.engine import reflection
 from sqlalchemy.sql import expression, select
 
-from rdflib_sqlalchemy.constants import (
+from rdflib_sqlalchemy2.constants import (
     ASSERTED_LITERAL_PARTITION,
     ASSERTED_NON_TYPE_PARTITION,
     ASSERTED_TYPE_PARTITION,
@@ -29,7 +29,7 @@ from rdflib_sqlalchemy.constants import (
     QUOTED_PARTITION,
     TRIPLE_SELECT_NO_ORDER,
 )
-from rdflib_sqlalchemy.tables import (
+from rdflib_sqlalchemy2.tables import (
     create_asserted_statements_table,
     create_literal_statements_table,
     create_namespace_binds_table,
@@ -37,10 +37,10 @@ from rdflib_sqlalchemy.tables import (
     create_type_statements_table,
     get_table_names,
 )
-from rdflib_sqlalchemy.base import SQLGeneratorMixin
-from rdflib_sqlalchemy.sql import union_select
-from rdflib_sqlalchemy.statistics import StatisticsMixin
-from rdflib_sqlalchemy.termutils import extract_triple
+from rdflib_sqlalchemy2.base import SQLGeneratorMixin
+from rdflib_sqlalchemy2.sql import union_select
+from rdflib_sqlalchemy2.statistics import StatisticsMixin
+from rdflib_sqlalchemy2.termutils import extract_triple
 
 
 _logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ def generate_interned_id(identifier):
     )
 
 
-class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
+class SQLAlchemy2(Store, SQLGeneratorMixin, StatisticsMixin):
     """
     SQL-92 formula-aware implementation of an rdflib Store.
 
