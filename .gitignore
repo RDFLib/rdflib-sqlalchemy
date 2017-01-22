@@ -5,3 +5,4 @@ syntax: glob
 *.pyc
 .noseids
 run_tests.sh
+sqlalchemy
