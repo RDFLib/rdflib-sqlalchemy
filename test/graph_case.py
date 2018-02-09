@@ -22,6 +22,10 @@ class GraphTestCase(unittest.TestCase):
     pizza = URIRef(u"pizza")
     cheese = URIRef(u"cheese")
 
+    namespace_dc = "http://purl.org/dc/elements/1.1/"
+    namespace_dct = "http://purl.org/dc/terms/"
+    namespace_saws = "http://purl.org/saws/ontology#"
+
     def setUp(self, uri="sqlite://", storename=None):
         store = plugin.get(storename, Store)(identifier=self.identifier)
         self.graph = Graph(store, identifier=self.identifier)
@@ -299,6 +303,23 @@ class GraphTestCase(unittest.TestCase):
         self.assertEquals(len(objs), 1)
         o = objs[0]
         self.assertEquals(o, (bob, says, imtheone))
+
+    def testBindNamespace(self):
+        """ Check that bound namespaced with prefix (including empty ones) are correctly kept """
+        self.graph.bind("", self.namespace_dc)
+        self.graph.bind("dct", self.namespace_dct)
+        self.assertEqual(
+            self.graph.qname(self.namespace_dct+"title"), "dct:title",
+            "Prefixed namespace should be stored and retrieved"
+        )
+        self.assertEqual(
+            self.graph.qname(self.namespace_dc+"title"), "title",
+            "Empty prefixes for namespace should be stored and retrieved"
+        )
+        self.assertEqual(
+            self.graph.qname(self.namespace_saws + "title"), "ns1:title",
+            "Unknown prefixes for namespace should be transformed to nsX"
+        )
 
 
 xmltestdoc = """<?xml version="1.0" encoding="UTF-8"?>
