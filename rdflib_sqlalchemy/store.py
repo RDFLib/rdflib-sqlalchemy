@@ -660,7 +660,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             res = connection.execute(s)
             rt = [rtTuple[0] for rtTuple in res.fetchall()]
             res.close()
-            return rt and rt[0] or None
+            if rt and (rt[0] or rt[0] == ""):
+                return rt[0]
+        return None
 
     def namespace(self, prefix):
         res = None
