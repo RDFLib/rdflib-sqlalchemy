@@ -32,7 +32,7 @@ class ContextTestCase(unittest.TestCase):
         self.graph.destroy(uri)
         try:
             self.graph.close()
-        except:
+        except:  # noqa
             pass
 
     def get_context(self, identifier):

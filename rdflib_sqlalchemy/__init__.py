@@ -47,7 +47,7 @@ def registerplugins():
         x = plugin.get("SQLAlchemy", Store)
         del x
         return  # plugins already registered
-    except:
+    except:  # noqa
         pass  # must register plugins
 
     # Register the plugins ...

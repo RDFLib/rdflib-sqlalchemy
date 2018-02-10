@@ -154,7 +154,7 @@ def type_to_term_combination(member, klass, context):
                                 term_to_letter(klass),
                                 normalize_graph(context)[-1])]
         return rt
-    except:
+    except:  # noqa
         raise Exception("Unable to persist" +
                         "classification triple: %s %s %s %s" %
                         (member, "rdf:type", klass, context))

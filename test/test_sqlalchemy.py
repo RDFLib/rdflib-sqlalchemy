@@ -42,7 +42,7 @@ class SQLATestCase(unittest.TestCase):
         self.graph.destroy(self.dburi)
         try:
             self.graph.close()
-        except:
+        except:  # noqa
             pass
 
     def test_registerplugins(self):

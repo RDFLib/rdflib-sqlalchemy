@@ -31,7 +31,7 @@ class GraphTestCase(unittest.TestCase):
         self.graph.destroy(uri)
         try:
             self.graph.close()
-        except:
+        except:  # noqa
             pass
 
     def addStuff(self):

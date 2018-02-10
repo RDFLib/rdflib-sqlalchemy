@@ -24,8 +24,8 @@ from rdflib.store import Store
 def investigate_len_issue():
     store = plugin.get("SQLAlchemy", Store)(
         identifier=URIRef("rdflib_test"),
-        configuration=Literal("sqlite:///%(here)s/development.sqlite" % {
-                                                        "here": os.getcwd()}))
+        configuration=Literal(
+            "sqlite:///%(here)s/development.sqlite" % {"here": os.getcwd()}))
     g0 = Graph("Sleepycat")
     g0.open("/tmp/foo", create=True)
     g1 = Graph(store)
