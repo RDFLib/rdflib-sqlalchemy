@@ -8,3 +8,4 @@ Contributors to the rdflib-sqlalchemy project:
 * Yves-Marie Haussonne - https://github.com/ymph 
 * Graham Higgins - https://github.com/gjhiggins
 * Ryan Shaw - https://github.com/rybesh
+* Thibault Clérice - https://github.com/ponteineptique
