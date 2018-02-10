@@ -29,10 +29,7 @@ class GraphTestCase(unittest.TestCase):
 
     def tearDown(self, uri="sqlite://"):
         self.graph.destroy(uri)
-        try:
-            self.graph.close()
-        except:
-            pass
+        self.graph.close()
 
     def addStuff(self):
         tarek = self.tarek
@@ -299,7 +296,6 @@ class GraphTestCase(unittest.TestCase):
         self.assertEquals(len(objs), 1)
         o = objs[0]
         self.assertEquals(o, (bob, says, imtheone))
-
 
 xmltestdoc = """<?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF

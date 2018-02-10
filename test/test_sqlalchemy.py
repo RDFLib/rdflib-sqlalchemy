@@ -40,10 +40,7 @@ class SQLATestCase(unittest.TestCase):
 
     def tearDown(self):
         self.graph.destroy(self.dburi)
-        try:
-            self.graph.close()
-        except:
-            pass
+        self.graph.close()
 
     def test_registerplugins(self):
         # I doubt this is quite right for a fresh pip installation,

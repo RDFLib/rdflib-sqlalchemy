@@ -30,10 +30,7 @@ class ContextTestCase(unittest.TestCase):
 
     def tearDown(self, uri="sqlite://"):
         self.graph.destroy(uri)
-        try:
-            self.graph.close()
-        except:
-            pass
+        self.graph.close()
 
     def get_context(self, identifier):
         assert isinstance(identifier, URIRef) or \

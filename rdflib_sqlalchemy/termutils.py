@@ -10,7 +10,6 @@ from rdflib_sqlalchemy.constants import (
     REVERSE_TERM_COMBINATIONS,
 )
 
-
 __all__ = ["extract_triple"]
 
 
@@ -148,16 +147,10 @@ def triple_pattern_to_term_combinations(triple):
 
 def type_to_term_combination(member, klass, context):
     """Map a type to a term combination."""
-    try:
-        rt = TERM_COMBINATIONS["%sU%s%s" %
-                               (term_to_letter(member),
-                                term_to_letter(klass),
-                                normalize_graph(context)[-1])]
-        return rt
-    except:
-        raise Exception("Unable to persist" +
-                        "classification triple: %s %s %s %s" %
-                        (member, "rdf:type", klass, context))
+    return TERM_COMBINATIONS["%sU%s%s" %
+                             (term_to_letter(member),
+                              term_to_letter(klass),
+                              normalize_graph(context)[-1])]
 
 
 def statement_to_term_combination(subject, predicate, obj, context):

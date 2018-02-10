@@ -562,9 +562,8 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 # partition (optionally)
                 selects = []
                 if (not self.STRONGLY_TYPED_TERMS or
-                        isinstance(obj, Literal) or
-                        not obj
-                        or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
+                        isinstance(obj, Literal) or not obj or (
+                            self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
                     clause = self.build_clause(literal, subject, predicate, obj)
                     selects.append(
                         (literal, clause, ASSERTED_LITERAL_PARTITION))
@@ -674,7 +673,8 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 rt = [rtTuple[0] for rtTuple in res.fetchall()]
                 res.close()
                 return rt and URIRef(rt[0]) or None
-        except:
+        except Exception:
+            _logger.warning('exception in namespace retrieval', exc_info=True)
             return None
 
     def namespaces(self):

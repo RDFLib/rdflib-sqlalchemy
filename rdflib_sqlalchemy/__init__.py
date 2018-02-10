@@ -44,11 +44,9 @@ def registerplugins():
     from rdflib import plugin
 
     try:
-        x = plugin.get("SQLAlchemy", Store)
-        del x
-        return  # plugins already registered
-    except:
-        pass  # must register plugins
+        plugin.get("SQLAlchemy", Store)
+    except plugin.PluginException:
+        pass
 
     # Register the plugins ...
 
