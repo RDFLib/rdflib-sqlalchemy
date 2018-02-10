@@ -309,11 +309,11 @@ class GraphTestCase(unittest.TestCase):
         self.graph.bind("", self.namespace_dc)
         self.graph.bind("dct", self.namespace_dct)
         self.assertEqual(
-            self.graph.qname(self.namespace_dct+"title"), "dct:title",
+            self.graph.qname(self.namespace_dct + "title"), "dct:title",
             "Prefixed namespace should be stored and retrieved"
         )
         self.assertEqual(
-            self.graph.qname(self.namespace_dc+"title"), "title",
+            self.graph.qname(self.namespace_dc + "title"), "title",
             "Empty prefixes for namespace should be stored and retrieved"
         )
         self.assertEqual(
