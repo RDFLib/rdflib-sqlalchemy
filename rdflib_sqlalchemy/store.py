@@ -646,9 +646,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         """Bind prefix for namespace."""
         with self.engine.connect() as connection:
             try:
-                ins = self.tables["namespace_binds"].insert().values(
-                    prefix=prefix, uri=namespace)
-                connection.execute(ins)
+                binds_table = self.tables["namespace_binds"]
+                connection.execute(binds_table.delete().where(binds_table.c.prefix == prefix))
+                connection.execute(binds_table.insert().values(prefix=prefix, uri=namespace))
             except Exception:
                 _logger.exception("Namespace binding failed.")
 
