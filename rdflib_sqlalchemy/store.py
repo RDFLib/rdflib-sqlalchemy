@@ -48,6 +48,26 @@ _logger = logging.getLogger(__name__)
 Any = None
 
 
+def grouper(iterable, n):
+    "Collect data into chunks of at most n elements"
+    i = 0
+    lst = []
+    iterable = iter(iterable)
+    while True:
+        try:
+            lst.append(next(iterable))
+        except StopIteration:
+            break
+
+        if i > 0 and i % n == 0:
+            yield lst
+            lst = []
+        i += 1
+
+    if len(lst) != 0:
+        yield lst
+
+
 def generate_interned_id(identifier):
     return "{prefix}{identifier_hash}".format(
         prefix=INTERNED_PREFIX,
@@ -78,17 +98,23 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     regex_matching = PYTHON_REGEX
     configuration = Literal("sqlite://")
 
-    def __init__(self, identifier=None, configuration=None, engine=None):
+    def __init__(self, identifier=None, configuration=None, engine=None,
+                 max_terms_per_where=800):
         """
         Initialisation.
 
         Args:
             identifier (rdflib.URIRef): URIRef of the Store. Defaults to CWD.
             engine (sqlalchemy.engine.Engine, optional): a `SQLAlchemy.engine.Engine` instance
+            max_terms_per_where (int): The max number of terms (s/p/o) in a call to
+                triples_choices to combine in one SQL "where" clause. Important for SQLite
+                back-end with SQLITE_MAX_EXPR_DEPTH limit and SQLITE_LIMIT_COMPOUND_SELECT
+                -- must find a balance that doesn't hit either of those.
 
         """
         self.identifier = identifier and identifier or "hardcoded"
         self.engine = engine
+        self._max_terms_per_where = max_terms_per_where
 
         # Use only the first 10 bytes of the digest
         self._interned_id = generate_interned_id(self.identifier)
@@ -367,25 +393,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 _logger.exception("Removal failed.")
                 trans.rollback()
 
-    def triples(self, triple, context=None):
-        """
-        A generator over all the triples matching pattern.
-
-        Pattern can be any objects for comparing against nodes in
-        the store, for example, RegExLiteral, Date? DateRange?
-
-        quoted table:                <id>_quoted_statements
-        asserted rdf:type table:     <id>_type_statements
-        asserted non rdf:type table: <id>_asserted_statements
-
-        triple columns:
-            subject, predicate, object, context, termComb, objLanguage, objDatatype
-        class membership columns:
-            member, klass, context, termComb
-
-        FIXME:  These union all selects *may* be further optimized by joins
-
-        """
+    def _triples_helper(self, triple, context=None):
         subject, predicate, obj = triple
 
         quoted_table = self.tables["quoted_statements"]
@@ -455,6 +463,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             clause = self.build_clause(quoted, subject, predicate, obj, context)
             selects.append((quoted, clause, QUOTED_PARTITION))
 
+        return selects
+
+    def _do_triples_select(self, selects, context):
         q = union_select(selects, select_type=TRIPLE_SELECT_NO_ORDER)
         with self.engine.connect() as connection:
             res = connection.execute(q)
@@ -474,6 +485,29 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         for (s, p, o), contexts in tripleCoverage.items():
             yield (s, p, o), (c for c in contexts)
 
+    def triples(self, triple, context=None):
+        """
+        A generator over all the triples matching pattern.
+
+        Pattern can be any objects for comparing against nodes in
+        the store, for example, RegExLiteral, Date? DateRange?
+
+        quoted table:                <id>_quoted_statements
+        asserted rdf:type table:     <id>_type_statements
+        asserted non rdf:type table: <id>_asserted_statements
+
+        triple columns:
+            subject, predicate, object, context, termComb, objLanguage, objDatatype
+        class membership columns:
+            member, klass, context, termComb
+
+        FIXME:  These union all selects *may* be further optimized by joins
+
+        """
+        selects = self._triples_helper(triple, context)
+        for m in self._do_triples_select(selects, context):
+            yield m
+
     def triples_choices(self, triple, context=None):
         """
         A variant of triples.
@@ -483,8 +517,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         import default 'fallback' implementation, which will iterate over
         each term in the list and dispatch to triples.
         """
+        # We already support accepting a list for s/p/o
         subject, predicate, object_ = triple
-
+        selects = []
         if isinstance(object_, list):
             assert not isinstance(
                 subject, list), "object_ / subject are both lists"
@@ -492,27 +527,30 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 predicate, list), "object_ / predicate are both lists"
             if not object_:
                 object_ = None
-            for (s1, p1, o1), cg in self.triples(
-                    (subject, predicate, object_), context):
-                yield (s1, p1, o1), cg
+            for o in grouper(object_, self._max_terms_per_where):
+                for sels in self._triples_helper((subject, predicate, o), context):
+                    selects.append(sels)
 
         elif isinstance(subject, list):
             assert not isinstance(
                 predicate, list), "subject / predicate are both lists"
             if not subject:
                 subject = None
-            for (s1, p1, o1), cg in self.triples(
-                    (subject, predicate, object_), context):
-                yield (s1, p1, o1), cg
+            for s in grouper(subject, 800):
+                for sels in self._triples_helper((s, predicate, object_), context):
+                    selects.append(sels)
 
         elif isinstance(predicate, list):
             assert not isinstance(
                 subject, list), "predicate / subject are both lists"
             if not predicate:
                 predicate = None
-            for (s1, p1, o1), cg in self.triples(
-                    (subject, predicate, object_), context):
-                yield (s1, p1, o1), cg
+            for p in grouper(predicate, 800):
+                for sels in self._triples_helper((subject, p, object_), context):
+                    selects.append(sels)
+
+        for m in self._do_triples_select(selects, context):
+            yield m
 
     def contexts(self, triple=None):
         quoted_table = self.tables["quoted_statements"]
