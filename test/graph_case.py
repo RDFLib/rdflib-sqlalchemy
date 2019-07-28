@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from rdflib import Graph
-from rdflib import URIRef
-from rdflib import Literal
-from rdflib import plugin
+from rdflib import Graph, URIRef, Literal, plugin
 from rdflib.parser import StringInputSource
 from rdflib.py3compat import PY3
 from rdflib.store import Store
@@ -316,6 +313,25 @@ class GraphTestCase(unittest.TestCase):
         self.assertEqual(
             self.graph.qname(self.namespace_saws + u"title"), "ns1:title",
             "Unknown prefixes for namespace should be transformed to nsX"
+        )
+
+    def testTriplesChoices(self):
+        likes = self.likes
+        pizza = self.pizza
+        cheese = self.cheese
+        tarek = self.tarek
+        michel = self.michel
+        bob = self.bob
+        self.addStuff()
+        trips = self.graph.triples_choices((None, likes, [pizza, cheese]))
+        self.assertEqual(
+            set(trips),
+            set([(tarek, likes, pizza),
+                 (tarek, likes, pizza),
+                 (tarek, likes, cheese),
+                 (michel, likes, pizza),
+                 (michel, likes, cheese),
+                 (bob, likes, cheese)])
         )
 
 
