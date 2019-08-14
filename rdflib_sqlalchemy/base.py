@@ -35,6 +35,7 @@ class SQLGeneratorMixin(object):
         triple_pattern = int(
             statement_to_term_combination(subject, predicate, obj, context)
         )
+
         command = self.tables["literal_statements"].insert()
         values = {
             "subject": subject,

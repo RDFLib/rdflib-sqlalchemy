@@ -16,7 +16,6 @@ from rdflib.store import CORRUPTED_STORE, VALID_STORE, NodePickler, Store
 from six import text_type
 from six.moves import reduce
 from sqlalchemy import MetaData
-from sqlalchemy.engine import reflection
 from sqlalchemy.sql import expression, select
 
 from rdflib_sqlalchemy.constants import (
@@ -221,7 +220,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         with self.engine.connect() as connection:
             res = connection.execute(q)
             rt = res.fetchall()
-            return reduce(lambda x, y: x + y, [rtTuple[0] for rtTuple in rt])
+            return sum(rtTuple[0] for rtTuple in rt)
 
     @property
     def table_names(self):
@@ -325,6 +324,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             context, quoted,
         )
 
+        statement = self._add_ignore_on_conflict(statement)
         with self.engine.connect() as connection:
             try:
                 connection.execute(statement, params)
@@ -353,12 +353,23 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             trans = connection.begin()
             try:
                 for command in commands_dict.values():
-                    connection.execute(command["statement"], command["params"])
+                    statement = self._add_ignore_on_conflict(command['statement'])
+                    connection.execute(statement, command["params"])
                 trans.commit()
             except Exception:
                 _logger.exception("AddN failed.")
                 trans.rollback()
                 raise
+
+    def _add_ignore_on_conflict(self, statement):
+        if self.engine.name == 'sqlite':
+            statement = statement.prefix_with('OR IGNORE')
+        elif self.engine.name == 'mysql':
+            statement = statement.prefix_with('IGNORE')
+        elif self.engine.name == 'postgresql':
+            from sqlalchemy.dialects.postgresql.dml import OnConflictDoNothing
+            statement._post_values_clause = OnConflictDoNothing()
+        return statement
 
     def remove(self, triple, context):
         """Remove a triple from the store."""
@@ -481,7 +492,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         return selects
 
     def _do_triples_select(self, selects, context):
-        q = union_select(selects, select_type=TRIPLE_SELECT_NO_ORDER)
+        q = union_select(selects, distinct=True, select_type=TRIPLE_SELECT_NO_ORDER)
         with self.engine.connect() as connection:
             res = connection.execute(q)
             # TODO: False but it may have limitations on text column. Check
@@ -696,11 +707,13 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     def bind(self, prefix, namespace):
         """Bind prefix for namespace."""
-        with self.engine.connect() as connection:
+        with self.engine.begin() as connection:
             try:
-                ins = self.tables["namespace_binds"].insert().values(
-                    prefix=prefix, uri=namespace)
-                connection.execute(ins)
+                binds_table = self.tables["namespace_binds"]
+                prefix = text_type(prefix)
+                namespace = text_type(namespace)
+                connection.execute(binds_table.delete().where(binds_table.c.prefix == prefix))
+                connection.execute(binds_table.insert().values(prefix=prefix, uri=namespace))
             except Exception:
                 _logger.exception("Namespace binding failed.")
 
@@ -734,7 +747,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     def namespaces(self):
         with self.engine.connect() as connection:
-            res = connection.execute(self.tables["namespace_binds"].select())
+            res = connection.execute(self.tables["namespace_binds"].select(distinct=True))
             for prefix, uri in res.fetchall():
                 yield prefix, uri
 

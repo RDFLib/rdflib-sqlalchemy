@@ -9,7 +9,6 @@ from rdflib.py3compat import PY3
 from rdflib.store import NO_STORE, VALID_STORE
 from rdflib.term import URIRef
 
-
 from . import context_case
 from . import graph_case
 
@@ -48,8 +47,7 @@ class SQLAMySQLGraphTestCase(graph_case.GraphTestCase):
     create = True
 
     def setUp(self):
-        super(SQLAMySQLGraphTestCase, self).setUp(
-            uri=self.uri, storename=self.storename)
+        super(SQLAMySQLGraphTestCase, self).setUp(uri=self.uri, storename=self.storename)
 
     def tearDown(self):
         super(SQLAMySQLGraphTestCase, self).tearDown(uri=self.uri)
@@ -84,12 +82,13 @@ class SQLAMySQLIssueTestCase(unittest.TestCase):
         if rt == NO_STORE:
             g.open(self.uri, create=True)
         else:
-            assert rt == VALID_STORE, "The underlying store is corrupt"
+            assert rt == VALID_STORE, "The underlying store is not valid: State: %s" % rt
         g.destroy(self.uri)
 
 
-SQLAMySQLGraphTestCase.storetest = True
-SQLAMySQLContextTestCase.storetest = True
+if False:
+    SQLAMySQLGraphTestCase.storetest = True
+    SQLAMySQLContextTestCase.storetest = True
 SQLAMySQLIssueTestCase.storetest = True
 
 if __name__ == "__main__":

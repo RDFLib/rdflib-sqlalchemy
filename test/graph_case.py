@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from rdflib import Graph, URIRef, Literal, plugin
+from rdflib import Graph, URIRef, Literal, plugin, RDF
 from rdflib.parser import StringInputSource
 from rdflib.py3compat import PY3
 from rdflib.store import Store
@@ -333,6 +333,49 @@ class GraphTestCase(unittest.TestCase):
                  (michel, likes, cheese),
                  (bob, likes, cheese)])
         )
+
+    def test_type_add(self):
+        trip = (URIRef('http://example.org#type-add'), RDF.type, URIRef('http://example.org/cra'))
+        self.graph.add(trip)
+        self.graph.add(trip)
+
+    def test_type_addn(self):
+        quad = (URIRef('http://example.org#type-addn'), RDF.type, URIRef('http://example.org/cra'), self.graph)
+        self.graph.addN([quad, quad])
+
+    def test_add(self):
+        trip = (URIRef('http://example.org#add'), URIRef('http://example.org/blah'), URIRef('http://example.org/cra'))
+        self.graph.add(trip)
+        self.graph.add(trip)
+
+    def test_addn(self):
+        quad = (URIRef('http://example.org#addn'),
+                URIRef('http://example.org/blah'),
+                URIRef('http://example.org/cra'),
+                self.graph)
+        self.graph.addN([quad, quad])
+
+    def test_namespace_change_prefix_binding(self):
+        nm = self.graph.namespace_manager
+        nm.bind('change_binding', URIRef('http://example.org/change-binding-1#'),
+                replace=True)
+        nm.bind('change_binding', URIRef('http://example.org/change-binding-2#'),
+                replace=True)
+        assert ('change_binding',
+                URIRef('http://example.org/change-binding-2#')) in list(nm.namespaces())
+
+    def test_namespace_rebind_prefix(self):
+        nm = self.graph.namespace_manager
+        nm.bind('rebind', URIRef('http://example.org/rebind#'))
+        nm.bind('rebind', URIRef('http://example.org/rebind#'))
+
+    # additional tests
+    # - add "duplicate" triples and query -- ensure the graph length counts only distinct
+    #   triples
+    # - add duplicate triples and query -- ensure there are no duplicate entries in the
+    #   query result
+    # - repeat the above two for type triples
+    # - test with quoted graphs (not even sure how that works)
 
 
 xmltestdoc = """<?xml version="1.0" encoding="UTF-8"?>

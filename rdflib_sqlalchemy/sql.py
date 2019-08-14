@@ -88,7 +88,7 @@ def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
             expression.literal_column("predicate"),
             expression.literal_column("object"),
         ]
-    if distinct:
+    if distinct and select_type != COUNT_SELECT:
         return expression.union(*selects, **{"order_by": order_statement})
     else:
         return expression.union_all(*selects, **{"order_by": order_statement})
