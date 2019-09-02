@@ -84,9 +84,9 @@ An illustrative unit test:
 
 Running the tests
 =================
-
-This is slightly baroque because of the test matrix (PostgreSQL|MySQL|SQLite
-x Python2.5|2.6|2.7|3.2) ...
+`nose` and `tox` are supported as test runners. Select the SQL back-end by
+setting a `DB` environment variable. Select the database connection by setting
+the `DBURI` variable. With `tox`, you can also specify the Python version.
 
 Using nose::
 
@@ -96,7 +96,8 @@ Using tox::
 
     DB='pgsql' DBURI='postgresql+psycopg2://user:password@host/dbname' tox -e py32
 
-DB variants are 'pgsql', 'mysql' and 'sqlite' 
+DB variants are 'pgsql', 'mysql' and 'sqlite'. Except in the case of SQLite,
+you'll need to create the database independently, before execution of the test.
 
 Sample DBURI values::
 
