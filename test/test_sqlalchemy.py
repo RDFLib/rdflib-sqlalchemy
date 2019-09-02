@@ -5,6 +5,8 @@ try:
 except ImportError:
     from mock import patch
 
+import six
+
 from rdflib import (
     ConjunctiveGraph,
     Literal,
@@ -45,7 +47,7 @@ class ConfigTest(unittest.TestCase):
 
     def test_no_url(self):
         with patch('rdflib_sqlalchemy.store.sqlalchemy'):
-            with self.assertRaisesRegex(Exception, '.*url.*'):
+            with six.assertRaisesRegex(self, Exception, '.*url.*'):
                 self.graph.open({'random_key': 'something'}, create=True)
 
 
