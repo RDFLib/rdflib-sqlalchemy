@@ -1,5 +1,9 @@
 import unittest
-from unittest.mock import patch
+
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 from rdflib import (
     ConjunctiveGraph,
@@ -40,7 +44,7 @@ class ConfigTest(unittest.TestCase):
             p.create_engine.assert_called_with('sqlite://', random_key='something')
 
     def test_no_url(self):
-        with patch('rdflib_sqlalchemy.store.sqlalchemy') as p:
+        with patch('rdflib_sqlalchemy.store.sqlalchemy'):
             with self.assertRaisesRegex(Exception, '.*url.*'):
                 self.graph.open({'random_key': 'something'}, create=True)
 

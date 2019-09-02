@@ -1,6 +1,9 @@
 #!/usr/bin/env python
+import sys
+
 from setuptools import setup
 
+PY2 = sys.version_info.major == 2
 
 project = "rdflib-sqlalchemy"
 version = "0.3.8"
@@ -53,7 +56,9 @@ setup(
     setup_requires=[
         "nose>=1.3.6",
     ],
-    tests_require="coveralls",
+    tests_require=[
+        "coveralls"
+    ] + (['mock'] if PY2 else []),
     test_suite="nose.collector",
     entry_points={
         'rdf.plugins.store': [
