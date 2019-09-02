@@ -55,4 +55,9 @@ setup(
     ],
     tests_require="coveralls",
     test_suite="nose.collector",
+    entry_points={
+        'rdf.plugins.store': [
+            'SQLAlchemy = rdflib_sqlalchemy.store:SQLAlchemy'
+        ]
+    }
 )
