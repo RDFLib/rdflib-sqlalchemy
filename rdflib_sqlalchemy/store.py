@@ -835,11 +835,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
         """
 
-        inspector = reflection.Inspector.from_engine(self.engine)
-        existing_table_names = inspector.get_table_names()
         for table_name in self.table_names:
-            if table_name not in existing_table_names:
-                _logger.critical("create_all() - table %s Doesn't exist!", table_name)
+            if not self.engine.has_table(table_name):
+                _logger.critical("create_all() - table %s is not known", table_name)
                 # The database exists, but one of the tables doesn't exist
                 return CORRUPTED_STORE
 
