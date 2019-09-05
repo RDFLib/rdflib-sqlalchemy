@@ -82,7 +82,7 @@ class GraphTestCase(unittest.TestCase):
         hates = self.hates
         pizza = self.pizza
         cheese = self.cheese
-        asserte = self.assertEquals
+        asserte = self.assertEqual
         triples = self.graph.triples
         Any = None
 
@@ -128,14 +128,14 @@ class GraphTestCase(unittest.TestCase):
     def testConnected(self):
         graph = self.graph
         self.addStuff()
-        self.assertEquals(True, graph.connected())
+        self.assertEqual(True, graph.connected())
 
         jeroen = URIRef("jeroen")
         unconnected = URIRef("unconnected")
 
         graph.add((jeroen, self.likes, unconnected))
 
-        self.assertEquals(False, graph.connected())
+        self.assertEqual(False, graph.connected())
 
     def testSub(self):
         g1 = Graph()
@@ -156,19 +156,19 @@ class GraphTestCase(unittest.TestCase):
 
         g3 = g1 - g2
 
-        self.assertEquals(len(g3), 1)
-        self.assertEquals((tarek, likes, pizza) in g3, True)
-        self.assertEquals((tarek, likes, cheese) in g3, False)
+        self.assertEqual(len(g3), 1)
+        self.assertEqual((tarek, likes, pizza) in g3, True)
+        self.assertEqual((tarek, likes, cheese) in g3, False)
 
-        self.assertEquals((bob, likes, cheese) in g3, False)
+        self.assertEqual((bob, likes, cheese) in g3, False)
 
         g1 -= g2
 
-        self.assertEquals(len(g1), 1)
-        self.assertEquals((tarek, likes, pizza) in g1, True)
-        self.assertEquals((tarek, likes, cheese) in g1, False)
+        self.assertEqual(len(g1), 1)
+        self.assertEqual((tarek, likes, pizza) in g1, True)
+        self.assertEqual((tarek, likes, cheese) in g1, False)
 
-        self.assertEquals((bob, likes, cheese) in g1, False)
+        self.assertEqual((bob, likes, cheese) in g1, False)
 
     def testGraphAdd(self):
         g1 = Graph()
@@ -188,19 +188,19 @@ class GraphTestCase(unittest.TestCase):
 
         g3 = g1 + g2
 
-        self.assertEquals(len(g3), 2)
-        self.assertEquals((tarek, likes, pizza) in g3, True)
-        self.assertEquals((tarek, likes, cheese) in g3, False)
+        self.assertEqual(len(g3), 2)
+        self.assertEqual((tarek, likes, pizza) in g3, True)
+        self.assertEqual((tarek, likes, cheese) in g3, False)
 
-        self.assertEquals((bob, likes, cheese) in g3, True)
+        self.assertEqual((bob, likes, cheese) in g3, True)
 
         g1 += g2
 
-        self.assertEquals(len(g1), 2)
-        self.assertEquals((tarek, likes, pizza) in g1, True)
-        self.assertEquals((tarek, likes, cheese) in g1, False)
+        self.assertEqual(len(g1), 2)
+        self.assertEqual((tarek, likes, pizza) in g1, True)
+        self.assertEqual((tarek, likes, cheese) in g1, False)
 
-        self.assertEquals((bob, likes, cheese) in g1, True)
+        self.assertEqual((bob, likes, cheese) in g1, True)
 
     def testGraphIntersection(self):
         g1 = Graph()
@@ -222,24 +222,24 @@ class GraphTestCase(unittest.TestCase):
 
         g3 = g1 * g2
 
-        self.assertEquals(len(g3), 1)
-        self.assertEquals((tarek, likes, pizza) in g3, False)
-        self.assertEquals((tarek, likes, cheese) in g3, False)
+        self.assertEqual(len(g3), 1)
+        self.assertEqual((tarek, likes, pizza) in g3, False)
+        self.assertEqual((tarek, likes, cheese) in g3, False)
 
-        self.assertEquals((bob, likes, cheese) in g3, False)
+        self.assertEqual((bob, likes, cheese) in g3, False)
 
-        self.assertEquals((michel, likes, cheese) in g3, True)
+        self.assertEqual((michel, likes, cheese) in g3, True)
 
         g1 *= g2
 
-        self.assertEquals(len(g1), 1)
+        self.assertEqual(len(g1), 1)
 
-        self.assertEquals((tarek, likes, pizza) in g1, False)
-        self.assertEquals((tarek, likes, cheese) in g1, False)
+        self.assertEqual((tarek, likes, pizza) in g1, False)
+        self.assertEqual((tarek, likes, cheese) in g1, False)
 
-        self.assertEquals((bob, likes, cheese) in g1, False)
+        self.assertEqual((bob, likes, cheese) in g1, False)
 
-        self.assertEquals((michel, likes, cheese) in g1, True)
+        self.assertEqual((michel, likes, cheese) in g1, True)
 
     def testStoreLiterals(self):
         bob = self.bob
@@ -256,14 +256,14 @@ class GraphTestCase(unittest.TestCase):
         objs = list(self.graph.objects(subject=bob, predicate=says))
         for o in objs:
             if o.value == u"hello":
-                self.assertEquals(o.language, "en")
+                self.assertEqual(o.language, "en")
             elif o.value == u"こんにちは":
-                self.assertEquals(o.language, "ja")
+                self.assertEqual(o.language, "ja")
             elif o.value == u"something":
-                self.assertEquals(o.language, None)
+                self.assertEqual(o.language, None)
             else:
                 self.fail()
-        self.assertEquals(len(list(objs)), 3)
+        self.assertEqual(len(list(objs)), 3)
 
     def testStoreLiteralsXml(self):
         bob = self.bob
@@ -278,11 +278,11 @@ class GraphTestCase(unittest.TestCase):
         self.graph.parse(StringInputSource(testdoc), formal="xml")
 
         objs = list(self.graph)
-        self.assertEquals(len(objs), 3)
+        self.assertEqual(len(objs), 3)
         for o in objs:
-            self.assertEquals(o[0], bob)
-            self.assertEquals(o[1], says)
-            self.assertTrue(o[2] in objects)
+            self.assertEqual(o[0], bob)
+            self.assertEqual(o[1], says)
+            self.assertIn(o[2], objects)
 
     def testStoreLiteralsXmlQuote(self):
         bob = self.bob
@@ -294,9 +294,9 @@ class GraphTestCase(unittest.TestCase):
         self.graph.parse(StringInputSource(testdoc), formal="xml")
 
         objs = list(self.graph)
-        self.assertEquals(len(objs), 1)
+        self.assertEqual(len(objs), 1)
         o = objs[0]
-        self.assertEquals(o, (bob, says, imtheone))
+        self.assertEqual(o, (bob, says, imtheone))
 
     def testBindNamespace(self):
         """ Check that bound namespaced with prefix (including empty ones) are correctly kept """
