@@ -168,13 +168,14 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 typeLen, quotedLen, assertedLen, literalLen = [
                     rtTuple[0] for rtTuple in rt]
             try:
-                return ("<Partitioned SQL N3 Store: %s " +
-                        "contexts, %s classification assertions, " +
-                        "%s quoted statements, %s property/value " +
+                return ("<Partitioned SQL N3 Store: %s "
+                        "contexts, %s classification assertions, "
+                        "%s quoted statements, %s property/value "
                         "assertions, and %s other assertions>" % (
-                            len([ctx for ctx in self.contexts()]),
+                            sum(1 for _ in self.contexts()),
                             typeLen, quotedLen, literalLen, assertedLen))
             except Exception:
+                _logger.exception('Error creating repr')
                 return "<Partitioned SQL N3 Store>"
         else:
             return "<Partitioned unopened SQL N3 Store>"
