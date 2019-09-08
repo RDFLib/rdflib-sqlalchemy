@@ -14,7 +14,6 @@ from rdflib.namespace import RDF
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX, REGEXTerm
 from rdflib.store import CORRUPTED_STORE, VALID_STORE, NodePickler, Store
 from six import text_type
-from six.moves import reduce
 from sqlalchemy import MetaData
 from sqlalchemy.sql import expression, select
 
@@ -305,14 +304,12 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         if self.engine is None:
             self.engine = self.open(configuration, create=False)
 
-        with self.engine.connect() as connection:
-            trans = connection.begin()
+        with self.engine.begin():
             try:
                 self.metadata.drop_all(self.engine)
-                trans.commit()
             except Exception:
                 _logger.exception("unable to drop table.")
-                trans.rollback()
+                raise
 
     # Triple Methods
 
@@ -325,7 +322,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         )
 
         statement = self._add_ignore_on_conflict(statement)
-        with self.engine.connect() as connection:
+        with self.engine.begin() as connection:
             try:
                 connection.execute(statement, params)
             except Exception:
@@ -349,16 +346,13 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             command_dict.setdefault("statement", statement)
             command_dict.setdefault("params", []).append(params)
 
-        with self.engine.connect() as connection:
-            trans = connection.begin()
+        with self.engine.begin() as connection:
             try:
                 for command in commands_dict.values():
                     statement = self._add_ignore_on_conflict(command['statement'])
                     connection.execute(statement, command["params"])
-                trans.commit()
             except Exception:
                 _logger.exception("AddN failed.")
-                trans.rollback()
                 raise
 
     def _add_ignore_on_conflict(self, statement):
@@ -385,8 +379,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         asserted_type_table = self.tables["type_statements"]
         literal_table = self.tables["literal_statements"]
 
-        with self.engine.connect() as connection:
-            trans = connection.begin()
+        with self.engine.begin() as connection:
             try:
                 if not predicate or predicate != RDF.type:
                     # Need to remove predicates other than rdf:type
@@ -413,11 +406,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
                     clause = self.build_clause(quoted_table, subject, predicate, obj, context)
                     connection.execute(quoted_table.delete(clause))
-
-                trans.commit()
             except Exception:
                 _logger.exception("Removal failed.")
-                trans.rollback()
+                raise
 
     def _triples_helper(self, triple, context=None):
         subject, predicate, obj = triple
@@ -716,6 +707,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 connection.execute(binds_table.insert().values(prefix=prefix, uri=namespace))
             except Exception:
                 _logger.exception("Namespace binding failed.")
+                raise
 
     def prefix(self, namespace):
         """Prefix."""
@@ -817,17 +809,15 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         asserted_type_table = self.tables["type_statements"]
         literal_table = self.tables["literal_statements"]
 
-        with self.engine.connect() as connection:
-            trans = connection.begin()
+        with self.engine.begin() as connection:
             try:
                 for table in [quoted_table, asserted_table,
                               asserted_type_table, literal_table]:
                     clause = self.build_context_clause(context, table)
                     connection.execute(table.delete(clause))
-                trans.commit()
             except Exception:
                 _logger.exception("Context removal failed.")
-                trans.rollback()
+                raise
 
     def _verify_store_exists(self):
         """
