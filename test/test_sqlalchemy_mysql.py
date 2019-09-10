@@ -86,10 +86,5 @@ class SQLAMySQLIssueTestCase(unittest.TestCase):
         g.destroy(self.uri)
 
 
-if False:
-    SQLAMySQLGraphTestCase.storetest = True
-    SQLAMySQLContextTestCase.storetest = True
-SQLAMySQLIssueTestCase.storetest = True
-
 if __name__ == "__main__":
     unittest.main()
