@@ -338,15 +338,18 @@ class GraphTestCase(unittest.TestCase):
         trip = (URIRef('http://example.org#type-add'), RDF.type, URIRef('http://example.org/cra'))
         self.graph.add(trip)
         self.graph.add(trip)
+        # No exception raised
 
     def test_type_addn(self):
         quad = (URIRef('http://example.org#type-addn'), RDF.type, URIRef('http://example.org/cra'), self.graph)
         self.graph.addN([quad, quad])
+        # No exception raised
 
     def test_add(self):
         trip = (URIRef('http://example.org#add'), URIRef('http://example.org/blah'), URIRef('http://example.org/cra'))
         self.graph.add(trip)
         self.graph.add(trip)
+        # No exception raised
 
     def test_addn(self):
         quad = (URIRef('http://example.org#addn'),
@@ -354,6 +357,7 @@ class GraphTestCase(unittest.TestCase):
                 URIRef('http://example.org/cra'),
                 self.graph)
         self.graph.addN([quad, quad])
+        # No exception raised
 
     def test_namespace_change_prefix_binding(self):
         nm = self.graph.namespace_manager
@@ -361,14 +365,24 @@ class GraphTestCase(unittest.TestCase):
                 replace=True)
         nm.bind('change_binding', URIRef('http://example.org/change-binding-2#'),
                 replace=True)
-        assert ('change_binding',
-                URIRef('http://example.org/change-binding-2#')) in list(nm.namespaces())
+        self.assertIn(
+            ('change_binding', URIRef('http://example.org/change-binding-2#')),
+            list(nm.namespaces())
+        )
 
     def test_namespace_rebind_prefix(self):
         nm = self.graph.namespace_manager
         nm.bind('rebind', URIRef('http://example.org/rebind#'))
         nm.bind('rebind', URIRef('http://example.org/rebind#'))
 
+    def test_add_duplicate_length(self):
+        '''
+        Test that adding duplicate triples doesn't increase the length of the graph
+        '''
+        trip = (URIRef('http://example.org#add'), URIRef('http://example.org/blah'), URIRef('http://example.org/cra'))
+        self.graph.add(trip)
+        self.graph.add(trip)
+        self.assertEqual(len(self.graph), 1)
     # additional tests
     # - add "duplicate" triples and query -- ensure the graph length counts only distinct
     #   triples
