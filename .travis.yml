@@ -1,9 +1,12 @@
 language: python
 
 env:
-- DB=pgsql
-- DB=mysql
-- DB=sqlite
+ global:
+ - COVERALLS_PARALLEL=true
+ matrix:
+ - DB=pgsql
+ - DB=mysql
+ - DB=sqlite
 
 services:
 - postgresql
@@ -17,21 +20,16 @@ python:
 - 3.7
 
 install:
-- pip install -U setuptools tox tox-travis
+- pip install -U setuptools tox tox-travis coveralls
 
 before_script:
 - ./travis-ci.sh
 
 script: tox
 
-deploy:
-  distributions: sdist bdist_wheel
-  provider: pypi
-  user: adamhadani
-  password:
-    secure: jSAo1pMtzpNSBJHOtn15WiT2XBL6JBTB/1u22CeRhW6tmRh4ngaK1+WAfuoRpgP5seTBnb1DIxiNzvCL5sRjq9ckbHgc7pW9EcpKCeDFjU1MQPH2GqQ37jicc4NY4TXu9pAUIbxIVwGxHWNCY0QPxIgCSVvTTKoiZn3QddL8hzg=
-  on:
-    tags: true
-    repo: RDFLib/rdflib-sqlalchemy
-    branch: develop
-    condition: $TRAVIS_PYTHON_VERSION = "3.5"
+notifications:
+  webhooks: https://coveralls.io/webhook
+
+after_script:
+- coveralls
+
