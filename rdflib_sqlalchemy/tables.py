@@ -72,7 +72,7 @@ def create_type_statements_table(interned_id, metadata):
         "{interned_id}_type_statements".format(interned_id=interned_id),
         metadata,
         Column("id", types.Integer, nullable=False, primary_key=True),
-        Column("member", TermType, nullable=False),
+        Column("member", TermType, nullable=False, quote=True),
         Column("klass", TermType, nullable=False),
         Column("context", TermType, nullable=False),
         Column("termcomb", types.Integer, nullable=False, key="termComb"),
