@@ -48,7 +48,7 @@ Any = None
 
 def grouper(iterable, n):
     "Collect data into chunks of at most n elements"
-    assert n > 0, 'Cannot group into chunks of zero elements'
+    assert n > 0, 'Cannot group into chunks smaller than one element'
     lst = []
     iterable = iter(iterable)
     while True:

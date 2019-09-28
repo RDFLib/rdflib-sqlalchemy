@@ -135,8 +135,7 @@ class SQLGeneratorMixin(object):
             return table.c.subject.op("REGEXP")(subject)
         elif isinstance(subject, list):
             # clauseStrings = [] --- unused
-            return expression.or_(
-                *[self.build_subject_clause(s, table) for s in subject if s])
+            return self._handle_statement_multi(table, subject, 'subject')
         elif isinstance(subject, (QuotedGraph, Graph)):
             return table.c.subject == subject.identifier
         elif subject is not None:
@@ -156,8 +155,7 @@ class SQLGeneratorMixin(object):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
             return table.c.predicate.op("REGEXP")(predicate)
         elif isinstance(predicate, list):
-            return expression.or_(
-                *[self.build_predicate_clause(p, table) for p in predicate if p])
+            return self._handle_statement_multi(table, predicate, 'predicate')
         elif predicate is not None:
             return table.c.predicate == predicate
         else:
@@ -175,14 +173,37 @@ class SQLGeneratorMixin(object):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
             return table.c.object.op("REGEXP")(obj)
         elif isinstance(obj, list):
-            return expression.or_(
-                *[self.build_object_clause(o, table) for o in obj if o])
+            return self._handle_statement_multi(table, obj, 'object')
         elif isinstance(obj, (QuotedGraph, Graph)):
             return table.c.object == obj.identifier
         elif obj is not None:
             return table.c.object == obj
         else:
             return None
+
+    def _handle_statement_multi(self, table, lst, typ):
+        simple = []
+        regex = []
+        for it in lst:
+            if isinstance(it, (QuotedGraph, Graph)):
+                simple.append(it.identifier)
+            elif isinstance(it, REGEXTerm):
+                regex.append(it)
+            elif it:
+                simple.append(it)
+            else:
+                return None
+
+        term_expr_base = getattr(table.c, typ)
+        if regex and not simple:
+            return expression.or_(*(term_expr_base.op("REGEXP")(s)
+                                    for s in regex if s))
+        elif simple and not regex:
+            return term_expr_base.in_(simple)
+        elif simple and regex:
+            return expression.or_(term_expr_base.in_(simple),
+                                  *(term_expr_base.op("REGEXP")(s)
+                                    for s in regex if s))
 
     def build_context_clause(self, context, table):
         """Build Context clause."""
@@ -200,8 +221,7 @@ class SQLGeneratorMixin(object):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
             return table.c.member.op("regexp")(subject)
         elif isinstance(subject, list):
-            return expression.or_(
-                *[self.build_type_member_clause(s, table) for s in subject if s])
+            return table.c.member.in_(subject)
         elif subject is not None:
             return table.c.member == subject
         else:
@@ -213,8 +233,7 @@ class SQLGeneratorMixin(object):
             # TODO: this work only in mysql. Must adapt for postgres and sqlite
             return table.c.klass.op("regexp")(obj)
         elif isinstance(obj, list):
-            return expression.or_(
-                *[self.build_type_class_clause(o, table) for o in obj if o])
+            return table.c.klass.in_(obj)
         elif obj is not None:
             return obj and table.c.klass == obj
         else:
