@@ -142,8 +142,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
         # XXX For backward compatibility we still support getting the connection string in constructor
         # TODO: deprecate this once refactoring is more mature
-        if configuration:
-            self.open(configuration)
+        super(SQLAlchemy, self).__init__(configuration)
 
     def __repr__(self):
         """Readable serialisation."""
@@ -315,6 +314,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     def add(self, triple, context=None, quoted=False):
         """Add a triple to the store of triples."""
+        super(SQLAlchemy, self).add(triple, context, quoted)
         subject, predicate, obj = triple
         _, statement, params = self._get_build_command(
             (subject, predicate, obj),
@@ -335,7 +335,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     def addN(self, quads):
         """Add a list of triples in quads form."""
         commands_dict = {}
+        add_event = super(SQLAlchemy, self).add
         for subject, predicate, obj, context in quads:
+            add_event((subject, predicate, obj), context)
             command_type, statement, params = self._get_build_command(
                 (subject, predicate, obj),
                 context,
@@ -367,6 +369,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     def remove(self, triple, context):
         """Remove a triple from the store."""
+        super(SQLAlchemy, self).remove(triple, context)
         subject, predicate, obj = triple
 
         if context is not None:
