@@ -3,7 +3,7 @@ import unittest
 
 from rdflib import Graph, URIRef, Literal, plugin, RDF
 from rdflib.parser import StringInputSource
-from rdflib.py3compat import PY3
+from six import PY3
 from rdflib.store import Store
 
 

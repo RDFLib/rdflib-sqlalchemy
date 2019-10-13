@@ -1,7 +1,6 @@
 """Convenience functions for working with Terms and Graphs."""
 from rdflib import BNode, Graph, Literal, URIRef, Variable
 from rdflib.graph import QuotedGraph
-from rdflib.py3compat import format_doctest_out
 from rdflib.term import Statement
 
 from rdflib_sqlalchemy.constants import (
@@ -25,7 +24,6 @@ GRAPH_TERM_DICT = {
 }
 
 
-@format_doctest_out
 def normalize_graph(graph):
     """
     Take an instance of a ``Graph`` and return the instance's identifier and  ``type``.
@@ -42,13 +40,13 @@ def normalize_graph(graph):
     >>> memstore = plugin.get('IOMemory', Store)()
     >>> g = Graph(memstore, URIRef("http://purl.org/net/bel-epa/gjh"))
     >>> normalize_graph(g)
-    (rdflib.term.URIRef(%(u)s'http://purl.org/net/bel-epa/gjh'), 'U')
+    (rdflib.term.URIRef(u'http://purl.org/net/bel-epa/gjh'), 'U')
     >>> g = ConjunctiveGraph(memstore, Namespace("http://rdflib.net/ns"))
     >>> normalize_graph(g)  #doctest: +ELLIPSIS
-    (rdflib.term.URIRef(%(u)s'http://rdflib.net/ns'), 'U')
+    (rdflib.term.URIRef(u'http://rdflib.net/ns'), 'U')
     >>> g = QuotedGraph(memstore, Namespace("http://rdflib.net/ns"))
     >>> normalize_graph(g)
-    (rdflib.term.URIRef(%(u)s'http://rdflib.net/ns'), 'F')
+    (rdflib.term.URIRef(u'http://rdflib.net/ns'), 'F')
 
     """
     if isinstance(graph, QuotedGraph):
@@ -57,7 +55,6 @@ def normalize_graph(graph):
         return graph.identifier, term_to_letter(graph.identifier)
 
 
-@format_doctest_out
 def term_to_letter(term):
     """
     Relate a given term to one of several key types.
@@ -79,9 +76,9 @@ def term_to_letter(term):
     'U'
     >>> term_to_letter(BNode())
     'B'
-    >>> term_to_letter(Literal(%(u)s''))  # noqa
+    >>> term_to_letter(Literal(u''))  # noqa
     'L'
-    >>> term_to_letter(Variable(%(u)s'x'))  # noqa
+    >>> term_to_letter(Variable(u'x'))  # noqa
     'V'
     >>> term_to_letter(Graph())
     'B'

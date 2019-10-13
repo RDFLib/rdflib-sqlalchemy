@@ -5,7 +5,7 @@ import unittest
 from nose import SkipTest
 from rdflib import Literal
 from rdflib.graph import ConjunctiveGraph as Graph
-from rdflib.py3compat import PY3
+from six import PY3
 from rdflib.store import NO_STORE, VALID_STORE
 from rdflib.term import URIRef
 
