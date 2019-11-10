@@ -53,33 +53,33 @@ An illustrative unit test:
 
 ```python
 
-    import unittest
-    from rdflib import plugin, Graph, Literal, URIRef
-    from rdflib.store import Store
+import unittest
+from rdflib import plugin, Graph, Literal, URIRef
+from rdflib.store import Store
 
 
-    class SQLASQLiteGraphTestCase(unittest.TestCase):
-        ident = URIRef("rdflib_test")
-        uri = Literal("sqlite://")
+class SQLASQLiteGraphTestCase(unittest.TestCase):
+    ident = URIRef("rdflib_test")
+    uri = Literal("sqlite://")
 
-        def setUp(self):
-            store = plugin.get("SQLAlchemy", Store)(identifier=self.ident)
-            self.graph = Graph(store, identifier=self.ident)
-            self.graph.open(self.uri, create=True)
+    def setUp(self):
+        store = plugin.get("SQLAlchemy", Store)(identifier=self.ident)
+        self.graph = Graph(store, identifier=self.ident)
+        self.graph.open(self.uri, create=True)
 
-        def tearDown(self):
-            self.graph.destroy(self.uri)
-            try:
-                self.graph.close()
-            except:
-                pass
+    def tearDown(self):
+        self.graph.destroy(self.uri)
+        try:
+            self.graph.close()
+        except:
+            pass
 
-        def test01(self):
-            self.assert_(self.graph is not None)
-            print(self.graph)
+    def test01(self):
+        self.assert_(self.graph is not None)
+        print(self.graph)
 
-    if __name__ == '__main__':
-        unittest.main()
+if __name__ == '__main__':
+    unittest.main()
 ```
 
 Running the tests
