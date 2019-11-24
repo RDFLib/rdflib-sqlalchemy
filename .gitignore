@@ -10,3 +10,4 @@ rdflib_sqlalchemy.egg-info
 /.eggs/
 /dist/
 /venv/
+docs/api

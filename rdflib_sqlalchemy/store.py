@@ -243,11 +243,13 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         Open the store specified by the configuration parameter.
 
         Args:
-            configuration: if a string, use as the DBAPI URL. If a dictionary, will use as the **kwargs
-                for the sqlalchemy.create_engine() call, and will attempt to extract the connection URL
-                from a 'url' key in that dictionary.
+            configuration: if a string, use as the DBAPI URL. If a dictionary, will use as the
+                `**kwargs` for the sqlalchemy.create_engine() call, and will attempt to
+                extract the connection URL from a 'url' key in that dictionary.
                 A valid connection string will be of the format:
+
                     dialect[+driver]://user:password@host/dbname[?key=value..]
+
             create (bool): If create is True a store will be created if it does not already
                 exist. If create is False and a store does not already exist
                 an exception is raised. An exception is also raised if a store
@@ -255,9 +257,10 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 store.
 
         Returns:
-            int: CORRUPTED_STORE (0) if database exists but is empty,
-                 VALID_STORE (1) if database exists and tables are all there,
-                 NO_STORE (-1) if nothing exists
+            int:
+            - CORRUPTED_STORE (0) if database exists but is empty,
+            - VALID_STORE (1) if database exists and tables are all there,
+            - NO_STORE (-1) if nothing exists
 
         """
         # Close any existing engine connection
@@ -289,7 +292,6 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     def close(self, commit_pending_transaction=False):
         """
         Close the current store engine connection if one is open.
-
         """
         if self.engine:
             self.engine.dispose()
@@ -298,7 +300,6 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     def destroy(self, configuration):
         """
         Delete all tables and stored data associated with the store.
-
         """
         if self.engine is None:
             self.engine = self.open(configuration, create=False)
@@ -506,24 +507,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             yield (s, p, o), (c for c in contexts)
 
     def triples(self, triple, context=None):
-        """
-        A generator over all the triples matching pattern.
-
-        Pattern can be any objects for comparing against nodes in
-        the store, for example, RegExLiteral, Date? DateRange?
-
-        quoted table:                <id>_quoted_statements
-        asserted rdf:type table:     <id>_type_statements
-        asserted non rdf:type table: <id>_asserted_statements
-
-        triple columns:
-            subject, predicate, object, context, termComb, objLanguage, objDatatype
-        class membership columns:
-            member, klass, context, termComb
-
-        FIXME:  These union all selects *may* be further optimized by joins
-
-        """
+        """ A generator over all the triples matching a pattern. """
         selects = self._triples_helper(triple, context)
         for m in self._do_triples_select(selects, context):
             yield m
@@ -531,11 +515,6 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     def triples_choices(self, triple, context=None):
         """
         A variant of triples.
-
-        Can take a list of terms instead of a single term in any slot.
-        Stores can implement this to optimize the response time from the
-        import default 'fallback' implementation, which will iterate over
-        each term in the list and dispatch to triples.
         """
         # We already support accepting a list for s/p/o
         subject, predicate, object_ = triple
@@ -648,54 +627,6 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             rt = res.fetchall()
         for context in [rtTuple[0] for rtTuple in rt]:
             yield URIRef(context)
-
-    # Optional Namespace methods
-
-    # Placeholder optimized interfaces (those needed in order to port Versa)
-    def subjects(self, predicate=None, obj=None):
-        """A generator of subjects with the given predicate and object."""
-        raise Exception("Not implemented")
-
-    # Capable of taking a list of predicate terms instead of a single term
-    def objects(self, subject=None, predicate=None):
-        """A generator of objects with the given subject and predicate."""
-        raise Exception("Not implemented")
-
-    # Optimized interfaces (others)
-    def predicate_objects(self, subject=None):
-        """A generator of (predicate, object) tuples for the given subject."""
-        raise Exception("Not implemented")
-
-    def subject_objects(self, predicate=None):
-        """A generator of (subject, object) tuples for the given predicate."""
-        raise Exception("Not implemented")
-
-    def subject_predicates(self, object=None):
-        """A generator of (subject, predicate) tuples for the given object."""
-        raise Exception("Not implemented")
-
-    def value(self, subject,
-              predicate=u"http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
-              object=None, default=None, any=False):
-        """
-        Get a value.
-
-        For a subject/predicate, predicate/object, or
-        subject/object pair -- exactly one of subject, predicate,
-        object must be None. Useful if one knows that there may only
-        be one value.
-
-        It is one of those situations that occur a lot, hence this
-        'macro' like utility
-
-        :param subject:
-        :param predicate:
-        :param object:  -- exactly one must be None
-        :param default: -- value to be returned if no values found
-        :param any: -- if true, return any value in the case there is more
-                       than one, else raise a UniquenessError
-        """
-        raise Exception("Not implemented")
 
     # Namespace persistence interface implementation
 
@@ -825,7 +756,6 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
     def _verify_store_exists(self):
         """
         Verify store (e.g. all tables) exist.
-
         """
 
         for table_name in self.table_names:

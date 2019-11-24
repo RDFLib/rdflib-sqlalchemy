@@ -3,14 +3,31 @@ from rdflib import BNode, Literal, URIRef, Variable
 
 
 COUNT_SELECT = 0
+''' Return the count of the number of result tuples '''
+
 CONTEXT_SELECT = 1
+''' Return the matching contexts '''
+
 TRIPLE_SELECT = 2
+''' Return the matching triples '''
+
 TRIPLE_SELECT_NO_ORDER = 3
+''' Return the matching triples in any order '''
 
 ASSERTED_NON_TYPE_PARTITION = 3
+''' Table of non-type triples '''
+
 ASSERTED_TYPE_PARTITION = 4
+''' Table of type triples '''
+
 QUOTED_PARTITION = 5
+''' Table of `quoted`_ type triples
+
+.. _quoted: https://rdflib.readthedocs.io/en/stable/univrdfstore.html#terminology
+'''
+
 ASSERTED_LITERAL_PARTITION = 6
+''' Table of triples with literals '''
 
 FULL_TRIPLE_PARTITIONS = [QUOTED_PARTITION, ASSERTED_LITERAL_PARTITION]
 
