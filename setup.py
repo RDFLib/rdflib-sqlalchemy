@@ -6,7 +6,7 @@ from setuptools import setup
 PY2 = sys.version_info.major == 2
 
 project = "rdflib-sqlalchemy"
-version = "0.3.8"
+version = "0.4.0"
 
 
 setup(
