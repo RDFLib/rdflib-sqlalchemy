@@ -9,3 +9,4 @@ Contributors to the rdflib-sqlalchemy project:
 * Graham Higgins - https://github.com/gjhiggins
 * Ryan Shaw - https://github.com/rybesh
 * Thibault Clérice - https://github.com/ponteineptique
+* Mark Watts - https://github.com/mwatts2015
