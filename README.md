@@ -103,8 +103,8 @@ Sample DBURI values::
 
     dburi = Literal("mysql://username:password@hostname:port/database-name?other-parameter")
     dburi = Literal("mysql+mysqldb://user:password@hostname:port/database?charset=utf8")
-    dburi = Literal('postgresql+psycopg2://user:pasword@hostname:port/database')
-    dburi = Literal('postgresql+pg8000://user:pasword@hostname:port/database')
+    dburi = Literal('postgresql+psycopg2://user:password@hostname:port/database')
+    dburi = Literal('postgresql+pg8000://user:password@hostname:port/database')
     dburi = Literal('sqlite:////absolute/path/to/foo.db')
     dburi = Literal("sqlite:///%(here)s/development.sqlite" % {"here": os.getcwd()})
     dburi = Literal('sqlite://') # In-memory
