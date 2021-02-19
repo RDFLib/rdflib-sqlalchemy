@@ -35,7 +35,7 @@ def registerplugins():
     plugins are registered through entry_points. This is strongly recommended.
 
     However, if only distutils is available, then the plugins must be
-    registed manually.
+    registered manually.
 
     This method will register all of the rdflib-sqlalchemy Store plugins.
 

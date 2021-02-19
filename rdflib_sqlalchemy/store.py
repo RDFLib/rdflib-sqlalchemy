@@ -119,13 +119,13 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         # Use only the first 10 bytes of the digest
         self._interned_id = generate_interned_id(self.identifier)
 
-        # This parameter controls how exlusively the literal table is searched
+        # This parameter controls how exclusively the literal table is searched
         # If true, the Literal partition is searched *exclusively* if the
         # object term in a triple pattern is a Literal or a REGEXTerm.  Note,
         # the latter case prevents the matching of URIRef nodes as the objects
         # of a triple in the store.
         # If the object term is a wildcard (None)
-        # Then the Literal paritition is searched in addition to the others
+        # Then the Literal partition is searched in addition to the others
         # If this parameter is false, the literal partition is searched
         # regardless of what the object of the triple pattern is
         self.STRONGLY_TYPED_TERMS = False
@@ -595,7 +595,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
             elif predicate:
                 # select from asserted non rdf:type partition (optionally),
-                # quoted partition (if context is speciied), and literal
+                # quoted partition (if context is specified), and literal
                 # partition (optionally)
                 selects = []
                 if (not self.STRONGLY_TYPED_TERMS or
