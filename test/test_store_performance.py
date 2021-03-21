@@ -82,7 +82,7 @@ class StoreTestCase(unittest.TestCase):
         self.input.parse(location=inputloc, format="n3")
 
         t0 = time()
-        store.addN((*t, store) for t in self.input)
+        store.addN(tuple(t) + (store,) for t in self.input)
         t1 = time()
         return "%.3g " % (t1 - t0)
 
