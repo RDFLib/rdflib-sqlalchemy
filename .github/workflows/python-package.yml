@@ -25,7 +25,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        if [ ${{ matrix.python-version }} != "2.7" ] ; then
+          python -m pip install --upgrade pip
+        fi
         python -m pip install flake8 tox nose
         pip install .
     #- name: Lint with flake8
