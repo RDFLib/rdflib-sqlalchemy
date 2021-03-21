@@ -29,7 +29,7 @@ jobs:
           python -m pip install --upgrade pip
         fi
         python -m pip install flake8 tox nose
-        apt-get install python3-dev
+        sudo apt-get install python3-dev
         pip install .
     #- name: Lint with flake8
       #run: |
