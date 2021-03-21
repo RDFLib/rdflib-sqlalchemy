@@ -57,7 +57,7 @@ setup(
     ],
     tests_require=[
         "coveralls",
-        "mock==3.0.5 ; python_version==2.7",
+        'mock==3.0.5 ; python_version==\"2.7\"',
     ],
     test_suite="nose.collector",
     entry_points={
