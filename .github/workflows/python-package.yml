@@ -28,7 +28,7 @@ jobs:
         if [ ${{ matrix.python-version }} != "2.7" ] ; then
           python -m pip install --upgrade pip
         fi
-        python -m pip install flake8 tox nose
+        python -m pip install flake8 tox nose tox-gh-actions
         sudo apt-get install python3-dev
         pip install .
     #- name: Lint with flake8
