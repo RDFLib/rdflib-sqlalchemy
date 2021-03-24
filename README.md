@@ -94,7 +94,7 @@ Using nose::
 
 Using tox::
 
-    DB='pgsql' DBURI='postgresql+psycopg2://user:password@host/dbname' tox -e py32
+    DB='pgsql' DBURI='postgresql+psycopg2://user:password@host/dbname' tox -e py36
 
 DB variants are 'pgsql', 'mysql' and 'sqlite'. Except in the case of SQLite,
 you'll need to create the database independently, before execution of the test.

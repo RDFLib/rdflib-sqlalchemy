@@ -37,11 +37,8 @@ setup(
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: BSD License",
@@ -59,8 +56,9 @@ setup(
         "nose>=1.3.6",
     ],
     tests_require=[
-        "coveralls"
-    ] + (['mock'] if PY2 else []),
+        "coveralls",
+        'mock==3.0.5 ; python_version==\"2.7\"',
+    ],
     test_suite="nose.collector",
     entry_points={
         'rdf.plugins.store': [
