@@ -62,7 +62,7 @@ def create_asserted_statements_table(interned_id, metadata):
             "object",
             "context",
             unique=True,
-            mysql_length=MYSQL_MAX_INDEX_LENGTH,
+            mysql_length=191,
         ),
     )
 
@@ -145,7 +145,7 @@ def create_literal_statements_table(interned_id, metadata):
             "objLanguage",
             "context",
             unique=True,
-            mysql_length=MYSQL_MAX_INDEX_LENGTH,
+            mysql_length=153,
         ),
     )
 
@@ -194,7 +194,7 @@ def create_quoted_statements_table(interned_id, metadata):
             "objLanguage",
             "context",
             unique=True,
-            mysql_length=MYSQL_MAX_INDEX_LENGTH,
+            mysql_length=153,
         ),
     )
 
