@@ -14,7 +14,7 @@ from rdflib.namespace import RDF
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX, REGEXTerm
 from rdflib.store import CORRUPTED_STORE, VALID_STORE, NodePickler, Store
 from six import text_type
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, inspect
 from sqlalchemy.sql import expression, select
 
 from rdflib_sqlalchemy.constants import (
@@ -759,7 +759,8 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         """
 
         for table_name in self.table_names:
-            if not self.engine.has_table(table_name):
+            inspector = inspect(self.engine)
+            if not inspector.has_table(table_name):
                 _logger.critical("create_all() - table %s is not known", table_name)
                 # The database exists, but one of the tables doesn't exist
                 return CORRUPTED_STORE
