@@ -50,7 +50,7 @@ setup(
     ],
     install_requires=[
         "alembic>=0.8.8",
-        "rdflib>=4.0",
+        "rdflib[sparql]>=4.0",
         "six>=1.10.0",
         "SQLAlchemy>=1.1.4",
     ],
