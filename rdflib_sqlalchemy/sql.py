@@ -54,7 +54,18 @@ def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
     for table, whereClause, tableType in select_components:
 
         if select_type == COUNT_SELECT:
-            select_clause = expression.select([functions.count()], whereClause).select_from(table)
+            if tableType == ASSERTED_TYPE_PARTITION:
+                select_clause = expression.select([
+                    functions.count(','.split('member,klass,context'))],
+                    whereClause).select_from(table)
+            elif tableType == ASSERTED_NON_TYPE_PARTITION:
+                select_clause = expression.select([
+                    functions.count(','.split('subject,predicate,object,context'))],
+                    whereClause).distinct().select_from(table)
+            else:
+                select_clause = expression.select(
+                        [functions.count()],
+                        whereClause).select_from(table)
         elif select_type == CONTEXT_SELECT:
             select_clause = expression.select([table.c.context], whereClause)
         elif tableType in FULL_TRIPLE_PARTITIONS:
