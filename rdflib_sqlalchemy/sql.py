@@ -61,9 +61,9 @@ def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
             elif tableType in (ASSERTED_LITERAL_PARTITION, ASSERTED_NON_TYPE_PARTITION, QUOTED_PARTITION):
                 cols = [c.subject, c.predicate, c.object]
             else:
-                raise ValueError(f'Unrecognized table type f{tableType}')
+                raise ValueError('Unrecognized table type {}'.format(tableType))
             select_clause = expression.select([functions.count().label('aCount')]).select_from(
-                        expression.select(cols, whereClause).distinct().select_from(table))
+                expression.select(cols, whereClause).distinct().select_from(table))
         elif select_type == CONTEXT_SELECT:
             select_clause = expression.select([table.c.context], whereClause)
         elif tableType in FULL_TRIPLE_PARTITIONS:
