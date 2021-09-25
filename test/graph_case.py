@@ -275,7 +275,7 @@ class GraphTestCase(unittest.TestCase):
 
         testdoc = (PY3 and bytes(xmltestdocXml, "UTF-8")) or xmltestdocXml
 
-        self.graph.parse(StringInputSource(testdoc), formal="xml")
+        self.graph.parse(StringInputSource(testdoc), format="xml")
 
         objs = list(self.graph)
         self.assertEqual(len(objs), 3)
@@ -291,7 +291,7 @@ class GraphTestCase(unittest.TestCase):
 
         testdoc = (PY3 and bytes(xmltestdocXmlQuote, "UTF-8")) or xmltestdocXmlQuote
 
-        self.graph.parse(StringInputSource(testdoc), formal="xml")
+        self.graph.parse(StringInputSource(testdoc), format="xml")
 
         objs = list(self.graph)
         self.assertEqual(len(objs), 1)
