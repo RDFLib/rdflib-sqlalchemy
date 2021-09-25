@@ -5,9 +5,11 @@ name: Python package
 
 on:
   push:
-    branches: [ develop, build-fix-1 ]
+    branches: [ develop ]
   pull_request:
     branches: [ develop ]
+  schedule:
+    - cron:  '27 19 * * *'
 
 jobs:
   build:

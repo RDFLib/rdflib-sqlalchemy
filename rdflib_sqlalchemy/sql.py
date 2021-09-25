@@ -1,11 +1,12 @@
 from rdflib.namespace import RDF
 from six import text_type
-from sqlalchemy.sql import expression
-from sqlalchemy.sql import functions
+from sqlalchemy.sql import expression, functions
 
 from rdflib_sqlalchemy.constants import (
     ASSERTED_TYPE_PARTITION,
     ASSERTED_NON_TYPE_PARTITION,
+    ASSERTED_LITERAL_PARTITION,
+    QUOTED_PARTITION,
     CONTEXT_SELECT,
     COUNT_SELECT,
     FULL_TRIPLE_PARTITIONS,
@@ -54,7 +55,15 @@ def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
     for table, whereClause, tableType in select_components:
 
         if select_type == COUNT_SELECT:
-            select_clause = expression.select([functions.count()], whereClause).select_from(table)
+            c = table.c
+            if tableType == ASSERTED_TYPE_PARTITION:
+                cols = [c.member, c.klass]
+            elif tableType in (ASSERTED_LITERAL_PARTITION, ASSERTED_NON_TYPE_PARTITION, QUOTED_PARTITION):
+                cols = [c.subject, c.predicate, c.object]
+            else:
+                raise ValueError('Unrecognized table type {}'.format(tableType))
+            select_clause = expression.select([functions.count().label('aCount')]).select_from(
+                expression.select(cols, whereClause).distinct().select_from(table))
         elif select_type == CONTEXT_SELECT:
             select_clause = expression.select([table.c.context], whereClause)
         elif tableType in FULL_TRIPLE_PARTITIONS:

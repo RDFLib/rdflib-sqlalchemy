@@ -218,7 +218,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         with self.engine.connect() as connection:
             res = connection.execute(q)
             rt = res.fetchall()
-            return sum(rtTuple[0] for rtTuple in rt)
+            return int(sum(rtTuple[0] for rtTuple in rt))
 
     @property
     def table_names(self):
@@ -737,7 +737,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     def _remove_context(self, context):
         """Remove context."""
-        assert context
+        assert context is not None
         quoted_table = self.tables["quoted_statements"]
         asserted_table = self.tables["asserted_statements"]
         asserted_type_table = self.tables["type_statements"]

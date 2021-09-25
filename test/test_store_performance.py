@@ -9,6 +9,12 @@ from tempfile import mkdtemp
 from rdflib import Graph
 from six.moves.urllib.request import pathname2url
 
+try:
+    from rdflib.plugins.stores.memory import Memory
+except ImportError:
+    # rdflib<6.0.0
+    from rdflib.plugins.memory import IOMemory as Memory
+
 
 class StoreTestCase(unittest.TestCase):
 
@@ -17,7 +23,7 @@ class StoreTestCase(unittest.TestCase):
     something other than a unit test... but for now we'll add it as a
     unit test.
     """
-    store = 'IOMemory'
+    store = None
     path = None
     storetest = True
     performancetest = True
@@ -26,7 +32,11 @@ class StoreTestCase(unittest.TestCase):
         self.gcold = gc.isenabled()
         gc.collect()
         gc.disable()
-        self.graph = Graph(store=self.store)
+        if self.store is None:
+            store = Memory()
+        else:
+            store = self.store
+        self.graph = Graph(store=store)
         self.tempdir = None
         if not self.path:
             self.tempdir = mkdtemp()
