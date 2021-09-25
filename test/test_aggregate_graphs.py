@@ -135,7 +135,7 @@ class GraphAggregates2(unittest.TestCase):
                              (testGraph2N3, self.graph2),
                              (testGraph3N3, self.graph3)]:
             graph.parse(StringIO(n3Str), format='n3')
-        self.graph4 = Graph(memStore, RDFS.uri)
+        self.graph4 = Graph(memStore, URIRef('http://example.com/graph4'))
         self.graph4.parse('test/rdf-schema.n3', format='n3')
         self.G = ConjunctiveGraph(memStore)
 
