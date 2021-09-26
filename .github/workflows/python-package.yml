@@ -80,3 +80,22 @@ jobs:
         ports:
           # Maps tcp port 3306 on service container to the host
           - 3306:3306
+
+  dev-deploy:
+    name: Deploy Dev Package to PyPI
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3
+      - name: Install Deploy Dependencies
+        run: pip install wheel twine
+      - name: Deploy
+        run: ./deploy.sh
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
