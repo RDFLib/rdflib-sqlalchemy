@@ -8,6 +8,7 @@ class TermType(types.TypeDecorator):
     """Term typology."""
 
     impl = types.Text()
+    cache_ok = True
 
     def process_bind_param(self, value, dialect):
         """Process bound parameters."""
