@@ -45,7 +45,7 @@ jobs:
         GA_PYTHON_VERSION: ${{ matrix.python-version }}
       run: |
         . ./github-ci.sh
-        tox
+        tox --workdir=.
     services:
       # Label used to access the service container
       postgres:
