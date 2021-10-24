@@ -277,8 +277,8 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         self.engine = sqlalchemy.create_engine(url, **kwargs)
         try:
             conn = self.engine.connect()
-        except OperationalError as e:
-            raise RuntimeError("open() - failed during engine connection") from e
+        except OperationalError:
+            raise RuntimeError("open() - failed during engine connection")
         else:
             with conn:
                 if create:
