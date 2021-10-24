@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-import sys
-
 from setuptools import setup
-
-PY2 = sys.version_info.major == 2
 
 project = "rdflib-sqlalchemy"
 version = "0.4.1.dev0"
@@ -39,7 +35,6 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",

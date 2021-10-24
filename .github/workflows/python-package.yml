@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.6, 3.7, 3.8, 3.9]
+        python-version: [2.7, 3.7, 3.8, 3.9]
         database:
         - pgsql
         - mysql
@@ -37,19 +37,6 @@ jobs:
         python -m pip install -r test-requirements.txt
         python -m pip install tox-gh-actions coveralls
         sudo apt-get install python3-dev
-        if [ "${{ matrix.python-version }}" == "3.6" ] ; then
-          # pyparsing 3.0 no longer allows setting the .name attribute for
-          # TokenConverter, but the fix for that only goes in RDFLib 6 which
-          # does not support Python 3.6. See
-          # https://github.com/RDFLib/rdflib/issues/1190 and
-          # https://github.com/rdflib/rdflib/issues/1370 for details on the issue.
-          #
-          # Since we're a library, it's up to the user how to resolve this
-          # (e.g., ignore and do not use SPARQL) so we do not impose any
-          # version constraints in package metadata, just adjust so the build
-          # passes
-          python -m pip install 'pyparsing<3.0.0'
-        fi
         pip install .
     - name: Test with tox
       if: ${{ ! (matrix['python-version'] == '2.7' &&  matrix['database'] == 'mysql') }}
