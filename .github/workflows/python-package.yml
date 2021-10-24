@@ -34,7 +34,8 @@ jobs:
         if [ ${{ matrix.python-version }} != "2.7" ] ; then
           python -m pip install --upgrade pip
         fi
-        python -m pip install flake8 tox nose tox-gh-actions
+        python -m pip install -r test-requirements.txt
+        python -m pip install tox-gh-actions coveralls
         sudo apt-get install python3-dev
         if [ "${{ matrix.python-version }}" == "3.6" ] ; then
           # pyparsing 3.0 no longer allows setting the .name attribute for

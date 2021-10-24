@@ -54,13 +54,6 @@ setup(
         "six>=1.10.0",
         "SQLAlchemy>=1.1.4",
     ],
-    setup_requires=[
-        "nose>=1.3.6",
-    ],
-    tests_require=[
-        "coveralls",
-        'mock==3.0.5 ; python_version==\"2.7\"',
-    ],
     test_suite="nose.collector",
     entry_points={
         'rdf.plugins.store': [
