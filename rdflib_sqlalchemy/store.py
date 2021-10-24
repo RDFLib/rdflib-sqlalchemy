@@ -16,6 +16,7 @@ from rdflib.store import CORRUPTED_STORE, VALID_STORE, NodePickler, Store
 from six import text_type
 from sqlalchemy import MetaData, inspect
 from sqlalchemy.sql import expression, select
+from sqlalchemy.exc import OperationalError
 
 from rdflib_sqlalchemy.constants import (
     ASSERTED_LITERAL_PARTITION,
@@ -274,11 +275,16 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             kwargs = configuration
 
         self.engine = sqlalchemy.create_engine(url, **kwargs)
-        with self.engine.connect():
-            if create:
-                self.create_all()
+        try:
+            conn = self.engine.connect()
+        except OperationalError as e:
+            raise RuntimeError("open() - failed during engine connection") from e
+        else:
+            with conn:
+                if create:
+                    self.create_all()
 
-            ret_value = self._verify_store_exists()
+                ret_value = self._verify_store_exists()
 
         if ret_value != VALID_STORE and not create:
             raise RuntimeError("open() - create flag was set to False, but store was not created previously.")
