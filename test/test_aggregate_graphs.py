@@ -1,6 +1,5 @@
 import unittest
 
-from nose.exc import SkipTest
 from rdflib import Literal
 from rdflib import RDF
 from rdflib import RDFS
@@ -56,21 +55,6 @@ testGraph3N3 = """
 <> a log:N3Document.
 """
 
-sparqlQ = \
-    """
-SELECT *
-FROM NAMED <http://example.com/graph1>
-FROM NAMED <http://example.com/graph2>
-FROM NAMED <http://example.com/graph3>
-FROM <http://www.w3.org/2000/01/rdf-schema#>
-
-WHERE {?sub ?pred rdfs:Class }"""
-
-sparqlQ2 =\
-    """
-SELECT ?class
-WHERE { GRAPH ?graph { ?member a ?class } }"""
-
 sparqlQ3 =\
     """
 PREFIX log: <http://www.w3.org/2000/10/swap/log#>
@@ -119,40 +103,6 @@ class GraphAggregates1(unittest.TestCase):
         barPredicates = [URIRef("http://test/d"), RDFS.isDefinedBy]
         assert len(list(self.G.triples_choices(
             (URIRef("http://test/bar"), barPredicates, None)))) == 2
-
-
-class GraphAggregates2(unittest.TestCase):
-    # known_issue = True
-
-    def setUp(self):
-        memStore = plugin.get('SQLAlchemy', Store)(
-            identifier="rdflib_test", configuration=Literal("sqlite://"))
-        self.graph1 = Graph(memStore, URIRef("http://example.com/graph1"))
-        self.graph2 = Graph(memStore, URIRef("http://example.com/graph2"))
-        self.graph3 = Graph(memStore, URIRef("http://example.com/graph3"))
-
-        for n3Str, graph in [(testGraph1N3, self.graph1),
-                             (testGraph2N3, self.graph2),
-                             (testGraph3N3, self.graph3)]:
-            graph.parse(StringIO(n3Str), format='n3')
-        self.graph4 = Graph(memStore, URIRef('http://example.com/graph4'))
-        self.graph4.parse('test/rdf-schema.n3', format='n3')
-        self.G = ConjunctiveGraph(memStore)
-
-    def testAggregateSPARQL(self):
-        raise SkipTest("known_issue with SELECT from NAMED")
-        rt = self.G.query(sparqlQ)
-        assert len(rt) > 1
-        rt = self.G.query(sparqlQ2, initBindings={u'?graph':
-                          URIRef(u"http://example.com/graph3")})
-        try:
-            import json
-            assert json
-        except ImportError:
-            import simplejson as json
-        res = json.loads(rt.serialize(format='json').decode('utf-8'))
-        assert len(
-            res['results']['bindings']) == 20, len(res['results']['bindings'])
 
 
 class GraphAggregates3(unittest.TestCase):
