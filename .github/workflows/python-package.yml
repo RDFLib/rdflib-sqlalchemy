@@ -45,7 +45,7 @@ jobs:
           # (e.g., ignore and do not use SPARQL) so we do not impose any
           # version constraints in package metadata, just adjust so the build
           # passes
-          python -m pyparsing<3.0.0
+          python -m pip install 'pyparsing<3.0.0'
         fi
         python -m pip install flake8 tox nose tox-gh-actions
         sudo apt-get install python3-dev
