@@ -144,10 +144,28 @@ def triple_pattern_to_term_combinations(triple):
 
 def type_to_term_combination(member, klass, context):
     """Map a type to a term combination."""
-    return TERM_COMBINATIONS["%sU%s%s" %
-                             (term_to_letter(member),
-                              term_to_letter(klass),
-                              normalize_graph(context)[-1])]
+    term_combination = '{subject}U{object}{context}'.format(
+        subject=term_to_letter(member),
+        object=term_to_letter(klass),
+        context=normalize_graph(context)[-1],
+    )
+
+    try:
+        return TERM_COMBINATIONS[term_combination]
+    except KeyError:
+        if isinstance(member, Literal):
+            raise ValueError(
+                'A Literal cannot be a subject of a triple.\n\n'
+                'Triple causing error:\n'
+                '  {member} rdf:type {klass}\n'
+                'Context: {context}'.format(
+                    member=member,
+                    klass=klass,
+                    context=context,
+                )
+            )
+
+        raise
 
 
 def statement_to_term_combination(subject, predicate, obj, context):

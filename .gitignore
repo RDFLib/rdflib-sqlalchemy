@@ -11,3 +11,7 @@ rdflib_sqlalchemy.egg-info
 /dist/
 /venv/
 docs/api
+
+# JetBrains IDE files
+/.idea/
+
