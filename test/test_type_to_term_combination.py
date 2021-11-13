@@ -1,6 +1,6 @@
 import unittest
 
-from rdflib import Literal, SDO, URIRef, Graph
+from rdflib import Literal, SDO, Graph
 
 from rdflib_sqlalchemy.termutils import type_to_term_combination
 
