@@ -391,7 +391,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
         with self.engine.begin() as connection:
             try:
-                if not predicate or predicate != RDF.type:
+                if predicate is None or predicate != RDF.type:
                     # Need to remove predicates other than rdf:type
 
                     if not self.STRONGLY_TYPED_TERMS or isinstance(obj, Literal):
@@ -408,7 +408,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                             clause = self.build_clause(table, subject, predicate, obj, context)
                             connection.execute(table.delete(clause))
 
-                if predicate == RDF.type or not predicate:
+                if predicate == RDF.type or predicate is None:
                     # Need to check rdf:type and quoted partitions (in addition
                     # perhaps)
                     clause = self.build_clause(asserted_type_table, subject, RDF.type, obj, context, True)
@@ -441,14 +441,14 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
         elif isinstance(predicate, REGEXTerm) \
                 and predicate.compiledExpr.match(RDF.type) \
-                or not predicate:
+                or predicate is None:
             # Select from quoted partition (if context is specified),
             # Literal partition if (obj is Literal or None) and asserted
             # non rdf:type partition (if obj is URIRef or None)
             selects = []
             if (not self.STRONGLY_TYPED_TERMS
                     or isinstance(obj, Literal)
-                    or not obj
+                    or obj is None
                     or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
                 literal = expression.alias(literal_table, "literal")
                 clause = self.build_clause(literal, subject, predicate, obj, context)
@@ -456,7 +456,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
             if not isinstance(obj, Literal) \
                     and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
-                    or not obj:
+                    or obj is None:
                 asserted = expression.alias(asserted_table, "asserted")
                 clause = self.build_clause(asserted, subject, predicate, obj, context)
                 selects.append((asserted, clause, ASSERTED_NON_TYPE_PARTITION))
@@ -472,15 +472,14 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             selects = []
             if not self.STRONGLY_TYPED_TERMS \
                     or isinstance(obj, Literal) \
-                    or not obj \
+                    or obj is None \
                     or (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm)):
                 literal = expression.alias(literal_table, "literal")
                 clause = self.build_clause(literal, subject, predicate, obj, context)
                 selects.append((literal, clause, ASSERTED_LITERAL_PARTITION))
 
-            if not isinstance(obj, Literal) \
-                    and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
-                    or not obj:
+            if (obj is None or (not isinstance(obj, Literal)
+                    and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS))):
                 asserted = expression.alias(asserted_table, "asserted")
                 clause = self.build_clause(asserted, subject, predicate, obj, context)
                 selects.append((asserted, clause, ASSERTED_NON_TYPE_PARTITION))
@@ -576,9 +575,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 clause = self.build_clause(typetable, subject, RDF.type, obj, Any, True)
                 selects = [(typetable, clause, ASSERTED_TYPE_PARTITION), ]
 
-            elif isinstance(predicate, REGEXTerm) \
-                    and predicate.compiledExpr.match(RDF.type) \
-                    or not predicate:
+            elif (predicate is None or
+                    (isinstance(predicate, REGEXTerm) and
+                        predicate.compiledExpr.match(RDF.type))):
                 # Select from quoted partition (if context is specified),
                 # literal partition if (obj is Literal or None) and
                 # asserted non rdf:type partition (if obj is URIRef
@@ -588,14 +587,14 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
                 if (not self.STRONGLY_TYPED_TERMS or
                         isinstance(obj, Literal) or
-                        not obj or
+                        obj is None or
                         (self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
                     clause = self.build_clause(literal, subject, predicate, obj)
                     selects.append(
                         (literal, clause, ASSERTED_LITERAL_PARTITION))
                 if not isinstance(obj, Literal) \
                         and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
-                        or not obj:
+                        or obj is None:
                     clause = self.build_clause(asserted, subject, predicate, obj)
                     selects.append((asserted, clause, ASSERTED_NON_TYPE_PARTITION))
 
@@ -605,14 +604,14 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 # partition (optionally)
                 selects = []
                 if (not self.STRONGLY_TYPED_TERMS or
-                        isinstance(obj, Literal) or not obj or (
+                        isinstance(obj, Literal) or obj is None or (
                             self.STRONGLY_TYPED_TERMS and isinstance(obj, REGEXTerm))):
                     clause = self.build_clause(literal, subject, predicate, obj)
                     selects.append(
                         (literal, clause, ASSERTED_LITERAL_PARTITION))
                 if not isinstance(obj, Literal) \
                         and not (isinstance(obj, REGEXTerm) and self.STRONGLY_TYPED_TERMS) \
-                        or not obj:
+                        or obj is None:
                     clause = self.build_clause(asserted, subject, predicate, obj)
                     selects.append(
                         (asserted, clause, ASSERTED_NON_TYPE_PARTITION))
