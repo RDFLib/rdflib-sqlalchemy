@@ -15,7 +15,7 @@ from rdflib.plugins.stores.regexmatching import PYTHON_REGEX, REGEXTerm
 from rdflib.store import CORRUPTED_STORE, VALID_STORE, NodePickler, Store
 from six import text_type
 from sqlalchemy import MetaData, inspect
-from sqlalchemy.sql import expression, select
+from sqlalchemy.sql import expression, select, delete
 from sqlalchemy.exc import OperationalError
 
 from rdflib_sqlalchemy.constants import (
@@ -641,7 +641,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 binds_table = self.tables["namespace_binds"]
                 prefix = text_type(prefix)
                 namespace = text_type(namespace)
-                connection.execute(binds_table.delete().where(binds_table.c.prefix == prefix))
+                connection.execute(delete(binds_table).where(
+                    expression.or_(binds_table.c.uri == namespace,
+                        binds_table.c.prefix == prefix)))
                 connection.execute(binds_table.insert().values(prefix=prefix, uri=namespace))
             except Exception:
                 _logger.exception("Namespace binding failed.")
@@ -649,7 +651,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     def prefix(self, namespace):
         """Prefix."""
-        with self.engine.connect() as connection:
+        with self.engine.begin() as connection:
             nb_table = self.tables["namespace_binds"]
             namespace = text_type(namespace)
             s = select([nb_table.c.prefix]).where(nb_table.c.uri == namespace)
@@ -664,7 +666,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         res = None
         prefix_val = text_type(prefix)
         try:
-            with self.engine.connect() as connection:
+            with self.engine.begin() as connection:
                 nb_table = self.tables["namespace_binds"]
                 s = select([nb_table.c.uri]).where(nb_table.c.prefix == prefix_val)
                 res = connection.execute(s)
@@ -676,7 +678,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             return None
 
     def namespaces(self):
-        with self.engine.connect() as connection:
+        with self.engine.begin() as connection:
             res = connection.execute(self.tables["namespace_binds"].select(distinct=True))
             for prefix, uri in res.fetchall():
                 yield prefix, uri
