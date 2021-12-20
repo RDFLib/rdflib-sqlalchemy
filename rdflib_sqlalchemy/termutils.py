@@ -1,7 +1,6 @@
 """Convenience functions for working with Terms and Graphs."""
 from rdflib import BNode, Graph, Literal, URIRef, Variable
 from rdflib.graph import QuotedGraph
-from rdflib.term import Statement
 
 from rdflib_sqlalchemy.constants import (
     TERM_COMBINATIONS,
@@ -61,7 +60,6 @@ def term_to_letter(term):
 
     * :class:`~rdflib.term.BNode`,
     * :class:`~rdflib.term.Literal`,
-    * :class:`~rdflib.term.Statement` (Deprecated)
     * :class:`~rdflib.term.URIRef`,
     * :class:`~rdflib.term.Variable`
     * :class:`~rdflib.graph.Graph`
@@ -69,7 +67,6 @@ def term_to_letter(term):
 
     >>> from rdflib import URIRef
     >>> from rdflib.term import BNode
-    >>> # from rdflib.term import Statement
     >>> from rdflib.graph import Graph, QuotedGraph
     >>> from rdflib_sqlalchemy.termutils import term_to_letter
     >>> term_to_letter(URIRef('http://purl.org/net/bel-epa.com/'))
@@ -86,8 +83,6 @@ def term_to_letter(term):
     'F'
     >>> term_to_letter(None)
     'L'
-    >>> # term_to_letter(Statement((None, None, None), None)) # Deprecated
-
     """
     if isinstance(term, URIRef):
         return "U"
@@ -99,8 +94,6 @@ def term_to_letter(term):
         return "F"
     elif isinstance(term, Variable):
         return "V"
-    elif isinstance(term, Statement):
-        return "s"
     elif isinstance(term, Graph):
         return term_to_letter(term.identifier)
     elif term is None:

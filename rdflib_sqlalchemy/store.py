@@ -8,7 +8,7 @@ from rdflib import (
     Literal,
     URIRef
 )
-from rdflib.term import Statement, Variable
+from rdflib.term import Variable
 from rdflib.graph import Graph, QuotedGraph
 from rdflib.namespace import RDF
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX, REGEXTerm
@@ -236,7 +236,6 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             np.register(Graph, "G")
             np.register(QuotedGraph, "Q")
             np.register(Variable, "V")
-            np.register(Statement, "s")
         return self._node_pickler
 
     def open(self, configuration, create=True):
