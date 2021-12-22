@@ -2,18 +2,20 @@ import logging
 import os
 import unittest
 
-from nose import SkipTest
+import pytest
 try:
     import psycopg2  # noqa
+    assert psycopg2  # quiets unused import warning
 except ImportError:
-    raise SkipTest("psycopg2 not installed, skipping PgSQL tests")
+    pytest.skip("psycopg2 not installed, skipping PgSQL tests",
+            allow_module_level=True)
 
 from . import context_case
 from . import graph_case
 
 
 if os.environ.get("DB") != "pgsql":
-    raise SkipTest("PgSQL not under test")
+    pytest.skip("PgSQL not under test", allow_module_level=True)
 
 sqlalchemy_url = os.environ.get(
     "DBURI",
@@ -54,7 +56,7 @@ class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
         super(SQLAPgSQLContextTestCase, self).tearDown(uri=self.uri)
 
     def testLenInMultipleContexts(self):
-        raise SkipTest("Known issue.")
+        pytest.skip("Known issue.")
 
 
 SQLAPgSQLGraphTestCase.storetest = True

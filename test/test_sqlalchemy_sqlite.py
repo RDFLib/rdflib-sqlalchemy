@@ -2,7 +2,7 @@ import logging
 import os
 import unittest
 
-from nose import SkipTest
+import pytest
 from rdflib import Literal
 
 from . import context_case
@@ -10,7 +10,7 @@ from . import graph_case
 
 
 if os.environ.get("DB") != "sqlite":
-    raise SkipTest("SQLite not under test")
+    pytest.skip("SQLite not under test", allow_module_level=True)
 
 _logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ class SQLASQLiteContextTestCase(context_case.ContextTestCase):
         super(SQLASQLiteContextTestCase, self).tearDown(uri=self.uri)
 
     def testLenInMultipleContexts(self):
-        raise SkipTest("Known issue.")
+        pytest.skip("Known issue.")
 
 
 SQLASQLiteGraphTestCase.storetest = True

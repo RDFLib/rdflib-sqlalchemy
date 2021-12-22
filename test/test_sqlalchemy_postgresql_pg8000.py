@@ -3,19 +3,20 @@ import logging
 import os
 import unittest
 
-from nose import SkipTest
+import pytest
 try:
     import pg8000
     assert pg8000 is not None
 except ImportError:
-    raise SkipTest("pg8000 not installed, skipping PgSQL tests")
+    pytest.skip("pg8000 not installed, skipping PgSQL tests",
+            allow_module_level=True)
 
 from . import context_case
 from . import graph_case
 
 
 if os.environ.get("DB") != "pgsql":
-    raise SkipTest("PgSQL not under test")
+    pytest.skip("PgSQL not under test", allow_module_level=True)
 
 _logger = logging.getLogger(__name__)
 
@@ -61,7 +62,7 @@ class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
 
     def testLenInMultipleContexts(self):
         """Test lin in multiple contexts, known issue."""
-        raise SkipTest("Known issue.")
+        pytest.skip("Known issue.")
 
 # SQLAPgSQLGraphTestCase.storetest = True
 # SQLAPgSQLContextTestCase.storetest = True

@@ -2,7 +2,7 @@ import logging
 import os
 import unittest
 
-from nose import SkipTest
+import pytest
 from rdflib import Literal
 from rdflib.graph import ConjunctiveGraph as Graph
 from six import PY3
@@ -19,18 +19,21 @@ if PY3:
         assert mysql
         dialect = "mysqlconnector"
     except ImportError:
-        raise SkipTest("MySQL-connector not found, skipping MySQL tests")
+        pytest.skip("MySQL-connector not found, skipping MySQL tests",
+                allow_module_level=True)
 else:
     try:
         import MySQLdb
         assert MySQLdb
         dialect = "mysqldb"
     except ImportError:
-        raise SkipTest("MySQLdb not found, skipping MySQL tests")
+        pytest.skip("MySQLdb not found, skipping MySQL tests",
+                allow_module_level=True)
 
 
 if os.environ.get("DB") != "mysql":
-    raise SkipTest("MySQL not under test")
+    pytest.skip("MySQL not under test",
+            allow_module_level=True)
 
 _logger = logging.getLogger(__name__)
 
@@ -67,7 +70,7 @@ class SQLAMySQLContextTestCase(context_case.ContextTestCase):
         super(SQLAMySQLContextTestCase, self).tearDown(uri=self.uri)
 
     def testLenInMultipleContexts(self):
-        raise SkipTest("Known issue.")
+        pytest.skip("Known issue.")
 
 
 class SQLAMySQLIssueTestCase(unittest.TestCase):
