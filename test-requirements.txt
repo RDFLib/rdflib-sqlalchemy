@@ -1,4 +1,4 @@
 flake8
 mock==3.0.5 ; python_version=="2.7"
-nose
+nose2[coverage_plugin]
 tox
