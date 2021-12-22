@@ -50,7 +50,6 @@ setup(
         "six>=1.10.0",
         "SQLAlchemy>=1.1.4",
     ],
-    test_suite="nose.collector",
     entry_points={
         'rdf.plugins.store': [
             'SQLAlchemy = rdflib_sqlalchemy.store:SQLAlchemy'

@@ -63,8 +63,7 @@ class SQLASQLiteGraphTestCase(unittest.TestCase):
     uri = Literal("sqlite://")
 
     def setUp(self):
-        store = plugin.get("SQLAlchemy", Store)(identifier=self.ident)
-        self.graph = Graph(store, identifier=self.ident)
+        self.graph = Graph("SQLAlchemy", identifier=self.ident)
         self.graph.open(self.uri, create=True)
 
     def tearDown(self):
@@ -84,17 +83,18 @@ if __name__ == '__main__':
 
 Running the tests
 =================
-`nose` and `tox` are supported as test runners. Select the SQL back-end by
-setting a `DB` environment variable. Select the database connection by setting
-the `DBURI` variable. With `tox`, you can also specify the Python version.
+`pytest` is supported as a test runner, typically called via `tox`. Select the
+SQL back-end by setting a `DB` environment variable. Select the database
+connection by setting the `DBURI` variable. With `tox`, you can also specify
+the Python version.
 
-Using nose::
+Using pytest::
 
-    DB='pgsql' DBURI='postgresql+psycopg2://user:password@host/dbname' nosetests
+    DB='pgsql' DBURI='postgresql+psycopg2://user:password@host/dbname' pytest
 
 Using tox::
 
-    DB='pgsql' DBURI='postgresql+psycopg2://user:password@host/dbname' tox -e py36
+    DB='pgsql' DBURI='postgresql+psycopg2://user:password@host/dbname' tox -e py310
 
 DB variants are 'pgsql', 'mysql' and 'sqlite'. Except in the case of SQLite,
 you'll need to create the database independently, before execution of the test.
