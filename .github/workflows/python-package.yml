@@ -79,7 +79,9 @@ jobs:
   dev-deploy:
     name: Deploy Dev Package to PyPI
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    if: github.event_name == 'push'
+      && (github.ref == 'refs/heads/develop'
+          || startsWith(github.ref, 'refs/heads/release/'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
