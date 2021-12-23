@@ -17,7 +17,7 @@ Back-end persistence is provided by SQLAlchemy.
 
 Tested dialects are:
 
-- SQLite, using the built-in Python driver or, for Python 2.5, pysqlite
+- SQLite, using the built-in Python driver
 - MySQL, using the MySQLdb-python driver or, for Python 3, mysql-connector
 - PostgreSQL, using the psycopg2 driver or the pg8000 driver.
 

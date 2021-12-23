@@ -10,11 +10,7 @@ if [ "$DB" = 'pgsql' ]; then
 fi
 
 if [ "$DB" = 'mysql' ]; then
-    if [[ "$GA_PYTHON_VERSION" =~ '.*3\.[789].*' ]] ; then
-        export DBURI='mysql+mysqlconnector://test:mysql@127.0.0.1/test?charset=utf8'
-    else
-        export DBURI='mysql+mysqldb://test:mysql@127.0.0.1/test?charset=utf8'
-    fi
+    export DBURI='mysql+mysqldb://test:mysql@127.0.0.1/test?charset=utf8'
 fi
 
 if [ "$DB" = 'sqlite' ]; then
