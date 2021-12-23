@@ -5,7 +5,6 @@ import unittest
 import pytest
 from rdflib import Literal
 from rdflib.graph import ConjunctiveGraph as Graph
-from six import PY3
 from rdflib.store import NO_STORE, VALID_STORE
 from rdflib.term import URIRef
 
@@ -13,22 +12,13 @@ from . import context_case
 from . import graph_case
 
 
-if PY3:
-    try:
-        import mysql
-        assert mysql
-        dialect = "mysqlconnector"
-    except ImportError:
-        pytest.skip("MySQL-connector not found, skipping MySQL tests",
-                allow_module_level=True)
-else:
-    try:
-        import MySQLdb
-        assert MySQLdb
-        dialect = "mysqldb"
-    except ImportError:
-        pytest.skip("MySQLdb not found, skipping MySQL tests",
-                allow_module_level=True)
+try:
+    import MySQLdb
+    assert MySQLdb
+    dialect = "mysqldb"
+except ImportError:
+    pytest.skip("MySQLdb not found, skipping MySQL tests",
+            allow_module_level=True)
 
 
 if os.environ.get("DB") != "mysql":
