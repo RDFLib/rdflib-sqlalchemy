@@ -2,7 +2,7 @@
 from setuptools import setup
 
 project = "rdflib-sqlalchemy"
-version = "0.5.1.dev0"
+version = "0.5.1"
 
 
 setup(
