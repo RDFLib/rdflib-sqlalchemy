@@ -53,9 +53,11 @@ class SQLGeneratorMixin(object):
         Build an insert command for regular triple table.
 
         """
-        stmt_table = (quoted and
-                      self.tables["quoted_statements"] or
-                      self.tables["asserted_statements"])
+        stmt_table = (
+            self.tables["quoted_statements"]
+            if quoted
+            else self.tables["asserted_statements"]
+        )
 
         triple_pattern = statement_to_term_combination(
             subject,
