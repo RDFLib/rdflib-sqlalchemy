@@ -123,6 +123,22 @@ class SQLATestCase(unittest.TestCase):
         # Expect two selects: one for the first two choices plus one for the last one
         self.assertEqual(sum(1 for c in children if isinstance(c, Select)), 2)
 
+    def test_quoted_statements(self):
+        '''
+        Regression test for RDFLib/rdflib-sqlalchemy#92
+        '''
+        cg = ConjunctiveGraph('SQLAlchemy')
+        cg.open('sqlite://', create=True)
+        testN3 = """
+        @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+        @prefix : <http://test/> .
+        {:a :b :c;a :foo} => {:a :d :c,?y}.
+        _:foo a rdfs:Class.
+        :a :d :c."""
+        cg.parse(data=testN3, format='n3')
+        # Doesn't raise an exception
+
 
 if __name__ == "__main__":
     unittest.main()
