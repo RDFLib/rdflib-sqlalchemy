@@ -31,7 +31,9 @@ autodoc_typehints = 'none'
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
               'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
-                       'rdflib': ('https://rdflib.readthedocs.io/en/stable/', None)}
+                       'rdflib': ('https://rdflib.readthedocs.io/en/stable/', None),
+                       'sqlalchemy': ('https://docs.sqlalchemy.org/en/14/', None),
+                       }
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

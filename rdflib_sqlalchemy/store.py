@@ -244,9 +244,9 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
         Args:
             configuration: if a string, use as the DBAPI URL. If a dictionary, will use as the
-                `**kwargs` for the sqlalchemy.create_engine() call, and will attempt to
-                extract the connection URL from a 'url' key in that dictionary.
-                A valid connection string will be of the format:
+                ``**kwargs`` for the sqlalchemy.create_engine() call, and will attempt to
+                extract the connection URL from a 'url' key in that dictionary.  A valid
+                connection string will be of the format:
 
                     dialect[+driver]://user:password@host/dbname[?key=value..]
 

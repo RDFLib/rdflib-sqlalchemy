@@ -47,8 +47,8 @@ def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
         select_components (iterable of tuples): Indicates the table and table type
             (table_name, where_clause_string, table_type)
         distinct (bool): Whether to eliminate duplicate results
-        select_type (int): From `rdflib_sqlalchemy.constants`. Either `COUNT_SELECT`,
-            `CONTEXT_SELECT`, `TRIPLE_SELECT`
+        select_type (int): From `rdflib_sqlalchemy.constants`. Either `.COUNT_SELECT`,
+            `.CONTEXT_SELECT`, `.TRIPLE_SELECT`
 
     """
     selects = []

@@ -7,10 +7,12 @@ def get_group_by_count(session, group_by_column):
     """
     Construct SQL query to get counts for distinct values using GROUP BY.
 
-    :param session - sqlalchemy `Session` instance
-    :param group_by_column sqlalchemy `Column` instance
-    :returns {dict} dictionary mapping from value to count
+    Args:
+        session (~sqlalchemy.orm.session.Session): session to query in
+        group_by_column (~sqlalchemy.schema.Column): column to group by
 
+    Returns:
+        dict: dictionary mapping from value to count
     """
     return dict(
         session.query(
