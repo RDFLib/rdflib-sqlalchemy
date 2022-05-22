@@ -107,7 +107,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
                 corresponding to the connection options accepted by sqlalchemy.create_engine,
                 with the additional "url" key pointing to the connection URL. See `open` documentation
                 for more details.
-            engine (sqlalchemy.engine.Engine, optional): a pre-existing `SQLAlchemy.engine.Engine` instance.
+            engine (`sqlalchemy.engine.Engine`, optional): a pre-existing engine instance.
             max_terms_per_where (int): The max number of terms (s/p/o) in a call to
                 triples_choices to combine in one SQL "where" clause. Important for SQLite
                 back-end with SQLITE_MAX_EXPR_DEPTH limit and SQLITE_LIMIT_COMPOUND_SELECT

@@ -22,8 +22,8 @@ def get_group_by_count(session, group_by_column):
     )
 
 
-class StatisticsMixin(object):
-
+class StatisticsMixin:
+    ''' Has methods for statistics on stores '''
     def statistics(self, asserted_statements=True, literals=True, types=True):
         """Store statistics."""
         statistics = {
