@@ -1,6 +1,7 @@
 """SQLAlchemy-based RDF store."""
 import hashlib
 import logging
+import warnings
 
 import sqlalchemy
 from rdflib import (
@@ -358,6 +359,10 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             try:
                 for command in commands_dict.values():
                     statement = self._add_ignore_on_conflict(command['statement'])
+                    warnings.filterwarnings(
+                        "ignore",
+                        ".*Class OnConflictDoNothing will not make use of SQL compilation caching.*",
+                    )
                     connection.execute(statement, command["params"])
             except Exception:
                 _logger.exception("AddN failed.")
