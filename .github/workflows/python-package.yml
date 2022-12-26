@@ -34,6 +34,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -r test-requirements.txt
         python -m pip install tox-gh-actions coveralls
+        python -m pip install --upgrade wheel # stop pip complaining about a setup.py install
         sudo apt-get install python3-dev
         pip install .
     - name: Test with tox
