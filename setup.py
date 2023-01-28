@@ -46,7 +46,7 @@ setup(
         "alembic>=0.8.8",
         "rdflib>=4.0",
         "six>=1.10.0",
-        "SQLAlchemy>=1.1.4",
+        "SQLAlchemy>=1.1.4,<2.0.0",
     ],
     entry_points={
         'rdf.plugins.store': [
