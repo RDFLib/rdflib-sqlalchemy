@@ -33,6 +33,15 @@ pg8000: https://pypi.python.org/pypi/pg8000
 
 Development
 ===========
+*** Note: Currently, rdflib-sqlalchemy is in maintenance mode. That means the
+current maintainer (@mwatts15) will do what he can to keep the package working
+for existing use-cases, but new features will not be added and newer versions
+of SQLAlchemy will not be supported. If you have an interest in further
+development of rdflib-sqlalchemy, please get in touch with @mwatts15 or [core
+RDFLib project developers][rdflib-contact].***
+
+[rdflib-contact]: https://rdflib.readthedocs.io/en/stable/#further-help-contact
+
 Github repository: https://github.com/RDFLib/rdflib-sqlalchemy
 
 Continuous integration: https://travis-ci.org/RDFLib/rdflib-sqlalchemy/
