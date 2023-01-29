@@ -33,7 +33,7 @@ pg8000: https://pypi.python.org/pypi/pg8000
 
 Development
 ===========
-*** Note: Currently, rdflib-sqlalchemy is in maintenance mode. That means the
+***Note: Currently, rdflib-sqlalchemy is in maintenance mode. That means the
 current maintainer (@mwatts15) will do what he can to keep the package working
 for existing use-cases, but new features will not be added and newer versions
 of SQLAlchemy will not be supported. If you have an interest in further
