@@ -62,31 +62,28 @@ def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
                 cols = [c.subject, c.predicate, c.object]
             else:
                 raise ValueError('Unrecognized table type {}'.format(tableType))
-            select_clause = expression.select([functions.count().label('aCount')]).select_from(
-                expression.select(cols, whereClause).distinct().select_from(table))
+            select_clause = expression.select(*[functions.count().label('aCount')]).select_from(
+                expression.select(*cols).where(whereClause).distinct().select_from(table))
         elif select_type == CONTEXT_SELECT:
-            select_clause = expression.select([table.c.context], whereClause)
+            select_clause = expression.select(table.c.context)
+            if whereClause is not None:
+                select_clause = expression.select(table.c.context).where(whereClause)
         elif tableType in FULL_TRIPLE_PARTITIONS:
-            select_clause = table.select(whereClause)
+            select_clause = table.select().where(whereClause)
         elif tableType == ASSERTED_TYPE_PARTITION:
             select_clause = expression.select(
-                [table.c.id.label("id"),
+                *[table.c.id.label("id"),
                  table.c.member.label("subject"),
                  expression.literal(text_type(RDF.type)).label("predicate"),
                  table.c.klass.label("object"),
                  table.c.context.label("context"),
                  table.c.termComb.label("termcomb"),
                  expression.literal_column("NULL").label("objlanguage"),
-                 expression.literal_column("NULL").label("objdatatype")],
+                 expression.literal_column("NULL").label("objdatatype")]).where(
                 whereClause)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
-            select_clause = expression.select(
-                [c for c in table.columns] +
-                [expression.literal_column("NULL").label("objlanguage"),
-                 expression.literal_column("NULL").label("objdatatype")],
-                whereClause,
-                from_obj=[table])
-
+            all_table_columns = [c for c in table.columns] + [expression.literal_column("NULL").label("objlanguage"), expression.literal_column("NULL").label("objdatatype")]
+            select_clause = expression.select(*all_table_columns).select_from(table).where(whereClause)
         selects.append(select_clause)
 
     order_statement = []
@@ -97,6 +94,6 @@ def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
             expression.literal_column("object"),
         ]
     if distinct and select_type != COUNT_SELECT:
-        return expression.union(*selects, **{"order_by": order_statement})
+        return expression.union(*selects).order_by(*order_statement)
     else:
-        return expression.union_all(*selects, **{"order_by": order_statement})
+        return expression.union_all(*selects).order_by(*order_statement)

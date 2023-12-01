@@ -18,3 +18,5 @@ docs/api
 
 # Test outcomes
 test/tmpdb.sqlite
+
+.env
