@@ -1,7 +1,11 @@
-from sqlalchemy import Column, Table, Index, types
+from sqlalchemy import Column, Table, Index, text, types
+from sqlalchemy.sql import quoted_name
 
+from rdflib_sqlalchemy.cratedb_patch import cratedb_patch_dialect
 from rdflib_sqlalchemy.types import TermType
 
+
+cratedb_patch_dialect()
 
 MYSQL_MAX_INDEX_LENGTH = 200
 
@@ -25,7 +29,7 @@ def create_asserted_statements_table(interned_id, metadata):
     return Table(
         "{interned_id}_asserted_statements".format(interned_id=interned_id),
         metadata,
-        Column("id", types.Integer, nullable=False, primary_key=True),
+        Column("id", types.BigInteger, nullable=False, primary_key=True, server_default=text("NOW()::LONG")),
         Column("subject", TermType, nullable=False),
         Column("predicate", TermType, nullable=False),
         Column("object", TermType, nullable=False),
@@ -71,7 +75,7 @@ def create_type_statements_table(interned_id, metadata):
     return Table(
         "{interned_id}_type_statements".format(interned_id=interned_id),
         metadata,
-        Column("id", types.Integer, nullable=False, primary_key=True),
+        Column("id", types.BigInteger, nullable=False, primary_key=True, server_default=text("NOW()::LONG")),
         Column("member", TermType, nullable=False),
         Column("klass", TermType, nullable=False),
         Column("context", TermType, nullable=False),
@@ -110,7 +114,7 @@ def create_literal_statements_table(interned_id, metadata):
     return Table(
         "{interned_id}_literal_statements".format(interned_id=interned_id),
         metadata,
-        Column("id", types.Integer, nullable=False, primary_key=True),
+        Column("id", types.BigInteger, nullable=False, primary_key=True, server_default=text("NOW()::LONG")),
         Column("subject", TermType, nullable=False),
         Column("predicate", TermType, nullable=False),
         Column("object", TermType),
@@ -154,7 +158,7 @@ def create_quoted_statements_table(interned_id, metadata):
     return Table(
         "{interned_id}_quoted_statements".format(interned_id=interned_id),
         metadata,
-        Column("id", types.Integer, nullable=False, primary_key=True),
+        Column("id", types.BigInteger, nullable=False, primary_key=True, server_default=text("NOW()::LONG")),
         Column("subject", TermType, nullable=False),
         Column("predicate", TermType, nullable=False),
         Column("object", TermType),
