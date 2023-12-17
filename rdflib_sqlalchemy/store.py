@@ -307,7 +307,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         Delete all tables and stored data associated with the store.
         """
         if self.engine is None:
-            self.engine = self.open(configuration, create=False)
+            self.open(configuration, create=False)
 
         with self.engine.begin():
             try:
