@@ -274,6 +274,11 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             kwargs = configuration
 
         self.engine = sqlalchemy.create_engine(url, **kwargs)
+
+        # CrateDB needs a fix to synchronize write operations.
+        from rdflib_sqlalchemy.cratedb_patch import cratedb_polyfill_refresh_after_dml_engine
+        cratedb_polyfill_refresh_after_dml_engine(self.engine)
+
         try:
             conn = self.engine.connect()
         except OperationalError:
