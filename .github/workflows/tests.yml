@@ -1,0 +1,86 @@
+name: "Tests: PR"
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - ci-gha
+  pull_request: ~
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: "
+    Python: ${{ matrix.python-version }}
+    SQLAlchemy: ${{ matrix.sqla-version }}
+    "
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        sqla-version: ['1.*']
+        pip-allow-prerelease: ['false']
+
+    env:
+      PYTHON_VERSION: ${{ matrix.python-version }}
+      SQLALCHEMY_VERSION: ${{ matrix.sqla-version }}
+      PIP_ALLOW_PRERELEASE: ${{ matrix.pip-allow-prerelease }}
+
+    steps:
+
+      - name: Acquire sources
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+          cache: 'pip'
+          cache-dependency-path: |
+            setup.cfg
+            setup.py
+            test-requirements.txt
+
+      - name: Set up project
+        run: |
+
+          # `setuptools 0.64.0` adds support for editable install hooks (PEP 660).
+          # https://github.com/pypa/setuptools/blob/main/CHANGES.rst#v6400
+          pip install "setuptools>=64" --upgrade
+
+          # Install package in editable mode.
+          pip install --use-pep517 --prefer-binary --editable='.[develop,test]'
+          
+          # Install development/test dependencies.
+          pip install -r test-requirements.txt
+          
+          # Explicitly install designated SQLAlchemy version to validate this test matrix slot.
+          pip install "sqlalchemy==${{ matrix.sqla-version }}"
+
+      - name: Invoke tests
+        run: |
+
+          # Report about the test matrix slot.
+          echo "Invoking tests with Python ${PYTHON_VERSION} and SQLAlchemy ${SQLALCHEMY_VERSION}"
+
+          # Run linters and software tests.
+          flake8 rdflib_sqlalchemy test
+          pytest
+
+      # https://github.com/codecov/codecov-action
+      - name: Upload coverage results to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          flags: main
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: false
