@@ -1,3 +1,5 @@
 flake8
 mock==3.0.5 ; python_version=="2.7"
+pytest<8
+pytest-cov<5
 tox
