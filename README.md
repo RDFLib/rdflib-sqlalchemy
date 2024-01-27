@@ -1,6 +1,8 @@
 RDFLib-SQLAlchemy
 =================
 
+[![Tests](https://github.com/RDFLib/rdflib-sqlalchemy/actions/workflows/tests.yml/badge.svg)](https://github.com/RDFLib/rdflib-sqlalchemy/actions/workflows/tests.yml)
+
 A SQLAlchemy-backed, formula-aware RDFLib Store. It stores its triples
 in the following partitions:
 
