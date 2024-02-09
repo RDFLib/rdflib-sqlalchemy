@@ -82,7 +82,9 @@ def union_select(select_components, distinct=False, select_type=TRIPLE_SELECT):
                  expression.literal_column("NULL").label("objdatatype")]).where(
                 whereClause)
         elif tableType == ASSERTED_NON_TYPE_PARTITION:
-            all_table_columns = [c for c in table.columns] + [expression.literal_column("NULL").label("objlanguage"), expression.literal_column("NULL").label("objdatatype")]
+            all_table_columns = [c for c in table.columns] + \
+                                [expression.literal_column("NULL").label("objlanguage"),
+                                 expression.literal_column("NULL").label("objdatatype")]
             if whereClause is not None:
                 select_clause = expression.select(*all_table_columns).select_from(table).where(whereClause)
             else:
