@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """SQLAlchemy Store plugin for RDFLib."""
 import logging
-from pkg_resources import get_distribution
+from importlib_metadata import version
 
-
-__version__ = get_distribution("rdflib_sqlalchemy").version
+__version__ = version("rdflib_sqlalchemy")
 
 
 class NullHandler(logging.Handler):
