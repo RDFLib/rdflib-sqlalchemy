@@ -3,7 +3,6 @@ import unittest
 
 from rdflib import Graph, URIRef, Literal, plugin, RDF
 from rdflib.parser import StringInputSource
-from six import PY3
 from rdflib.store import Store
 
 
@@ -273,7 +272,7 @@ class GraphTestCase(unittest.TestCase):
             Literal(u"こんにちは", lang="ja"),
             Literal(u"les garçons à Noël reçoivent des œufs", lang="fr")]
 
-        testdoc = (PY3 and bytes(xmltestdocXml, "UTF-8")) or xmltestdocXml
+        testdoc = bytes(xmltestdocXml, "UTF-8")
 
         self.graph.parse(StringInputSource(testdoc), format="xml")
 
@@ -289,7 +288,7 @@ class GraphTestCase(unittest.TestCase):
         says = URIRef(u"http://www.rdflib.net/terms/says")
         imtheone = Literal(u"I'm the one", lang="en")
 
-        testdoc = (PY3 and bytes(xmltestdocXmlQuote, "UTF-8")) or xmltestdocXmlQuote
+        testdoc = bytes(xmltestdocXmlQuote, "UTF-8")
 
         self.graph.parse(StringInputSource(testdoc), format="xml")
 

@@ -13,7 +13,6 @@ from rdflib.graph import Graph, QuotedGraph
 from rdflib.namespace import RDF
 from rdflib.plugins.stores.regexmatching import PYTHON_REGEX, REGEXTerm
 from rdflib.store import CORRUPTED_STORE, VALID_STORE, NodePickler, Store
-from six import text_type
 from sqlalchemy import MetaData, inspect
 from sqlalchemy.sql import expression, select, delete
 from sqlalchemy.exc import OperationalError
@@ -639,8 +638,8 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         with self.engine.begin() as connection:
             try:
                 binds_table = self.tables["namespace_binds"]
-                prefix = text_type(prefix)
-                namespace = text_type(namespace)
+                prefix = str(prefix)
+                namespace = str(namespace)
                 connection.execute(delete(binds_table).where(
                     expression.or_(binds_table.c.uri == namespace,
                         binds_table.c.prefix == prefix)))
@@ -653,7 +652,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
         """Prefix."""
         with self.engine.begin() as connection:
             nb_table = self.tables["namespace_binds"]
-            namespace = text_type(namespace)
+            namespace = str(namespace)
             s = select(nb_table.c.prefix).where(nb_table.c.uri == namespace)
             res = connection.execute(s)
             rt = [rtTuple[0] for rtTuple in res.fetchall()]
@@ -664,7 +663,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     def namespace(self, prefix):
         res = None
-        prefix_val = text_type(prefix)
+        prefix_val = str(prefix)
         try:
             with self.engine.begin() as connection:
                 nb_table = self.tables["namespace_binds"]
