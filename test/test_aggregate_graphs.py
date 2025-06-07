@@ -1,4 +1,5 @@
 import unittest
+from io import StringIO
 
 from rdflib import Literal
 from rdflib import RDF
@@ -10,7 +11,6 @@ from rdflib.graph import ConjunctiveGraph
 from rdflib.graph import Graph
 from rdflib.graph import ReadOnlyGraphAggregate
 from rdflib.store import Store
-from six.moves import cStringIO as StringIO
 
 
 plugin.register(

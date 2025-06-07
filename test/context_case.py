@@ -6,7 +6,6 @@ from rdflib import Graph
 from rdflib import URIRef
 from rdflib import plugin
 from rdflib.store import Store
-from six import string_types
 
 
 class ContextTestCase(unittest.TestCase):
@@ -164,7 +163,7 @@ class ContextTestCase(unittest.TestCase):
         self.addStuffInMultipleContexts()
 
         def cid(c):
-            if not isinstance(c, string_types):
+            if not isinstance(c, str):
                 return c.identifier
             return c
         self.assertIn(self.c1, list(map(cid, self.graph.contexts())))
