@@ -1,11 +1,5 @@
 import unittest
-
-try:
-    from unittest.mock import patch, MagicMock
-except ImportError:
-    from mock import patch, MagicMock
-
-import six
+from unittest.mock import patch, MagicMock
 
 from rdflib import (
     ConjunctiveGraph,
@@ -48,7 +42,7 @@ class ConfigTest(unittest.TestCase):
 
     def test_no_url(self):
         with patch('rdflib_sqlalchemy.store.sqlalchemy'):
-            with six.assertRaisesRegex(self, Exception, '.*url.*'):
+            with self.assertRaisesRegex(Exception, '.*url.*'):
                 self.graph.open({'random_key': 'something'}, create=True)
 
 
