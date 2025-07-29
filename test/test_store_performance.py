@@ -1,4 +1,3 @@
-from __future__ import print_function
 import unittest
 import gc
 import os
@@ -7,7 +6,7 @@ from time import time
 from tempfile import mkdtemp
 
 from rdflib import Graph
-from six.moves.urllib.request import pathname2url
+from urllib.request import pathname2url
 
 try:
     from rdflib.plugins.stores.memory import Memory
