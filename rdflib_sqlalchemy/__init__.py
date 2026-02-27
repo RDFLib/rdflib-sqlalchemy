@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 """SQLAlchemy Store plugin for RDFLib."""
 import logging
-from pkg_resources import get_distribution
+import sys
 
+if sys.version_info >= (3, 8):
+    import importlib.metadata
 
-__version__ = get_distribution("rdflib_sqlalchemy").version
+    __version__ = importlib.metadata.version("rdflib_sqlalchemy")
+else:
+    # Implicit dependency on `setuptools<81` for Python < 3.8.
+    import pkg_resources
+
+    __version__ = pkg_resources.get_distribution("rdflib_sqlalchemy").version
 
 
 class NullHandler(logging.Handler):
