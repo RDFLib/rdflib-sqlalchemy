@@ -4,14 +4,11 @@ import logging
 import sys
 
 if sys.version_info >= (3, 8):
-    import importlib.metadata
-
-    __version__ = importlib.metadata.version("rdflib_sqlalchemy")
+    import importlib.metadata as importlib_metadata
 else:
-    # Implicit dependency on `setuptools<81` for Python < 3.8.
-    import pkg_resources
+    import importlib_metadata
 
-    __version__ = pkg_resources.get_distribution("rdflib_sqlalchemy").version
+__version__ = importlib_metadata.version("rdflib_sqlalchemy")
 
 
 class NullHandler(logging.Handler):
