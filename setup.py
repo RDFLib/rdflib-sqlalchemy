@@ -46,6 +46,7 @@ setup(
         "alembic>=0.8.8",
         "rdflib>=6,<8",
         "SQLAlchemy>=2.0.23",
+        "importlib-metadata; python_version < '3.8'",
     ],
     entry_points={
         'rdf.plugins.store': [
