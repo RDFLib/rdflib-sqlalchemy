@@ -45,7 +45,6 @@ setup(
     install_requires=[
         "alembic>=0.8.8",
         "rdflib>=6,<8",
-        "six>=1.10.0",
         "SQLAlchemy>=2.0.23",
         "importlib-metadata; python_version < '3.8'",
     ],
