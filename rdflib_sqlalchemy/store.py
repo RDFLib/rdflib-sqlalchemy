@@ -91,6 +91,7 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
 
     context_aware = True
     formula_aware = True
+    graph_aware = True
     transaction_aware = True
     regex_matching = PYTHON_REGEX
     configuration = Literal("sqlite://")
@@ -361,6 +362,12 @@ class SQLAlchemy(Store, SQLGeneratorMixin, StatisticsMixin):
             except Exception:
                 _logger.exception("AddN failed.")
                 raise
+
+    def add_graph(self, graph):
+        self.addN((s, p, o, graph) for (s, p, o) in graph.triples())
+
+    def remove_graph(self, graph):
+        self._remove_context(graph)
 
     def _add_ignore_on_conflict(self, statement):
         if self.engine.name == 'sqlite':
