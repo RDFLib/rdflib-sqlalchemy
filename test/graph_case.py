@@ -10,6 +10,10 @@ class GraphTestCase(unittest.TestCase):
     storetest = True
     identifier = URIRef("rdflib_test")
 
+    # storename is expected to be assigned in subclasses.
+    storename: str
+    uri: str = "sqlite://"
+
     michel = URIRef(u"michel")
     tarek = URIRef(u"tarek")
     bob = URIRef(u"bob")
@@ -22,13 +26,13 @@ class GraphTestCase(unittest.TestCase):
     namespace_dct = "http://purl.org/dc/terms/"
     namespace_saws = "http://purl.org/saws/ontology#"
 
-    def setUp(self, uri="sqlite://", storename=None):
-        store = plugin.get(storename, Store)(identifier=self.identifier)
+    def setUp(self) -> None:
+        store = plugin.get(self.storename, Store)(identifier=self.identifier)
         self.graph = Graph(store, identifier=self.identifier)
-        self.graph.open(uri, create=True)
+        self.graph.open(self.uri, create=True)
 
-    def tearDown(self, uri="sqlite://"):
-        self.graph.destroy(uri)
+    def tearDown(self) -> None:
+        self.graph.destroy(self.uri)
         self.graph.close()
 
     def addStuff(self):

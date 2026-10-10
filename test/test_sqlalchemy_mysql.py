@@ -39,25 +39,12 @@ class SQLAMySQLGraphTestCase(graph_case.GraphTestCase):
     uri = sqlalchemy_url
     create = True
 
-    def setUp(self):
-        super(SQLAMySQLGraphTestCase, self).setUp(uri=self.uri, storename=self.storename)
-
-    def tearDown(self):
-        super(SQLAMySQLGraphTestCase, self).tearDown(uri=self.uri)
-
 
 class SQLAMySQLContextTestCase(context_case.ContextTestCase):
     storetest = True
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
     create = True
-
-    def setUp(self):
-        super(SQLAMySQLContextTestCase, self).setUp(
-            uri=self.uri, storename=self.storename)
-
-    def tearDown(self):
-        super(SQLAMySQLContextTestCase, self).tearDown(uri=self.uri)
 
     def testLenInMultipleContexts(self):
         pytest.skip("Known issue.")
