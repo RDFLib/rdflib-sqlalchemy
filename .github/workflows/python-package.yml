@@ -89,7 +89,7 @@ jobs:
         with:
           python-version: 3
       - name: Install Deploy Dependencies
-        run: pip install wheel twine
+        run: pip install wheel twine setuptools[core]
       - name: Deploy
         run: ./deploy.sh
         env:
