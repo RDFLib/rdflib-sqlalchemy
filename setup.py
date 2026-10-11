@@ -33,10 +33,11 @@ setup(
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "License :: OSI Approved :: BSD License",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Operating System :: OS Independent",
@@ -45,8 +46,8 @@ setup(
     install_requires=[
         "alembic>=0.8.8",
         "rdflib>=6,<8",
-        "six>=1.10.0",
         "SQLAlchemy>=2.0.23",
+        "importlib-metadata; python_version < '3.8'",
     ],
     entry_points={
         'rdf.plugins.store': [
