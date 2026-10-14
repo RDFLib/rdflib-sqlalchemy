@@ -5,7 +5,7 @@ import unittest
 
 import pytest
 try:
-    import pg8000
+    import pg8000  # type: ignore
     assert pg8000 is not None
 except ImportError:
     pytest.skip("pg8000 not installed, skipping PgSQL tests",
@@ -33,15 +33,6 @@ class SQLAPgSQLGraphTestCase(graph_case.GraphTestCase):
     uri = sqlalchemy_url
     create = True
 
-    def setUp(self):
-        """Setup."""
-        super(SQLAPgSQLGraphTestCase, self).setUp(
-            uri=self.uri, storename=self.storename)
-
-    def tearDown(self):
-        """Teardown."""
-        super(SQLAPgSQLGraphTestCase, self).tearDown(uri=self.uri)
-
 
 class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
     """Context test case."""
@@ -50,15 +41,6 @@ class SQLAPgSQLContextTestCase(context_case.ContextTestCase):
     storename = "SQLAlchemy"
     uri = sqlalchemy_url
     create = True
-
-    def setUp(self):
-        """Setup."""
-        super(SQLAPgSQLContextTestCase, self).setUp(
-            uri=self.uri, storename=self.storename)
-
-    def tearDown(self):
-        """Teardown."""
-        super(SQLAPgSQLContextTestCase, self).tearDown(uri=self.uri)
 
     def testLenInMultipleContexts(self):
         """Test lin in multiple contexts, known issue."""
